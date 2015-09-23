@@ -1,0 +1,23 @@
+#ifdef __CINT__
+
+
+#pragma link off all globals;
+#pragma link off all classes;
+#pragma link off all functions;
+
+#pragma link C++ nestedclass;
+
+// #pragma link C++ class std::complex<double>+;
+// #pragma link C++ class RooScaleLOSM+;
+// #pragma link C++ class RooScaleHGamGamLOSM+;
+// #pragma link C++ class RooScaleHGluGluLOSM+;
+// #pragma link C++ class RooScaleHGamGamLOSMPlusX+;
+// #pragma link C++ class RooScaleHGluGluLOSMPlusX+;
+// #pragma link C++ class RooSpline1D+;
+#pragma link C++ class RooFormulaVarExt+;
+#pragma link C++ class FlexibleInterpVarExt+;
+// #pragma link C++ class RooBSplineBases+;
+// #pragma link C++ class RooBSpline+;
+// #pragma link C++ class RooParamKeysPdf+;
+
+#endif
