@@ -1,0 +1,53 @@
+<!DOCTYPE Combination  SYSTEM 'Combination.dtd'>
+<Combination>
+  <Channel Name="combined" IsCombined="true" Mass="125.09">
+    <File Name="./combined.root"/>
+    <Workspace Name="combWS"/>
+    <ModelConfig  Name="ModelConfig"/>
+    <ModelData Name="combData"/>
+    <ModelPOI Name="mu_Hc[-50~50], mu_Hu[0~0]"/>
+  </Channel>
+  <Channel Name="diphoton">
+    <File Name="workspace/fcnc/param/hgg_param.root"/>
+    <Workspace Name="combWS"/>
+    <ModelConfig Name="ModelConfig"/>
+    <ModelPOI Name="mu_Hc, mu_Hu"/>
+    <ModelData Name="combData"/>
+    <RenameMap>
+      <Syst OldName =                                    "nui_EM_ES_Z_had(EM_ES_Z, RNDM_EM_ES_Z)"     NewName =                 "ATLAS_EM_ES_Z" />
+      <Syst OldName =                           "nui_EM_MAT_LOW_had(EM_MAT_LOW, RNDM_EM_MAT_LOW)"     NewName =              "ATLAS_EM_MAT_LOW" />
+      <Syst OldName =                        "nui_EM_MAT_HIGH_had(EM_MAT_HIGH, RNDM_EM_MAT_HIGH)"     NewName =             "ATLAS_EM_MAT_HIGH" />
+      <Syst OldName =                           "nui_EM_PS_BARR_had(EM_PS_BARR, RNDM_EM_PS_BARR)"     NewName =              "ATLAS_EM_PS_BARR" />
+      <Syst OldName =                                 "nui_EM_PS_EC_had(EM_PS_EC, RNDM_EM_PS_EC)"     NewName =                "ATLAS_EM_PS_EC" />
+      <Syst OldName =                                       "nui_EM_ADD_had(EM_ADD, RNDM_EM_ADD)"     NewName =                  "ATLAS_EM_ADD" />
+      <Syst OldName =                                             "nui_mRes_had(mRes, RNDM_mRes)"     NewName =                    "ATLAS_Hgg_mRes" />
+      <Syst OldName =                                                "constrbr_had(nuibr, globr)"     NewName =                   "BR_gamgam" />
+      <Syst OldName =                                                "constrxs_had(nuixs, gloxs)"     NewName =                   "ttbar_XS" />
+      <Syst OldName =                                          "constrlum8_had(nuilum8, glolum8)"     NewName =                 "ATLAS_lumi_2012" />
+      <Syst OldName =                                          "constrlum7_had(nuilum7, glolum7)"     NewName =                 "ATLAS_lumi_2011" />
+      <Syst OldName =                                             "constriso_had(nuiiso, gloiso)"     NewName =                  "ATLAS_PH_ISO" />
+      <Syst OldName =                                             "constrpid_had(nuipid, glopid)"     NewName =                  "ATLAS_PH_ID" />
+      <Syst OldName =                                             "constrtri_had(nuitri, glotri)"     NewName =                  "ATLAS_PH_TRIG" />
+      <Syst OldName =                                             "constrjes_had(nuijes, glojes)"     NewName =                  "ATLAS_Hgg_JES" />
+      <Syst OldName =                                             "constrjer_had(nuijer, glojer)"     NewName =                  "ATLAS_JER" />
+      <Syst OldName =                                             "constrjvf_had(nuijvf, glojvf)"     NewName =                  "ATLAS_JVF" />
+      <Syst OldName =                                             "constrbta_had(nuibta, globta)"     NewName =                  "ATLAS_Hgg_BTAG" />
+      <Syst OldName =                                                "construe_had(nuiue, gloue)"     NewName =                   "UEPS" />
+      <Syst OldName =                                             "constrgen_had(nuigen, glogen)"     NewName =                  "ATLAS_ISR_FSR" />
+      <Syst OldName =                                             "constrbias_had(bias, globias)"     NewName =                  "ATLAS_Hgg_had_bias" />
+      <Syst OldName =                                                "constrnh_had(nuinh, glonh)"     NewName =                  "ATLAS_Hgg_Higgs_Bkg" />
+      <Syst OldName =                                             "constrsof_lep(nuisof, glosof)"     NewName =                  "ATLAS_Hgg_MET" />
+      <Syst OldName =                                             "constrles_lep(nuiles, gloles)"     NewName =                  "ATLAS_Hgg_LEP" />
+      <Syst OldName =                                             "constralp_lep(nuialp, gloalp)"     NewName =                  "ATLAS_Hgg_lep_EXTR" />
+      <Syst OldName =                  "BR_param_alphaS_Pdf(BR_param_alphaS, BR_param_alphaS_In)"     NewName =         "BR_param_alphaS" />
+      <Syst OldName =                              "BR_param_mB_Pdf(BR_param_mB, BR_param_mB_In)"     NewName =             "BR_param_mB" />
+      <Syst OldName = "BR_HiggsDecayWidthTHU_hqq_Pdf(BR_HiggsDecayWidthTHU_hqq, BR_HiggsDecayWidthTHU_hqq_In)"        NewName = "BR_HiggsDecayWidthTHU_hqq" />
+      <Syst OldName = "BR_HiggsDecayWidthTHU_hgg_Pdf(BR_HiggsDecayWidthTHU_hgg, BR_HiggsDecayWidthTHU_hgg_In)"        NewName = "BR_HiggsDecayWidthTHU_hgg" />
+      <Syst OldName =                  "nb_had"       NewName =                  "nb_had" />
+      <Syst OldName =                  "a1_had"       NewName =                  "a1_had" />
+      <Syst OldName =                  "a2_had"       NewName =                  "a2_had" />
+      <Syst OldName =                       "b"       NewName =                       "b" />
+      <Syst OldName=       "channelList" 		NewName=      "Cat_hgg"/>
+    </RenameMap>
+  </Channel>
+</Combination>

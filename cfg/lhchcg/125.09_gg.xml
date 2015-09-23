@@ -1,0 +1,247 @@
+  <Channel Name="gg_atlas">
+    <File Name="/afs/cern.ch/user/z/zhangfz/work/wsCombiner_new/atlas_input/gg_raw.root"/>
+    <Workspace Name="combWS"/>
+    <ModelConfig Name="ModelConfig"/>
+    <ModelPOI Name="mu=mu,
+					mu_XS7_ggF=mu_ggH_7TeV,
+					mu_XS7_VBF=mu_VBF_7TeV,
+					mu_XS7_WH=mu_WH_7TeV,
+					mu_XS7_qqZH=mu_ZH_7TeV,
+					mu_XS7_ttH=mu_ttH_7TeV,
+					mu_XS7_ggF=mu_bbH_7TeV,
+					mu_XS7_tHjb=mu_tHjb_7TeV,
+					mu_XS7_WtH=mu_WtH_7TeV,
+					mu_XS8_ggF=mu_ggH_8TeV,
+					mu_XS8_VBF=mu_VBF_8TeV,
+					mu_XS8_WH=mu_WH_8TeV,
+					mu_XS8_qqZH=mu_ZH_8TeV,
+					mu_XS8_ttH=mu_ttH_8TeV,
+					mu_XS8_ggF=mu_bbH_8TeV,
+					mu_XS8_tHjb=mu_tHjb_8TeV,
+					mu_XS8_WtH=mu_WtH_8TeV,
+					mu_BR_gamgam=mu_BR_gg"/>
+    <ModelData Name="combData"/>
+    <RenameMap>
+		<Syst OldName=                      "mH_gg_atlas" 		NewName=            "mHiggs"/>
+		<Syst OldName=       "combCat" 		NewName=      "gg_atlas"/>
+
+        <Syst OldName="ATLAS_BR_gamgam"		NewName="ATLAS_BR_gamgam"/>
+		<Syst OldName="ATLAS_BTag_BTagENV_2011"		NewName="ATLAS_BTag_BTagENV_2011"/>
+		<Syst OldName="ATLAS_BTag_CTagENV_2011"		NewName="ATLAS_BTag_CTagENV_2011"/>
+		<Syst OldName="ATLAS_BTag_MisTagENV_2011"		NewName="ATLAS_BTag_MisTagENV_2011"/>
+		<Syst OldName="ATLAS_BTag_btag14_2012"		NewName="ATLAS_BTag_btag14_2012"/>
+		<Syst OldName="ATLAS_BTag_btag19_2012"		NewName="ATLAS_BTag_btag19_2012"/>
+		<Syst OldName="ATLAS_BTag_btag20_2012"		NewName="ATLAS_BTag_btag20_2012"/>
+		<Syst OldName="ATLAS_BTag_btag23_2012"		NewName="ATLAS_BTag_btag23_2012"/>
+		<Syst OldName="ATLAS_BTag_btag24_2012"		NewName="ATLAS_BTag_btag24_2012"/>
+		<Syst OldName="ATLAS_BTag_ctag23_2012"		NewName="ATLAS_BTag_ctag23_2012"/>
+		<Syst OldName="ATLAS_BTag_ctag24_2012"		NewName="ATLAS_BTag_ctag24_2012"/>
+		<Syst OldName="ATLAS_BTag_mistag32_2012"		NewName="ATLAS_BTag_mistag32_2012"/>
+		<Syst OldName="ATLAS_BTag_mistag47_2012"		NewName="ATLAS_BTag_mistag47_2012"/>
+		<Syst OldName="ATLAS_BTag_mistag48_2012"		NewName="ATLAS_BTag_mistag48_2012"/>
+		<Syst OldName="ATLAS_EL_ISO"		NewName="ATLAS_EL_ISO"/>
+		<Syst OldName="ATLAS_EL_SCALE"		NewName="ATLAS_EL_ESCALE"/>
+		<Syst OldName="ATLAS_EM_mRes_CT"		NewName="ATLAS_EM_mRes_CT"/>
+		<Syst OldName="ATLAS_EM_mRes_MAT"		NewName="ATLAS_EM_mRes_MAT"/>
+		<Syst OldName="ATLAS_EM_mRes_PU"		NewName="ATLAS_EM_mRes_PU"/>
+		<Syst OldName="ATLAS_EM_mRes_ST"		NewName="ATLAS_EM_mRes_ST"/>
+		<Syst OldName="ATLAS_Hgg_BIAS_VBFloose"		NewName="ATLAS_Hgg_BIAS_VBFloose"/>
+		<Syst OldName="ATLAS_Hgg_BIAS_VBFtight"		NewName="ATLAS_Hgg_BIAS_VBFtight"/>
+		<Syst OldName="ATLAS_Hgg_BIAS_VHMET"		NewName="ATLAS_Hgg_BIAS_VHMET"/>
+		<Syst OldName="ATLAS_Hgg_BIAS_VHdijet"		NewName="ATLAS_Hgg_BIAS_VHdijet"/>
+		<Syst OldName="ATLAS_Hgg_BIAS_VHdilepton"		NewName="ATLAS_Hgg_BIAS_VHdilepton"/>
+		<Syst OldName="ATLAS_Hgg_BIAS_VHlepton"		NewName="ATLAS_Hgg_BIAS_VHlepton"/>
+		<Syst OldName="ATLAS_Hgg_BIAS_good_high_ptt"		NewName="ATLAS_Hgg_BIAS_good_high_ptt"/>
+		<Syst OldName="ATLAS_Hgg_BIAS_good_low_ptt"		NewName="ATLAS_Hgg_BIAS_good_low_ptt"/>
+		<Syst OldName="ATLAS_Hgg_BIAS_rest_high_ptt"		NewName="ATLAS_Hgg_BIAS_rest_high_ptt"/>
+		<Syst OldName="ATLAS_Hgg_BIAS_rest_low_ptt"		NewName="ATLAS_Hgg_BIAS_rest_low_ptt"/>
+		<Syst OldName="ATLAS_Hgg_BIAS_ttHhad"		NewName="ATLAS_Hgg_BIAS_ttHhad"/>
+		<Syst OldName="ATLAS_Hgg_BIAS_ttHlep"		NewName="ATLAS_Hgg_BIAS_ttHlep"/>
+		<Syst OldName="ATLAS_Hgg_Trigger_2011"		NewName="ATLAS_PH_2011_TRIG"/>
+		<Syst OldName="ATLAS_Hgg_Trigger_2012"		NewName="ATLAS_PH_2012_TRIG"/>
+		<Syst OldName="ATLAS_JER"		NewName="ATLAS_JER"/>
+		<Syst OldName="ATLAS_JES_EtaInterCal"		NewName="ATLAS_JES_EtaInterCal"/>
+		<Syst OldName="ATLAS_JES_FlavComp_VBF"		NewName="ATLAS_JES_FlavComp_VBF"/>
+		<Syst OldName="ATLAS_JES_FlavComp_VH"		NewName="ATLAS_JES_FlavComp_VH"/>
+		<Syst OldName="ATLAS_JES_FlavComp_WtH"		NewName="ATLAS_JES_FlavComp_WtH"/>
+		<Syst OldName="ATLAS_JES_FlavComp_ggH"		NewName="ATLAS_JES_FlavComp_ggH"/>
+		<Syst OldName="ATLAS_JES_FlavComp_tHjb"		NewName="ATLAS_JES_FlavComp_tHjb"/>
+		<Syst OldName="ATLAS_JES_FlavComp_ttH"		NewName="ATLAS_JES_FlavComp_ttH"/>
+		<Syst OldName="ATLAS_JES_FlavResp"		NewName="ATLAS_JES_FlavResp"/>
+		<Syst OldName="ATLAS_JES_MU"		NewName="ATLAS_JES_Mu"/>
+		<Syst OldName="ATLAS_JES_Merged"		NewName="ATLAS_JES_Merged"/>
+		<Syst OldName="ATLAS_JES_Modelling1"		NewName="ATLAS_JES_1112_Modelling1"/>
+		<Syst OldName="ATLAS_JES_PU_Rand"		NewName="ATLAS_JES_PU_Rand"/>
+		<Syst OldName="ATLAS_JES_PU_RhoTopo_VBF"		NewName="ATLAS_JES_PU_RhoTopo_VBF"/>
+		<Syst OldName="ATLAS_JES_PU_RhoTopo_VH"		NewName="ATLAS_JES_PU_RhoTopo_VH"/>
+		<Syst OldName="ATLAS_JES_PU_RhoTopo_WtH"		NewName="ATLAS_JES_PU_RhoTopo_WtH"/>
+		<Syst OldName="ATLAS_JES_PU_RhoTopo_ggH"		NewName="ATLAS_JES_PU_RhoTopo_ggH"/>
+		<Syst OldName="ATLAS_JES_PU_RhoTopo_tHjb"		NewName="ATLAS_JES_PU_RhoTopo_tHjb"/>
+		<Syst OldName="ATLAS_JES_PU_RhoTopo_ttH"		NewName="ATLAS_JES_PU_RhoTopo_ttH"/>
+		<Syst OldName="ATLAS_JVF"		NewName="ATLAS_JVF"/>
+		<Syst OldName="ATLAS_MET_Merged"		NewName="ATLAS_MET_Merged"/>
+		<Syst OldName="ATLAS_MET_PER"		NewName="ATLAS_MET_PER"/>
+		<Syst OldName="ATLAS_MET_PES"		NewName="ATLAS_MET_PES"/>
+		<Syst OldName="ATLAS_MET_SoftRes"		NewName="ATLAS_MET_SoftRes_Hgg"/>
+		<Syst OldName="ATLAS_MET_SoftScale"		NewName="ATLAS_MET_SoftScale_Hgg"/>
+		<Syst OldName="ATLAS_MSS_BkgModeling_VBFloose"		NewName="ATLAS_EM_BkgModeling_VBFloose"/>
+		<Syst OldName="ATLAS_MSS_BkgModeling_VBFtight"		NewName="ATLAS_EM_BkgModeling_VBFtight"/>
+		<Syst OldName="ATLAS_MSS_BkgModeling_VHMET"		NewName="ATLAS_EM_BkgModeling_VHMET"/>
+		<Syst OldName="ATLAS_MSS_BkgModeling_VHdijet"		NewName="ATLAS_EM_BkgModeling_VHdijet"/>
+		<Syst OldName="ATLAS_MSS_BkgModeling_VHdilepton"		NewName="ATLAS_EM_BkgModeling_VHdilepton"/>
+		<Syst OldName="ATLAS_MSS_BkgModeling_VHlepton"		NewName="ATLAS_EM_BkgModeling_VHlepton"/>
+		<Syst OldName="ATLAS_MSS_BkgModeling_good_high_ptt"		NewName="ATLAS_EM_BkgModeling_good_high_ptt"/>
+		<Syst OldName="ATLAS_MSS_BkgModeling_good_low_ptt"		NewName="ATLAS_EM_BkgModeling_good_low_ptt"/>
+		<Syst OldName="ATLAS_MSS_BkgModeling_rest_high_ptt"		NewName="ATLAS_EM_BkgModeling_rest_high_ptt"/>
+		<Syst OldName="ATLAS_MSS_BkgModeling_rest_low_ptt"		NewName="ATLAS_EM_BkgModeling_rest_low_ptt"/>
+		<Syst OldName="ATLAS_MSS_BkgModeling_ttHhad"		NewName="ATLAS_EM_BkgModeling_ttHhad"/>
+		<Syst OldName="ATLAS_MSS_BkgModeling_ttHlep"		NewName="ATLAS_EM_BkgModeling_ttHlep"/>
+		<Syst OldName="ATLAS_MSS_EM_ConvEfficiency"		NewName="ATLAS_EM_ConvEfficiency"/>
+		<Syst OldName="ATLAS_MSS_EM_ConvFakeRate"		NewName="ATLAS_EM_ConvFakeRate"/>
+		<Syst OldName="ATLAS_MSS_EM_ConvRadius"		NewName="ATLAS_EM_ConvRadius"/>
+		<Syst OldName="ATLAS_MSS_EM_G4"		NewName="ATLAS_EM_Geant4"/>
+		<Syst OldName="ATLAS_MSS_EM_L1Gain"		NewName="ATLAS_EM_L1Gain"/>
+		<Syst OldName="ATLAS_MSS_EM_L2Gain"		NewName="ATLAS_EM_L2Gain"/>
+		<Syst OldName="ATLAS_MSS_EM_LArCalibbarrel"		NewName="ATLAS_EM_LArCalib_Barrel"/>
+		<Syst OldName="ATLAS_MSS_EM_LArCalibendcap"		NewName="ATLAS_EM_LArCalib_EC"/>
+		<Syst OldName="ATLAS_MSS_EM_LArElecCalib"		NewName="ATLAS_EM_LArElecCalib"/>
+		<Syst OldName="ATLAS_MSS_EM_LArElecUnconvbarrel"		NewName="ATLAS_EM_LArElecUnconv_Barrel"/>
+		<Syst OldName="ATLAS_MSS_EM_LArElecUnconvendcap"		NewName="ATLAS_EM_LArElecUnconv_EC"/>
+		<Syst OldName="ATLAS_MSS_EM_LArUnconvCalibbarrel"		NewName="ATLAS_EM_LArUnconvCalib_Barrel"/>
+		<Syst OldName="ATLAS_MSS_EM_LArUnconvCalibendcap"		NewName="ATLAS_EM_LArUnconvCalib_EC"/>
+		<Syst OldName="ATLAS_MSS_EM_LeakageConv"		NewName="ATLAS_EM_LatLeakConv"/>
+		<Syst OldName="ATLAS_MSS_EM_LeakageUnconv"		NewName="ATLAS_EM_LatLeakUnconv"/>
+		<Syst OldName="ATLAS_MSS_EM_MatCalobarrel"		NewName="ATLAS_EM_MatCalo_Barrel"/>
+		<Syst OldName="ATLAS_MSS_EM_MatCaloendcap"		NewName="ATLAS_EM_MatCalo_EC"/>
+		<Syst OldName="ATLAS_MSS_EM_MatCryobarrel"		NewName="ATLAS_EM_MatCryo_Barrel"/>
+		<Syst OldName="ATLAS_MSS_EM_MatCryoendcap"		NewName="ATLAS_EM_MatCryo_EC"/>
+		<Syst OldName="ATLAS_MSS_EM_MatID1"		NewName="ATLAS_EM_MatID1"/>
+		<Syst OldName="ATLAS_MSS_EM_MatID2"		NewName="ATLAS_EM_MatID2"/>
+		<Syst OldName="ATLAS_MSS_EM_MatID3"		NewName="ATLAS_EM_MatID3"/>
+		<Syst OldName="ATLAS_MSS_EM_MatID4"		NewName="ATLAS_EM_MatID4"/>
+		<Syst OldName="ATLAS_MSS_EM_PSbarrel"		NewName="ATLAS_EM_PS_Barrel"/>
+		<Syst OldName="ATLAS_MSS_EM_PSendcap"		NewName="ATLAS_EM_PS_EC"/>
+		<Syst OldName="ATLAS_MSS_EM_Pedestal_2011"		NewName="ATLAS_EM_Pedestal_2011"/>
+		<Syst OldName="ATLAS_MSS_EM_Pedestal_2012"		NewName="ATLAS_EM_Pedestal_2012"/>
+		<Syst OldName="ATLAS_MSS_EM_S12barrel"		NewName="ATLAS_EM_S12_Barrel"/>
+		<Syst OldName="ATLAS_MSS_EM_S12endcap"		NewName="ATLAS_EM_S12_EC"/>
+		<Syst OldName="ATLAS_MSS_EM_Zee"		NewName="ATLAS_EM_ES_Z"/>
+		<Syst OldName="ATLAS_MSS_PV"		NewName="ATLAS_EM_pv"/>
+		<Syst OldName="ATLAS_MU_ISO"		NewName="ATLAS_MU_ISO"/>
+		<Syst OldName="ATLAS_MU_SCALE"		NewName="ATLAS_MU_ESCALE"/>
+		<Syst OldName="ATLAS_PH_ID_2011"		NewName="ATLAS_PH_ID_2011"/>
+		<Syst OldName="ATLAS_PH_ID_2012"		NewName="ATLAS_PH_ID_2012"/>
+		<Syst OldName="ATLAS_PH_ISO_2011"		NewName="ATLAS_PH_ISO_2011"/>
+		<Syst OldName="ATLAS_PH_ISO_2012"		NewName="ATLAS_PH_ISO_2012"/>
+		<Syst OldName="ATLAS_stat_7TeV_WtH_ttHhad"		NewName="ATLAS_stat_7TeV_WtH_ttHhad"/>
+		<Syst OldName="ATLAS_stat_7TeV_WtH_ttHlep"		NewName="ATLAS_stat_7TeV_WtH_ttHlep"/>
+		<Syst OldName="ATLAS_stat_7TeV_ZH_VHdilepton"		NewName="ATLAS_stat_7TeV_ZH_VHdilepton"/>
+		<Syst OldName="ATLAS_stat_7TeV_tHjb_ttHhad"		NewName="ATLAS_stat_7TeV_tHjb_ttHhad"/>
+		<Syst OldName="ATLAS_stat_7TeV_tHjb_ttHlep"		NewName="ATLAS_stat_7TeV_tHjb_ttHlep"/>
+		<Syst OldName="ATLAS_stat_8TeV_WH_VHlepton"		NewName="ATLAS_stat_8TeV_WH_VHlepton"/>
+		<Syst OldName="ATLAS_stat_8TeV_WtH_ttHhad"		NewName="ATLAS_stat_8TeV_WtH_ttHhad"/>
+		<Syst OldName="ATLAS_stat_8TeV_WtH_ttHlep"		NewName="ATLAS_stat_8TeV_WtH_ttHlep"/>
+		<Syst OldName="ATLAS_stat_8TeV_ZH_VHdilepton"		NewName="ATLAS_stat_8TeV_ZH_VHdilepton"/>
+		<Syst OldName="ATLAS_stat_8TeV_ggH_VBFtight"		NewName="ATLAS_stat_8TeV_ggH_VBFtight"/>
+		<Syst OldName="ATLAS_stat_8TeV_tHjb_ttHhad"		NewName="ATLAS_stat_8TeV_tHjb_ttHhad"/>
+		<Syst OldName="ATLAS_stat_8TeV_tHjb_ttHlep"		NewName="ATLAS_stat_8TeV_tHjb_ttHlep"/>
+		<Syst OldName="ATLAS_stat_8TeV_ttH_ttHhad"		NewName="ATLAS_stat_8TeV_ttH_ttHhad"/>
+		<Syst OldName="ATLAS_stat_8TeV_ttH_ttHlep"		NewName="ATLAS_stat_8TeV_ttH_ttHlep"/>
+		<Syst OldName="HF"		NewName="ATLAS_HF"/>
+		<Syst OldName="MOD_DPHI"		NewName="ATLAS_TH_MOD_DPHI"/>
+		<Syst OldName="MOD_ETAS"		NewName="ATLAS_TH_MOD_ETAS"/>
+		<Syst OldName="MOD_ttH_MU"		NewName="ATLAS_TH_MOD_ttH_MU"/>
+		<Syst OldName="MOD_ttH_SCALE"		NewName="ATLAS_TH_MOD_ttH_SCALE"/>
+
+		<Syst OldName="QCDscale_Higgs_VH"		NewName="QCDscale_VH"/>
+		<Syst OldName="QCDscale_Higgs_WtH"		NewName="QCDscale_WtH"/>
+		<Syst OldName="QCDscale_Higgs_bbH"		NewName="QCDscale_bbH"/>
+		<Syst OldName="QCDscale_Higgs_ggH"		NewName="QCDscale_ggH"/>
+		<Syst OldName="ATLAS_QCDscale_Higgs_ggH_ptH_m01"		NewName="QCDscale_ggH1in"/>
+		<Syst OldName="QCDscale_Higgs_ggH_m23"		NewName="QCDscale_ggH3in_vbf"/>
+		<Syst OldName="QCDscale_Higgs_qqH"		NewName="QCDscale_qqH"/>
+		<Syst OldName="QCDscale_Higgs_tHjb"		NewName="QCDscale_tHjb"/>
+		<Syst OldName="QCDscale_Higgs_ttH"		NewName="QCDscale_ttH"/>
+		<Syst OldName="QCDscale_Higgs_WH_ttHAC"		NewName="QCDscale_Higgs_WH_ttHAC"/>
+		<Syst OldName="QCDscale_Higgs_WtH_ttHAC"		NewName="QCDscale_Higgs_WtH_ttHAC"/>
+		<Syst OldName="QCDscale_Higgs_ggH_ttHAC"		NewName="QCDscale_Higgs_ggH_ttHAC"/>
+		<Syst OldName="QCDscale_Higgs_tHjb_ttHAC"		NewName="QCDscale_Higgs_tHjb_ttHAC"/>
+
+		<Syst OldName="atlas_nbkg_7TeV_VBFloose"		NewName="u_ATLAS_Hgg_nbkg_7TeV_VBFloose"/>
+		<Syst OldName="atlas_nbkg_7TeV_VBFtight"		NewName="u_ATLAS_Hgg_nbkg_7TeV_VBFtight"/>
+		<Syst OldName="atlas_nbkg_7TeV_VHMET"		NewName="u_ATLAS_Hgg_nbkg_7TeV_VHMET"/>
+		<Syst OldName="atlas_nbkg_7TeV_VHdijet"		NewName="u_ATLAS_Hgg_nbkg_7TeV_VHdijet"/>
+		<Syst OldName="atlas_nbkg_7TeV_VHdilepton"		NewName="u_ATLAS_Hgg_nbkg_7TeV_VHdilepton"/>
+		<Syst OldName="atlas_nbkg_7TeV_VHlepton"		NewName="u_ATLAS_Hgg_nbkg_7TeV_VHlepton"/>
+		<Syst OldName="atlas_nbkg_7TeV_good_high_ptt"		NewName="u_ATLAS_Hgg_nbkg_7TeV_good_high_ptt"/>
+		<Syst OldName="atlas_nbkg_7TeV_good_low_ptt"		NewName="u_ATLAS_Hgg_nbkg_7TeV_good_low_ptt"/>
+		<Syst OldName="atlas_nbkg_7TeV_rest_high_ptt"		NewName="u_ATLAS_Hgg_nbkg_7TeV_rest_high_ptt"/>
+		<Syst OldName="atlas_nbkg_7TeV_rest_low_ptt"		NewName="u_ATLAS_Hgg_nbkg_7TeV_rest_low_ptt"/>
+		<Syst OldName="atlas_nbkg_7TeV_ttHhad"		NewName="u_ATLAS_Hgg_nbkg_7TeV_ttHhad"/>
+		<Syst OldName="atlas_nbkg_7TeV_ttHlep"		NewName="u_ATLAS_Hgg_nbkg_7TeV_ttHlep"/>
+		<Syst OldName="atlas_nbkg_VBFloose"		NewName="u_ATLAS_Hgg_nbkg_VBFloose"/>
+		<Syst OldName="atlas_nbkg_VBFtight"		NewName="u_ATLAS_Hgg_nbkg_VBFtight"/>
+		<Syst OldName="atlas_nbkg_VHMET"		NewName="u_ATLAS_Hgg_nbkg_VHMET"/>
+		<Syst OldName="atlas_nbkg_VHdijet"		NewName="u_ATLAS_Hgg_nbkg_VHdijet"/>
+		<Syst OldName="atlas_nbkg_VHdilepton"		NewName="u_ATLAS_Hgg_nbkg_VHdilepton"/>
+		<Syst OldName="atlas_nbkg_VHlepton"		NewName="u_ATLAS_Hgg_nbkg_VHlepton"/>
+		<Syst OldName="atlas_nbkg_good_high_ptt"		NewName="u_ATLAS_Hgg_nbkg_good_high_ptt"/>
+		<Syst OldName="atlas_nbkg_good_low_ptt"		NewName="u_ATLAS_Hgg_nbkg_good_low_ptt"/>
+		<Syst OldName="atlas_nbkg_rest_high_ptt"		NewName="u_ATLAS_Hgg_nbkg_rest_high_ptt"/>
+		<Syst OldName="atlas_nbkg_rest_low_ptt"		NewName="u_ATLAS_Hgg_nbkg_rest_low_ptt"/>
+		<Syst OldName="atlas_nbkg_ttHhad"		NewName="u_ATLAS_Hgg_nbkg_ttHhad"/>
+		<Syst OldName="atlas_nbkg_ttHlep"		NewName="u_ATLAS_Hgg_nbkg_ttHlep"/>
+		<Syst OldName="p0_7TeV_good_low_ptt"		NewName="u_ATLAS_Hgg_p0_7TeV_good_low_ptt"/>
+		<Syst OldName="p0_7TeV_rest_high_ptt"		NewName="u_ATLAS_Hgg_p0_7TeV_rest_high_ptt"/>
+		<Syst OldName="p0_7TeV_rest_low_ptt"		NewName="u_ATLAS_Hgg_p0_7TeV_rest_low_ptt"/>
+		<Syst OldName="p0_good_low_ptt"		NewName="u_ATLAS_Hgg_p0_good_low_ptt"/>
+		<Syst OldName="p0_rest_high_ptt"		NewName="u_ATLAS_Hgg_p0_rest_high_ptt"/>
+		<Syst OldName="p0_rest_low_ptt"		NewName="u_ATLAS_Hgg_p0_rest_low_ptt"/>
+		<Syst OldName="p1_7TeV_good_low_ptt"		NewName="u_ATLAS_Hgg_p1_7TeV_good_low_ptt"/>
+		<Syst OldName="p1_7TeV_rest_high_ptt"		NewName="u_ATLAS_Hgg_p1_7TeV_rest_high_ptt"/>
+		<Syst OldName="p1_7TeV_rest_low_ptt"		NewName="u_ATLAS_Hgg_p1_7TeV_rest_low_ptt"/>
+		<Syst OldName="p1_good_low_ptt"		NewName="u_ATLAS_Hgg_p1_good_low_ptt"/>
+		<Syst OldName="p1_rest_high_ptt"		NewName="u_ATLAS_Hgg_p1_rest_high_ptt"/>
+		<Syst OldName="p1_rest_low_ptt"		NewName="u_ATLAS_Hgg_p1_rest_low_ptt"/>
+        
+		<Syst OldName="pdf_Higgs_WtH"		NewName="pdf_Higgs_qg"/>
+		<Syst OldName="pdf_Higgs_ggH"		NewName="pdf_Higgs_gg"/>
+		<Syst OldName="pdf_Higgs_ttH"		NewName="-pdf_Higgs_gg"/>
+		<Syst OldName="pdf_Higgs_gqH"		NewName="pdf_Higgs_qg"/>
+		<Syst OldName="pdf_Higgs_qqH"		NewName="pdf_Higgs_qq"/>
+
+		<Syst OldName="slope_7TeV_VBFloose"		NewName="u_ATLAS_Hgg_slope_7TeV_VBFloose"/>
+		<Syst OldName="slope_7TeV_VBFtight"		NewName="u_ATLAS_Hgg_slope_7TeV_VBFtight"/>
+		<Syst OldName="slope_7TeV_VHdijet"		NewName="u_ATLAS_Hgg_slope_7TeV_VHdijet"/>
+		<Syst OldName="slope_7TeV_good_high_ptt"		NewName="u_ATLAS_Hgg_slope_7TeV_good_high_ptt"/>
+		<Syst OldName="slope_VBFloose"		NewName="u_ATLAS_Hgg_slope_VBFloose"/>
+		<Syst OldName="slope_VBFtight"		NewName="u_ATLAS_Hgg_slope_VBFtight"/>
+		<Syst OldName="slope_VHMET"		NewName="u_ATLAS_Hgg_slope_VHMET"/>
+		<Syst OldName="slope_VHdijet"		NewName="u_ATLAS_Hgg_slope_VHdijet"/>
+		<Syst OldName="slope_VHdilepton"		NewName="u_ATLAS_Hgg_slope_VHdilepton"/>
+		<Syst OldName="slope_VHlepton"		NewName="u_ATLAS_Hgg_slope_VHlepton"/>
+		<Syst OldName="slope_good_high_ptt"		NewName="u_ATLAS_Hgg_slope_good_high_ptt"/>
+		<Syst OldName="slope_ttHhad"		NewName="u_ATLAS_Hgg_slope_ttHhad"/>
+		<Syst OldName="slope_ttHlep"		NewName="u_ATLAS_Hgg_slope_ttHlep"/>
+
+<Syst OldName="ATLAS_lumi_2011"		NewName="ATLAS_lumi_2011"/>
+<Syst OldName="ATLAS_lumi_2012"		NewName="ATLAS_lumi_2012"/>
+<Syst OldName="lumi_2011"		NewName="lumi_2011"/>
+<Syst OldName="lumi_2012"		NewName="lumi_2012"/>
+
+<Syst OldName="ATLAS_UEPS_ggH_nonvbf"		NewName="ATLAS_Hgg_UEPS_ggH_nonvbf"/>
+<Syst OldName="ATLAS_UEPS_ggH_tth"		NewName="ATLAS_Hgg_UEPS_ggH_tth"/>
+<Syst OldName="ATLAS_UEPS_ggH_vh"		NewName="ATLAS_Hgg_UEPS_ggH_vh"/>
+<Syst OldName="ATLAS_UEPS_qqH_nonvbf"		NewName="ATLAS_Hgg_UEPS_qqH_nonvbf"/>
+<Syst OldName="ATLAS_UEPS_qqH_tth"		NewName="ATLAS_Hgg_UEPS_qqH_tth"/>
+<Syst OldName="ATLAS_UEPS_qqH_vh"		NewName="ATLAS_Hgg_UEPS_qqH_vh"/>
+<Syst OldName="ATLAS_UEPS_tH"		NewName="ATLAS_Hgg_UEPS_tH"/>
+<Syst OldName="UEPS_ggH_vbf"		NewName="UEPS_ggH_vbf"/>
+<Syst OldName="UEPS_qqH_vbf"		NewName="UEPS_qqH_vbf"/>
+<Syst OldName="QCDscale_Higgs_ggH2in_vbf"		NewName="QCDscale_ggH2in_vbf"/>
+<Syst OldName="QCDscale_Higgs_ggH2in_vh"		NewName="QCDscale_ggH2in_vh"/>
+
+
+
+    </RenameMap>
+  </Channel>

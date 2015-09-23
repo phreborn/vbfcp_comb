@@ -1,0 +1,9 @@
+<!DOCTYPE Orgnization  SYSTEM 'Orgnization.dtd'>
+<Orgnization InFile="workspace/fcnc/combined.root" OutFile="workspace/fcnc/combined_only_Hu.root"
+	     ModelName="FCNC_only_mu_Hu"
+	     POINames="mu_Hu">
+  <Item Name="zero[0]"/>
+  <Item Name= "EDIT::NEWPDF(OLDPDF,
+	       mu_Hc=zero
+       	       )" />
+</Orgnization>

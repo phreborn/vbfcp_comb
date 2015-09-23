@@ -1,0 +1,22 @@
+<!DOCTYPE Orgnization  SYSTEM 'Orgnization.dtd'>
+<Orgnization InFile="workspace/fcnc/decorated/hlep_decorated.root" OutFile="workspace/fcnc/param/hlep_param.root"
+	     ModelName="FCNC_mu"
+	     POINames="mu_Hc, mu_Hu">
+  <Item Name="one[1]"/>
+  <Item Name="zero[0]"/>
+  <Item Name="mu_Hc[1,-5,5]"/>
+  <Item Name="mu_Hu[1,-5,5]"/>
+  <Item Name= "EDIT::NEWPDF(OLDPDF,
+	       mu_XS_ttH=one,
+	       mu_tHjb_kTp1_BR_WW=one,
+	       mu_tHjb_kTp1_BR_bb=one,
+	       mu_tHjb_kTp1_BR_ZZ=one,
+	       mu_tHjb_kTp1_BR_tautau=one,
+	       mu_tHW_kTp1_BR_WW=one,
+	       mu_tHW_kTp1_BR_bb=one,
+	       mu_tHW_kTp1_BR_ZZ=one,
+	       mu_tHW_kTp1_BR_tautau=one,
+	       mu_XS_tHc=mu_Hc,
+	       mu_XS_tHu=mu_Hu,
+       	       )" />
+</Orgnization>

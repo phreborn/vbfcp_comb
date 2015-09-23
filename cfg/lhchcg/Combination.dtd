@@ -1,0 +1,41 @@
+<!ELEMENT Combination (Channel+)*>
+
+<!ELEMENT Channel (File | Workspace | ModelConfig | ModelPdf | ModelData | ModelPOI | RenameMap)*>
+<!ATTLIST Channel
+        Name              CDATA            #REQUIRED
+        IsCombined        CDATA            #IMPLIED
+        Mass              CDATA            #IMPLIED
+        CombBOnly              CDATA            #IMPLIED
+> 
+
+<!ELEMENT File EMPTY>
+<!ATTLIST File
+        Name               CDATA            #REQUIRED
+> 
+<!ELEMENT Workspace EMPTY>
+<!ATTLIST Workspace
+        Name               CDATA            #REQUIRED
+> 
+<!ELEMENT ModelConfig EMPTY>
+<!ATTLIST ModelConfig
+        Name               CDATA            #REQUIRED
+> 
+<!ELEMENT ModelPdf EMPTY>
+<!ATTLIST ModelPdf
+        Name               CDATA            #REQUIRED
+> 
+<!ELEMENT ModelData EMPTY>
+<!ATTLIST ModelData
+        Name               CDATA            #REQUIRED
+> 
+<!ELEMENT ModelPOI EMPTY>
+<!ATTLIST ModelPOI
+        Name               CDATA            #REQUIRED
+> 
+<!ELEMENT RenameMap (Syst+)>
+<!ELEMENT Syst EMPTY>
+<!ATTLIST Syst
+        OldName               CDATA            #REQUIRED
+        NewName               CDATA            #REQUIRED
+>
+ 

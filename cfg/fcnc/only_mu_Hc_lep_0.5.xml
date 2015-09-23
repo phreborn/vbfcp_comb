@@ -1,0 +1,13 @@
+<!DOCTYPE Orgnization  SYSTEM 'Orgnization.dtd'>
+<Orgnization InFile="workspace/fcnc/hlep.root" OutFile="workspace/fcnc/hlep_only_Hc_0.5.root"
+	     ModelName="FCNC_only_mu_Hc"
+	     POINames="mu_Hc">
+  <Item Name="zero[0]"/>
+  <Item Name="mu_Hc_handler[0.5]"/>
+  <Item Name="mu_Hc[1,0,5]"/>
+  <Item Name="prod::mu_Hc_comp(mu_Hc_handler,mu_Hc)"/>
+  <Item Name= "EDIT::NEWPDF(OLDPDF,
+	       mu_Hu=zero,
+	       mu_Hc=mu_Hc_comp,
+       	       )" />
+</Orgnization>

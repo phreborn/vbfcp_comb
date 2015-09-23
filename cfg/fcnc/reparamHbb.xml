@@ -1,0 +1,12 @@
+<!DOCTYPE Orgnization  SYSTEM 'Orgnization.dtd'>
+<Orgnization InFile="workspace/fcnc/decorated/hbb_decorated.root" OutFile="workspace/fcnc/param/hbb_param.root"
+	     ModelName="FCNC_mu"
+	     POINames="mu_Hc, mu_Hu">
+  <Item Name="one[1]"/>
+  <Item Name="zero[0]"/>
+  
+  <Item Name= "EDIT::NEWPDF(OLDPDF,
+	       Lumi=one,
+	       nominalLumi=zero
+       	       )" />
+</Orgnization>

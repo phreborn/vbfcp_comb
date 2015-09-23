@@ -1,0 +1,28 @@
+<!DOCTYPE Orgnization  SYSTEM 'Orgnization.dtd'>
+<Orgnization InFile="workspace/lhchcg/myrep/atlas/decorated/atlas_h4l_obs_decorated.root" OutFile="workspace/lhchcg/myrep/atlas/handler/atlas_h4l_obs_handler.root"
+	     ModelName="param_BR"
+	     POINames="mH,mu_ZZ,mu,lambda_mu,lambda_mu_ZZ,dmH_exp">
+
+  <Item Name="mu[1]"/>
+  <Item Name="mu_ZZ[1,-5,5]"/>
+
+  <!-- <Item Name="mu_BR_gamgam_temp[1]"/> -->
+
+  <!-- <Item Name="prod::RF_comp(RF_gg,mu_BR_gamgam_temp)"/> -->
+  <!-- <Item Name="prod::RV_comp(RV_gg,mu_BR_gamgam_temp)"/> -->
+
+  <Item Name="lambda_mu[1]"/>
+  <Item Name="lambda_mu_ZZ[1]"/>
+
+  <Item Name="dmH_exp[0]"/>
+
+  <Item Name="mH[125,120,130]"/>  
+  <Item Name="prod::mu_ZZ_comp(mu_ZZ,mu,lambda_mu_ZZ,lambda_mu)"/>
+
+  <Item Name="sum::mH_comp(mH,dmH_exp)"/>
+
+  <Item Name= "EDIT::NEWPDF(OLDPDF,
+	       mH=mH_comp,
+	       mu=mu_ZZ_comp,
+       	       )" />
+</Orgnization>
