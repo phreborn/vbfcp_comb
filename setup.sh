@@ -1,11 +1,29 @@
 #!/bin/bash
 # $Id: setup.sh 80 2012-01-31 19:08:31Z hji $
 
+# The Makefiles depend only on the root-config script to use ROOT,
+# so make sure that is available
+# if [[ `which root-config` == "" ]]; then
+#     echo "Info: Setting up environment for root first!"
+#     # source ~/setROOT_patch.sh
+#     source ~/setROOT32.sh
+#     if [[ `which root-config` == "" ]]; then
+#         echo "Error: Setting up root failed!"
+#     fi
+# fi
+
+# gcc
+#source /afs/cern.ch/project/wiscatlas/HtoGG/yanght/xdata2/root-v5-34_x86-64/setup.sh
+#export LD_LIBRARY_PATH=${ROOTSYS}/lib:${LD_LIBRARY_PATH}
+
+source /afs/cern.ch/user/y/yanght/bin/setupROOT.sh
+
 which gcc
 which root
 
 #dynamic libraries
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`pwd`/lib:/usr/local/Cellar/boost/1.57.0/lib/
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`pwd`/lib:/afs/cern.ch/cms/slc6_amd64_gcc472/external/boost/1.51.0-cms/lib/
+#export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`pwd`/lib:/afs/cern.ch/cms/slc5_amd64_gcc434/external/boost/1.44.0-cms/lib/
 
 # Greet the user
 echo "Setting up environment for compiling/running SFrame"

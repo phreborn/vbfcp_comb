@@ -35,7 +35,6 @@ class decorator {
   void Tokenize(const std::string& str, std::vector<std::string>& tokens, const std::string& delimiters);
   void setVar(std::string input){ setVar_=input;}
   void setHistToData(bool input){ histToData_=input;}
-  void setBinnedLH(bool input){ setBinnedLH_=input;}
  private:
   TFile *fin_;
   RooStats::ModelConfig* m_mc;
@@ -51,8 +50,7 @@ class decorator {
   TList* m_dataList;
   int numChannels;
   std::string splittedFile_;
-  bool histToData_;
-  std::string setVar_;
-  bool setBinnedLH_;
+  bool histToData_=true;
+  std::string setVar_="";
 };
 

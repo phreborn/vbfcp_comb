@@ -23,8 +23,10 @@ INCDIR  = interface
 ifeq ($(shell root-config --platform), macosx)
 	BOOSTLIBS = -lboost_system-mt -lboost_filesystem-mt -lboost_program_options-mt -lboost_regex-mt
 else
-	BOOSTLIBS = -L/usr/local/Cellar/boost/1.57.0/lib/ -lboost_filesystem -lboost_program_options -lboost_regex -lboost_system
-	BOOST_INC = -I/usr/local/Cellar/boost/1.57.0/include/
+	BOOSTLIBS = -L/afs/cern.ch/cms/slc6_amd64_gcc472/external/boost/1.51.0-cms/lib/ -lboost_filesystem -lboost_program_options -lboost_regex -lboost_system
+	BOOST_INC = -I/afs/cern.ch/cms/slc6_amd64_gcc472/external/boost/1.51.0-cms/include/
+	# BOOSTLIBS = -L/afs/cern.ch/cms/slc6_amd64_gcc434/external/boost/1.44.0-cms/lib/ -lboost_filesystem -lboost_program_options -lboost_regex -lboost_system
+	# BOOST_INC = -I/afs/cern.ch/cms/slc6_amd64_gcc434/external/boost/1.44.0-cms/include/
 
 	INCLUDES += $(BOOST_INC) 
 endif

@@ -101,8 +101,7 @@ namespace asimovUtils {
                         double tolerance = 0.001,
                         bool simple = false,
                         std::string hintFileName = "",
-                        int runFlag=0,
-			bool multiple=false
+                        int runFlag=0
                         );
 
         void makeAsimovDataForMultiPoi(RooWorkspace* w, RooStats::ModelConfig* mc, RooDataSet* data, std::vector<std::string> poiNames );
@@ -146,7 +145,6 @@ namespace asimovUtils {
         //         hf->Close();
         //         return success;
         //     }
-
 }
 
 

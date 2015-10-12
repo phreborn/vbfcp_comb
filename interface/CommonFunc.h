@@ -47,7 +47,7 @@ namespace CommonFunc{
   bool descending(double i, double j);
   //TTree* GetTree(RooDataSet*);
   void CopyFileContent(TFile *input, TFile* target);
-/*   void sleep(unsigned int mseconds); */
+  TH1D *VectorToHist(std::vector<double> vec, TString name, double xmin, double xmax, int nbin);
   const double GeV=1e3;
 };
 

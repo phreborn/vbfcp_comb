@@ -72,7 +72,7 @@ struct Channel {
     pdfReMap_ = ch.pdfReMap_;
   }
 
-    void Print()
+  void Print()
   {
     std::cout << "Channel Name: " << name_ << std::endl;
     std::cout << "\tFile Name: " << fileName_ << std::endl;
@@ -96,23 +96,22 @@ class combiner {
   void makeSimCategory();
   void regularizeWorkspace();
   void makeSnapshots0(
-		      std::string minimizerType,
-		      std::string inputFile,
-		      std::string snapshotHintFile="",
-		      double tolerance=0.001,
-		      bool simple=false,
-		      int fitFlag=0,
-		      bool multiplePoi=false
-		      );
+      std::string minimizerType,
+      std::string inputFile,
+      std::string snapshotHintFile="",
+      double tolerance=0.001,
+      bool simple=false,
+      int fitFlag=0
+
+      );
   void static makeSnapshots(
-			    std::string minimizerType,
-			    std::string inputFile,
-			    std::string snapshotHintFile="",
-			    double tolerance=0.001,
-			    bool simple = false,
-			    int fitFlag=0,
-			    bool multiplePoi=false
-			    );
+      std::string minimizerType,
+      std::string inputFile,
+      std::string snapshotHintFile="",
+      double tolerance=0.001,
+      bool simple = false,
+      int fitFlag=0
+      );
 
 
   void doFit(double mu=-1);
@@ -123,9 +122,9 @@ class combiner {
   void readConfigXml( std::string configFileName );
   void readChannel( TXMLNode* rootNode );
   std::string getAttributeValue(
-				TXMLNode* rootNode,
-				std::string attributeKey = "Name"
-				);
+      TXMLNode* rootNode,
+      std::string attributeKey = "Name"
+      );
 
   void findArgSetIn(RooWorkspace* w, RooArgSet* set);
   void printSummary()
@@ -138,7 +137,7 @@ class combiner {
 
   void getPOIs(std::string& poisInput,
                std::vector<POI>& pois
-	       )
+              )
   {
     // mu[0-5], mu_VH[0-15]
     TString poiStr = poisInput.c_str();
@@ -215,11 +214,11 @@ class combiner {
   }
 
   static void linkMap(
-		      std::map<std::string, std::string>& attMap,
-		      std::string& keyStr,
-		      std::string& valueStr,
-		      std::string linker = ","
-		      )
+      std::map<std::string, std::string>& attMap,
+      std::string& keyStr,
+      std::string& valueStr,
+      std::string linker = ","
+      )
   {
     int mapSize = (int)attMap.size();
     int index = 0;
@@ -257,136 +256,137 @@ class combiner {
 
 
   template<class T>
-    void tokenizeV(const std::string &s,
-		   std::vector<T> &o)
-    {
-      typedef boost::tokenizer<boost::char_separator<char> >  tok_t;
+void tokenizeV(const std::string &s,
+               std::vector<T> &o)
+{
+  typedef boost::tokenizer<boost::char_separator<char> >  tok_t;
 
-      boost::char_separator<char> sep(" \t");
-      tok_t tok(s, sep);
-      for(tok_t::iterator j (tok.begin());
-	  j != tok.end();
-	  ++j)
-	{
-	  std::string f(*j);
-	  boost::trim(f);
-	  o.push_back(boost::lexical_cast<T>(f));
-	}
-    }
-
-  /* read text file with title */
-  void readTxt(std::string filename,
-	       std::vector<std::string>& names,
-	       std::map<double, std::vector<double> >& contentMap
-	       )
+  boost::char_separator<char> sep(" \t");
+  tok_t tok(s, sep);
+  for(tok_t::iterator j (tok.begin());
+      j != tok.end();
+      ++j)
   {
-    /* match line containing numbers */
-    static const boost::regex e("\\d{2}.*");
+    std::string f(*j);
+    boost::trim(f);
+    o.push_back(boost::lexical_cast<T>(f));
+  }
+}
 
-    boost::iostreams::stream<boost::iostreams::file_source> file(filename.c_str());
-    std::string line;
-    while (std::getline(file, line)) {
-      bool isNumber =  boost::regex_match(line, e);
+/* read text file with title */
+void readTxt(std::string filename,
+             std::vector<std::string>& names,
+             std::map<double, std::vector<double> >& contentMap
+            )
+{
+  /* match line containing numbers */
+  static const boost::regex e("\\d{2}.*");
 
-      /* replace % with E-2 */
-      boost::xpressive::sregex re  =  boost::xpressive::as_xpr("%");
-      std::string format("E-2");
-      line  =  regex_replace( line, re, format );
+  boost::iostreams::stream<boost::iostreams::file_source> file(filename.c_str());
+  std::string line;
+  while (std::getline(file, line)) {
+    bool isNumber =  boost::regex_match(line, e);
 
-      if ( isNumber ) {
-	std::vector<double> results;
-	tokenizeV(line, results);
-	contentMap[results[0]] = results;
-      } else {
-	tokenizeV(line, names);
-      }
+    /* replace % with E-2 */
+    boost::xpressive::sregex re  =  boost::xpressive::as_xpr("%");
+    std::string format("E-2");
+    line  =  regex_replace( line, re, format );
+
+    if ( isNumber ) {
+      std::vector<double> results;
+      tokenizeV(line, results);
+      contentMap[results[0]] = results;
+    } else {
+      tokenizeV(line, names);
     }
   }
+}
 
-  void makeBOnly(bool flag) { m_mkBonly = flag; }
+void makeBOnly(bool flag) { m_mkBonly = flag; }
 
 
-  TString editRFVString( TString& oldString )
-  {
-    TString newFormExprBegin = "";
-    TString newFormExprEnd = "";
-    TString templateStr = oldString;
-    std::map<std::string, std::string> reNameMap;
-    /* want to replace the long ones first, so that there is no mis-replacement */
-    std::vector<std::string> allOldNames;
-    std::vector<int> indice;
-    std::vector<int> nameLength;
+TString editRFVString( TString& oldString )
+{
+  TString newFormExprBegin = "";
+  TString newFormExprEnd = "";
+  TString templateStr = oldString;
+  std::map<std::string, std::string> reNameMap;
+  /* want to replace the long ones first, so that there is no mis-replacement */
+  std::vector<std::string> allOldNames;
+  std::vector<int> indice;
+  std::vector<int> nameLength;
 
-    TObjArray* strArray = templateStr.Tokenize(",");
-    int num = strArray->GetEntries() - 1;
+  TObjArray* strArray = templateStr.Tokenize(",");
+  int num = strArray->GetEntries() - 1;
 
-    newFormExprBegin = ((TObjString*)strArray->At(0))->GetString();
+  newFormExprBegin = ((TObjString*)strArray->At(0))->GetString();
 
-    for ( int i= 0; i < num; i++ ) {
-      // TString oldName = _actualVars.at(i)->GetName();
-      TString oldName = ((TObjString*)strArray->At(i+1))->GetString();
-      oldName = oldName.ReplaceAll(")", "");
-      oldName = oldName.ReplaceAll(" ", "");
-      newFormExprEnd += ",";
-      newFormExprEnd += oldName;
-      TString newName = TString::Format("@%d", i);
-      indice.push_back(i);
-      nameLength.push_back(oldName.Length());
-      allOldNames.push_back(oldName.Data());
-      reNameMap[oldName.Data()] = newName.Data();
-    }
-    newFormExprEnd += ")";
-
-    TMath::Sort(num, &nameLength[0], &indice[0], true);
-    for ( int i= 0; i < num; i++ ) {
-      int index = indice[i];
-      TString oldName = allOldNames[index];
-      TString newName = reNameMap[oldName.Data()].c_str();
-      newFormExprBegin = newFormExprBegin.ReplaceAll(oldName, newName);
-    }
-    // std::cout << "\tInput : " << oldString << std::endl;
-    std::cout << "\tOutput: " << newFormExprBegin+newFormExprEnd << std::endl;
-    return newFormExprBegin+newFormExprEnd;
+  for ( int i= 0; i < num; i++ ) {
+    // TString oldName = _actualVars.at(i)->GetName();
+    TString oldName = ((TObjString*)strArray->At(i+1))->GetString();
+    oldName = oldName.ReplaceAll(")", "");
+    oldName = oldName.ReplaceAll(" ", "");
+    newFormExprEnd += ",";
+    newFormExprEnd += oldName;
+    TString newName = TString::Format("@%d", i);
+    indice.push_back(i);
+    nameLength.push_back(oldName.Length());
+    allOldNames.push_back(oldName.Data());
+    reNameMap[oldName.Data()] = newName.Data();
   }
-  
- private:
-  std::vector<Channel> m_summary;
-  std::vector<POI> m_pois;
-  Channel m_outSummary;
+  newFormExprEnd += ")";
 
-  std::string m_wsName;
-  std::string m_dataName;
-  std::string m_pdfName;
-  std::string m_poiName;
-  std::string m_obsName;
-  std::string m_nuisName;
-  std::string m_gObsName;
-  std::string m_catName;
-  std::string m_outputFileName;
+  TMath::Sort(num, &nameLength[0], &indice[0], true);
+  for ( int i= 0; i < num; i++ ) {
+    int index = indice[i];
+    TString oldName = allOldNames[index];
+    TString newName = reNameMap[oldName.Data()].c_str();
+    newFormExprBegin = newFormExprBegin.ReplaceAll(oldName, newName);
+  }
+  // std::cout << "\tInput : " << oldString << std::endl;
+  std::cout << "\tOutput: " << newFormExprBegin+newFormExprEnd << std::endl;
+  return newFormExprBegin+newFormExprEnd;
+}
 
-  double m_mass;
-  bool m_editBR;
-  bool m_editPDF;
-  bool m_editRFV;
-  bool m_mkBonly;
 
-  RooArgSet m_obs;
-  RooArgSet m_obsAndWgt;
-  RooWorkspace* m_comb;
-  RooArgSet* m_nuis;
-  RooArgSet* m_gObs;
-  RooStats::ModelConfig* m_mc;
-  RooWorkspace* m_tmpComb; /* temporary */
-  RooArgSet* m_tmpNuis;
-  RooArgSet* m_tmpGobs;
-  RooCategory* m_cat;
-  RooSimultaneous* m_pdf;
-  RooDataSet* m_data;
-  TFile* m_outputFile;
+private:
+std::vector<Channel> m_summary;
+std::vector<POI> m_pois;
+Channel m_outSummary;
 
-  int m_numChannel;
-  std::map<std::string, RooAbsPdf*> m_pdfMap;
-  std::map<std::string, RooDataSet*> m_dataMap;
-  TList m_keep;
+std::string m_wsName;
+std::string m_dataName;
+std::string m_pdfName;
+std::string m_poiName;
+std::string m_obsName;
+std::string m_nuisName;
+std::string m_gObsName;
+std::string m_catName;
+std::string m_outputFileName;
+
+double m_mass;
+bool m_editBR;
+bool m_editPDF;
+bool m_editRFV;
+bool m_mkBonly;
+
+RooArgSet m_obs;
+RooArgSet m_obsAndWgt;
+RooWorkspace* m_comb;
+RooArgSet* m_nuis;
+RooArgSet* m_gObs;
+RooStats::ModelConfig* m_mc;
+RooWorkspace* m_tmpComb; /* temporary */
+RooArgSet* m_tmpNuis;
+RooArgSet* m_tmpGobs;
+RooCategory* m_cat;
+RooSimultaneous* m_pdf;
+RooDataSet* m_data;
+TFile* m_outputFile;
+
+int m_numChannel;
+std::map<std::string, RooAbsPdf*> m_pdfMap;
+std::map<std::string, RooDataSet*> m_dataMap;
+TList m_keep;
 
 };

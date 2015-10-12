@@ -138,24 +138,8 @@ void decorator::decorate()
     SafeDelete(iter);
     m_comb->saveSnapshot( "nominalGlobs", *m_mc->GetGlobalObservables() );
   }
-  // std::cout<<"~~~~~~~~~~~~~ Nominal global observable values ~~~~~~~~~~~~~"<<std::endl;
-  // m_gobs->Print("v");
-
-  if ( setBinnedLH_ && m_mc->GetNuisanceParameters() )
-    {
-      // Speed-up fit to binned PDFs
-      RooWorkspace* w = m_mc->GetWS();
-      RooArgSet funcs = w->allPdfs();
-      std::unique_ptr<TIterator> iter(funcs.createIterator());
-      for ( RooAbsPdf* v = (RooAbsPdf*)iter->Next(); v!=0; v = (RooAbsPdf*)iter->Next() ) {
-	std::string name = v->GetName();
-
-	if (v->IsA() == RooRealSumPdf::Class()) {
-	  std::cout << "\tset binned likelihood for: " << v->GetName() << std::endl;
-	  v->setAttribute("BinnedLikelihood", true);
-	}
-      }
-    }
+  std::cout<<"~~~~~~~~~~~~~ Nominal global observable values ~~~~~~~~~~~~~"<<std::endl;
+  m_gobs->Print("v");
 
   if ( setVar_!="" ) {
 

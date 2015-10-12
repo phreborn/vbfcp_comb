@@ -27,8 +27,6 @@
 
 bool histToData_=true;
 std::string setVar_="";
-bool setBinnedLH_=false;
-bool multiplePoi_=false;
 
 int main( int argc, char** argv )
 {
@@ -73,9 +71,8 @@ int main( int argc, char** argv )
     ("improveFit", po::value<bool>(&improveFit_)->default_value(improveFit_), "Whether to call improve() after fit converges")
     ("robustFit", po::value<bool>(&robustFit_)->default_value(robustFit_), "Whether to fit again after fit converges")
     ("setVar", po::value<std::string>(&setVar_)->default_value(setVar_), "Manipulating variables in the workspace")
-    ("setBinnedLH", po::value<bool>(&setBinnedLH_)->default_value(setBinnedLH_), "Set binned likelihood attribute")
+    ("generateAsimov", po::value<bool>(&generateAsimov_)->default_value(generateAsimov_), "Generate Asimov data or not")
     ("histToData", po::value<bool>(&histToData_)->default_value(histToData_), "Convert RooDataHist to RooDataSet")
-    ("multiplePoi", po::value<bool>(&multiplePoi_)->default_value(multiplePoi_), "Whether there are multiple POIs to be handled")
     ;
   po::variables_map vm0;
   
@@ -147,7 +144,7 @@ int main( int argc, char** argv )
       comb->makeBOnly(makeBOnly_);
       comb->makeSimCategory();
       comb->regularizeWorkspace();
-      comb->makeSnapshots0( minimizerType_, combinedFile_, snapshotHintFile_, minimizerTolerance_, false, fitFlag_, multiplePoi_);
+      comb->makeSnapshots0( minimizerType_, combinedFile_, snapshotHintFile_, minimizerTolerance_, false, fitFlag_);
       comb->write(combinedFile_);
     }
 
@@ -182,8 +179,7 @@ int main( int argc, char** argv )
     }
 
     if(doStep3) {
-      std::cout << "\tStart making final workspace ~~~~ " << std::endl;
-      combiner::makeSnapshots( minimizerType_, combinedFile_, snapshotHintFile_, 0.001, true, fitFlag_,multiplePoi_);
+      combiner::makeSnapshots( minimizerType_, combinedFile_, snapshotHintFile_, minimizerTolerance_, true, fitFlag_);
       std::cout << "\tMade final workspace ~~~~ " << std::endl;
     }
   }
@@ -238,7 +234,6 @@ int main( int argc, char** argv )
     decorator* decorate=new decorator(combinedFile_,splittedFile_,dataName_);
     decorate->setVar(setVar_);
     decorate->setHistToData(histToData_);
-    decorate->setBinnedLH(setBinnedLH_);
     decorate->decorate();
     
     if ( snapShot_ ){

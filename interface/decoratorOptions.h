@@ -3,6 +3,4 @@
 
 std::string setVar_="";
 bool histToData_=true;
-bool setBinnedLH_=false;
-
 #endif

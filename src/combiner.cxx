@@ -1563,12 +1563,11 @@ void combiner::makeSnapshots0(
 			      std::string snapshotHintFile,
 			      double tolerance,
 			      bool simple,
-			      int fitFlag,
-			      bool multiplePoi
+			      int fitFlag
 			      )
 {
 
-  asimovUtils::makeSnapshots(m_comb, m_mc, m_data, m_pdf, combinedFile, minimizerType, tolerance, simple, snapshotHintFile, fitFlag, multiplePoi);
+  asimovUtils::makeSnapshots(m_comb, m_mc, m_data, m_pdf, combinedFile, minimizerType, tolerance, simple, snapshotHintFile, fitFlag);
 
 }
 
@@ -1579,8 +1578,7 @@ void combiner::makeSnapshots(
 			     std::string snapshotHintFile,
 			     double tolerance,
 			     bool simple,
-			     int fitFlag,
-			     bool multiplePoi
+			     int fitFlag
 			     )
 {
   TFile* f = new TFile((combinedFile+"_raw.root").c_str());
@@ -1615,8 +1613,7 @@ void combiner::makeSnapshots(
     TString outputPlotName = combinedFile.c_str();
     outputPlotName = outputPlotName.ReplaceAll("_raw", "");
     std::cout << "\tOutput plot: " << outputPlotName << std::endl;
-    std::cout<<"REGTEST: Whether there are multiple POIs: "<<multiplePoi<<std::endl;
-    asimovUtils::makeSnapshots(w, mc, data, pdf, outputPlotName.Data(), minimizerType, tolerance, simple, snapshotHintFile, fitFlag, multiplePoi);
+    asimovUtils::makeSnapshots(w, mc, data, pdf, outputPlotName.Data(), minimizerType, tolerance, simple, snapshotHintFile, fitFlag);
   }
   w->writeToFile(combinedFile.c_str());
   delete w;

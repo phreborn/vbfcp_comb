@@ -77,4 +77,9 @@
 #include <TMVA/Factory.h>
 #include <TMVA/Reader.h>
 #include <TMVA/MethodCuts.h>
+/// XML IO
+#include <TDOMParser.h>
+#include <TXMLNode.h>
+#include <TXMLAttr.h>
+
 #endif
