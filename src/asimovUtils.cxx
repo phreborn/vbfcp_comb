@@ -1,9 +1,8 @@
 #include <stdlib.h>
 
 #include "asimovUtils.h"
-#include "RooBinning.h"
 #include "asimovUtilsOptions.h"
-#include "RooMultiPdf.h"
+
 using namespace RooStats;
 using namespace RooFit;
 using namespace HistFactory;
@@ -362,17 +361,17 @@ RooAbsData* asimovUtils::asimovDatasetWithFit(
             }
           }
 
-	  // Deactivate level 2 constant term optimization for CMS H->gamgam workspace
-	  {
-	    RooFIter iter=w->components().fwdIterator();
-	    RooAbsArg *arg;
-	    while ((arg=iter.next())){
-	      if(arg->IsA()==RooMultiPdf::Class()){
-		arg->setAttribute("NoCacheAndTrack");
-		std::cout<<"De-activating level 2 constant term optimization for "<<arg->GetName()<<std::endl;
-	      }
-	    }
-	  }
+	  // // Deactivate level 2 constant term optimization for CMS H->gamgam workspace
+	  // {
+	  //   RooFIter iter=w->components().fwdIterator();
+	  //   RooAbsArg *arg;
+	  //   while ((arg=iter.next())){
+	  //     if(arg->IsA()==RooMultiPdf::Class()){
+	  // 	arg->setAttribute("NoCacheAndTrack");
+	  // 	std::cout<<"De-activating level 2 constant term optimization for "<<arg->GetName()<<std::endl;
+	  //     }
+	  //   }
+	  // }
 
           RooAbsReal* nll_ = mc->GetPdf()->createNLL(realdata,
                                                      RooFit::Constrain( *mc->GetNuisanceParameters() ),

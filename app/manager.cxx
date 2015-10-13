@@ -11,16 +11,6 @@
 #include <boost/program_options.hpp>
 
 // ATLAS-CMS combination
-#include "RooBernsteinFast.h"
-#include "SimpleCacheSentry.h"
-#include "HGGRooPdfs.h"
-#include "HZZ2L2QRooPdfs.h"
-#include "VerticalInterpHistPdf.h"
-#include "HZZ4LRooPdfs.h"
-#include "RooMultiPdf.h"
-#include "FastTemplate.h"
-#include "ProcessNormalization.h"
-#include "RooSpline1D.h"
 #include "CommonOptions.h"
 #include "asimovUtilsOptions.h"
 // bool combine_ = true;
