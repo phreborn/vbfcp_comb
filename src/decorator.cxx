@@ -121,9 +121,6 @@ void decorator::decorate()
 
   // Save nominal global observable values in a snapshot
   if(!m_comb->loadSnapshot("nominalGlobs")){
-    // statistics::constSet((RooArgSet*)m_gobs,false);
-    // statistics::setvalSet((RooArgSet*)m_gobs,0);
-    // statistics::constSet((RooArgSet*)m_gobs,true);
     TIterator *iter = m_gobs -> createIterator();
     RooRealVar* parg = NULL;
     while((parg=(RooRealVar*)iter->Next()) ){

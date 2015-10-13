@@ -21,7 +21,6 @@
 #include "TKey.h"
 #include "TIterator.h"
 #include "asimovUtils.h"
-#include "statistics.hh"
 
 class decorator {
  public:
