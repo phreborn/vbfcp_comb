@@ -1,7 +1,7 @@
 /*
  * =====================================================================================
  *
- *       Filename:  Orgnizer.cxx
+ *       Filename:  Organizer.cxx
  *
  *    Description:  Orgnize the workspace
  *
@@ -15,25 +15,25 @@
  *
  * =====================================================================================
  */
-#include "Orgnizer.h"
+#include "Organizer.h"
 #include "combiner.h"
 
-Orgnizer::Orgnizer() :
-    AlgoBase("Orgnizer specific options") {
+Organizer::Organizer() :
+    AlgoBase("Organizer specific options") {
       options_.add_options()
           // ("toysH,T", boost::program_options::value<unsigned int>(&nToys_)->default_value(nToys_),         "Number of Toy MC extractions to compute CLs+b, CLb and CLs")
           ;
     }
 
-void Orgnizer::applyOptions(const boost::program_options::variables_map &vm) {
+void Organizer::applyOptions(const boost::program_options::variables_map &vm) {
 }
 
-void Orgnizer::applyDefaultOptions() { validateOptions(); }
+void Organizer::applyDefaultOptions() { validateOptions(); }
 
-void Orgnizer::validateOptions() {
+void Organizer::validateOptions() {
 }
 
-bool Orgnizer::run(bool makeSnapshot)
+bool Organizer::run(bool makeSnapshot)
 {
   std::string wsName = "combWS";
   std::string mcName = "ModelConfig";
@@ -376,7 +376,7 @@ bool Orgnizer::run(bool makeSnapshot)
   return action;
 }
 
-void Orgnizer::readConfigXml( std::string filen )
+void Organizer::readConfigXml( std::string filen )
 {
   std::cout << "Parsing file: " << filen << std::endl;
   TDOMParser xmlparser;
@@ -446,7 +446,7 @@ void Orgnizer::readConfigXml( std::string filen )
 }
 
 
-std::vector<TString> Orgnizer::SplitString(const TString& theOpt, const char separator )
+std::vector<TString> Organizer::SplitString(const TString& theOpt, const char separator )
 {
    // splits the option string at 'separator' and fills the list
    // 'splitV' with the primitive strings

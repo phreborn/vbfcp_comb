@@ -1,7 +1,7 @@
 /*
  * =====================================================================================
  *
- *       Filename:  Orgnizer.h
+ *       Filename:  Organizer.h
  *
  *    Description:  Orgnize the workspace
  *
@@ -16,8 +16,8 @@
  * =====================================================================================
  */
 
-#ifndef Manager_Orgnizer
-#define Manager_Orgnizer
+#ifndef Manager_Organizer
+#define Manager_Organizer
 
 #include "AlgoBase.h"
 #include "rooCommon.h"
@@ -32,15 +32,15 @@
 #include "asimovUtils.h"
 
 
-class Orgnizer : public AlgoBase {
+class Organizer : public AlgoBase {
     public:
-        Orgnizer() ;
+        Organizer() ;
         virtual void applyOptions(const boost::program_options::variables_map &vm) ;
         virtual void applyDefaultOptions() ;
         virtual void validateOptions() ;
 
         virtual const std::string & name() const {
-          static const std::string name("Orgnizer");
+          static const std::string name("Organizer");
           return name;
         }
 

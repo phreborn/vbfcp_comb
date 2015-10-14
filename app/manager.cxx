@@ -6,7 +6,7 @@
 
 #include "combiner.h"
 #include "splitter.h"
-#include "Orgnizer.h"
+#include "Organizer.h"
 #include "decorator.h"
 #include <boost/program_options.hpp>
 
@@ -213,7 +213,7 @@ int main( int argc, char** argv )
   }
   else if ( what_=="orgnize" )
   {
-    Orgnizer* org = new Orgnizer();
+    Organizer* org = new Organizer();
     org->readConfigXml(configFile_);
     // org->printSummary();
     org->run(snapShot_);
