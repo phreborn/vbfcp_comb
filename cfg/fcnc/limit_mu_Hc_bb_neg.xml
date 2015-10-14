@@ -1,7 +1,0 @@
-<!DOCTYPE Orgnization  SYSTEM 'Orgnization.dtd'>
-<Orgnization InFile="workspace/fcnc/hbb_clean.root" OutFile="workspace/fcnc/hbb_limit_Hc_neg.root"
-	     ModelName="FCNC_mu_Hc"
-	     POINames="mu_Hc,mu_Hu">
-  <Item Name= "EDIT::NEWPDF(OLDPDF,
-       	       )" />
-</Orgnization>

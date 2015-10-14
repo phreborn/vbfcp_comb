@@ -1,9 +1,0 @@
-<!DOCTYPE Orgnization  SYSTEM 'Orgnization.dtd'>
-<Orgnization InFile="workspace/fcnc/combined.root" OutFile="workspace/fcnc/combined_limit_Hu_pos.root"
-	     ModelName="FCNC_mu_Hu"
-	     POINames="mu_Hu,nuis_mu_Hc">
-  <Item Name="nuis_mu_Hc[1,0,5]"/>
-  <Item Name= "EDIT::NEWPDF(OLDPDF,
-	       mu_Hc=nuis_mu_Hc,
-       	       )" />
-</Orgnization>
