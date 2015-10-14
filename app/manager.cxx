@@ -26,7 +26,7 @@ int main( int argc, char** argv )
   desc.add_options()
     ("help,h", "Produce help message")
     // ( "Combine,c",               po::value<bool>( &combine_ )->default_value( combine_ ), "do the combination" )
-    ( "what,w",               po::value<std::string>( &what_ )->default_value( what_ ), "what to do? combine/split/orgnize/decorate" )
+    ( "what,w",               po::value<std::string>( &what_ )->default_value( what_ ), "what to do? combine/split/organize/decorate" )
     ( "ConfigXml,x",               po::value<std::string>( &configFile_ )->default_value( configFile_ ), "The configure xml file" )
     ( "CombinedFile,f",               po::value<std::string>( &combinedFile_ )->default_value( combinedFile_ ), "force the output combined file name, even though it is given in the xml file" )
     ( "SplittedFile,p",               po::value<std::string>( &splittedFile_ )->default_value( splittedFile_ ), "force the output splitted file name" )
@@ -211,7 +211,7 @@ int main( int argc, char** argv )
 
     delete split; split = NULL;
   }
-  else if ( what_=="orgnize" )
+  else if ( what_=="organize" )
   {
     Organizer* org = new Organizer();
     org->readConfigXml(configFile_);
