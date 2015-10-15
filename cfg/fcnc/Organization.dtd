@@ -1,5 +1,5 @@
-<!ELEMENT Orgnization (Item+)*>
-<!ATTLIST Orgnization
+<!ELEMENT Organization (Item+)*>
+<!ATTLIST Organization
         InFile              CDATA            #REQUIRED
         OutFile             CDATA            #REQUIRED
         ModelName           CDATA            #REQUIRED
