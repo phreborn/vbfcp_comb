@@ -19,36 +19,47 @@
 #include <list>
 #include "decorator.h"
 
-decorator::decorator(std::string combinedFile, std::string splittedFile, std::string dataName)
+decorator::decorator(std::string combinedFile, std::string splittedFile, std::string dataName, std::string wsName, std::string mcName)
 {
   splittedFile_=splittedFile;
   TFile *fin_=TFile::Open(combinedFile.c_str());
   assert(fin_);
 
-  TList* keys = fin_->GetListOfKeys();
-  TIter next(keys);
-  TKey* obj;
-  std::string className = "";
-
-  while ((obj = (TKey*)next())) {
-    className = obj->GetClassName();
-    if ( className.find("RooWorkspace")!=std::string::npos ) {
-      m_comb = (RooWorkspace*)obj->ReadObj();
-      std::list<TObject*> allObjs = m_comb->allGenericObjects();
-      for (std::list<TObject*>::iterator it = allObjs.begin(); it != allObjs.end(); it++) {
-	if ( (m_mc = dynamic_cast<RooStats::ModelConfig*>(*it)) &&
-	     std::string(m_mc->GetName()).find("only") == std::string::npos
-	     ) {
-	  break;
-	}
+  if(wsName!=""){
+    m_comb=dynamic_cast<RooWorkspace*>(fin_->Get(wsName.c_str()));
+  }
+  else{
+    TList* keys = fin_->GetListOfKeys();
+    TIter next(keys);
+    TKey* obj;
+    std::string className = "";
+    
+    while ((obj = (TKey*)next())) {
+      className = obj->GetClassName();
+      if ( className.find("RooWorkspace")!=std::string::npos ) {
+	m_comb = (RooWorkspace*)obj->ReadObj();
       }
-      assert ( m_mc );
-      m_pdf = dynamic_cast<RooSimultaneous*>(m_mc->GetPdf()); assert (m_pdf);
-      m_cat = (RooCategory*)&m_pdf->indexCat();
-      m_gobs = dynamic_cast<const RooArgSet*>(m_mc->GetGlobalObservables()); assert(m_gobs);
-      numChannels = m_cat->numBins(0);
     }
   }
+
+  assert(m_comb);
+  
+  if(mcName!=""){
+    m_mc=dynamic_cast<ModelConfig*>(m_comb->obj(mcName.c_str()));
+  }
+  else{
+    std::list<TObject*> allObjs = m_comb->allGenericObjects();
+    for (std::list<TObject*>::iterator it = allObjs.begin(); it != allObjs.end(); it++) {
+      if ( (m_mc = dynamic_cast<RooStats::ModelConfig*>(*it))) {
+	  break;
+      }
+    }
+  }
+  assert ( m_mc );
+  m_pdf = dynamic_cast<RooSimultaneous*>(m_mc->GetPdf()); assert (m_pdf);
+  m_cat = (RooCategory*)&m_pdf->indexCat();
+  m_gobs = dynamic_cast<const RooArgSet*>(m_mc->GetGlobalObservables()); assert(m_gobs);
+  numChannels = m_cat->numBins(0);
 
   if(!m_comb){
     std::cerr<<"Workspace cannot be found in the input file. Aborting..."<<std::endl;
@@ -135,8 +146,8 @@ void decorator::decorate()
     SafeDelete(iter);
     m_comb->saveSnapshot( "nominalGlobs", *m_mc->GetGlobalObservables() );
   }
-  std::cout<<"~~~~~~~~~~~~~ Nominal global observable values ~~~~~~~~~~~~~"<<std::endl;
-  m_gobs->Print("v");
+  // std::cout<<"~~~~~~~~~~~~~ Nominal global observable values ~~~~~~~~~~~~~"<<std::endl;
+  // m_gobs->Print("v");
 
   if ( setVar_!="" ) {
 

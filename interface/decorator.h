@@ -24,7 +24,7 @@
 
 class decorator {
  public:
-  decorator(std::string combinedFile, std::string splittedFile, std::string dataName);
+  decorator(std::string combinedFile, std::string splittedFile, std::string dataName, std::string wsName="", std::string mcName="");
   ~decorator();
   void decorate();
   void printSummary(bool verbose);
@@ -34,6 +34,7 @@ class decorator {
   void Tokenize(const std::string& str, std::vector<std::string>& tokens, const std::string& delimiters);
   void setVar(std::string input){ setVar_=input;}
   void setHistToData(bool input){ histToData_=input;}
+
  private:
   TFile *fin_;
   RooStats::ModelConfig* m_mc;
@@ -49,7 +50,8 @@ class decorator {
   TList* m_dataList;
   int numChannels;
   std::string splittedFile_;
-  bool histToData_=true;
-  std::string setVar_="";
+  bool histToData_;
+  std::string setVar_;
+
 };
 

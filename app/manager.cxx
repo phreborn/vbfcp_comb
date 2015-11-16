@@ -11,9 +11,46 @@
 #include <boost/program_options.hpp>
 
 // ATLAS-CMS combination
-#include "CommonOptions.h"
 #include "asimovUtilsOptions.h"
 // bool combine_ = true;
+
+std::string what_ = "";
+std::string configFile_ = "";
+std::string combinedFile_ = "combined.root";
+std::string splittedFile_ = "splitted.root";
+bool snapShot_ = false;
+std::string snapshotHintFile_ = "";
+std::string minimizerType_ = "Minuit2";
+std::string indice_ = "";
+std::string toBeFixed_ = "";
+bool mkInjectedWS_ = false;
+bool simpleScale_ = false;
+std::string injectFile_ = "";
+std::string injectMass_ = "";
+std::string injectStr_ = "mu~1";
+std::string injectDataSet_ = "asimovData_1";
+std::string replaceStr_ = "";
+std::string usePseudoData_ = "";
+std::string dataName_ = "obsData";
+std::string wsName_ = "";
+std::string mcName_ = "";
+
+float minimizerTolerance_ = 0.001;
+
+double rMax_ = -999;
+double tolerance_ = 0.001; /* root default is 0.001 */
+double mHiggs_ = -1;
+bool singlePoi_ = true;
+int fitFlag_ = 0;
+bool editBR_ = false;
+bool editPDF_ = false;
+bool editRFV_ = false;
+int procedure_ = 0;
+bool verbose_ = false;
+
+bool makeBOnly_ = false;
+// int reBin_ = -1;
+int reBin_ = 500;
 
 bool histToData_=true;
 std::string setVar_="";
@@ -55,6 +92,8 @@ int main( int argc, char** argv )
     ( "makeBOnly",               po::value<bool>( &makeBOnly_ )->default_value( makeBOnly_ ), "do we make b-only" )
     ( "verbose",               po::value<bool>( &verbose_ )->default_value( verbose_ ), "verbose..." )
     ( "dataName,d",               po::value<std::string>( &dataName_ )->default_value( dataName_ ), "Name of the dataset" )
+    ( "wsName",               po::value<std::string>( &wsName_ )->default_value( wsName_ ), "Name of the workspace" )
+    ( "mcName",               po::value<std::string>( &mcName_ )->default_value( mcName_ ), "Name of the ModelConfig" )
     ("minimizerTolerance", po::value<float>(&minimizerTolerance_)->default_value(minimizerTolerance_),  "Tolerance for minimizer used for profiling")
     ("minimizerStrategy", po::value<int>(&minimizerStrategy_)->default_value(minimizerStrategy_),  "Strategy for minimizer used for profiling")
     ("nllOffset", po::value<bool>(&nllOffset_)->default_value(nllOffset_),  "Enable NLL offsetting")
@@ -221,7 +260,7 @@ int main( int argc, char** argv )
   else if ( what_=="decorate" )
   {
 
-    decorator* decorate=new decorator(combinedFile_,splittedFile_,dataName_);
+    decorator* decorate=new decorator(combinedFile_,splittedFile_,dataName_,wsName_,mcName_);
     decorate->setVar(setVar_);
     decorate->setHistToData(histToData_);
     decorate->decorate();
