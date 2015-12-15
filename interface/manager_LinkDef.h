@@ -12,4 +12,6 @@
 
 #pragma link C++ class std::list<RooAbsData*>::iterator;
 
+#pragma link C++ class Background+;
+
 #endif
