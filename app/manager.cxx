@@ -14,6 +14,7 @@
 #include "asimovUtilsOptions.h"
 // bool combine_ = true;
 
+#include "Background.h"
 std::string what_ = "";
 std::string configFile_ = "";
 std::string combinedFile_ = "combined.root";
