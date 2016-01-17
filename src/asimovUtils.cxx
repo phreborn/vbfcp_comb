@@ -1134,18 +1134,28 @@ void asimovUtils::makePlots( const RooAbsPdf& pdf, const RooAbsData& data, std::
       std::cout << "fit for mu = 0" << std::endl;
 
       asimovData = asimovUtils::asimovDatasetWithFit( m_mc, *m_data, snapshot, nll_0, mu, tolerance );
-      assert( asimovData );
+      
       m_comb->saveSnapshot( "conditionalNuis_0", *m_mc->GetNuisanceParameters(), true );
       m_comb->saveSnapshot( "conditionalGlobs_0", snapshot, true );
-      asimovData->SetName( "asimovData_0" );
-      m_comb->import( *asimovData );
-      plotName = m_outputFileName;
-      plotName = plotName.replace(plotName.find(".root"), 5, "")+"_asimovData_0.pdf";
-      makePlots( *m_pdf, *asimovData,  plotName);
-      plotName = m_outputFileName;
-      plotName = plotName.replace(plotName.find(".root"), 5, "")+"_obsData_0.pdf";
-      makePlots( *m_pdf, *m_data,  plotName);
-      if(clearMemory){delete asimovData; asimovData = NULL; }
+      
+      if(generateAsimov_){
+	assert( asimovData );
+	asimovData->SetName( "asimovData_0" );
+	m_comb->import( *asimovData );
+      }
+
+      if(makePlots_){
+	if(generateAsimov_){
+	  plotName = m_outputFileName;
+	  plotName = plotName.replace(plotName.find(".root"), 5, "")+"_asimovData_0.pdf";
+	  makePlots( *m_pdf, *asimovData,  plotName);
+	}
+	plotName = m_outputFileName;
+	plotName = plotName.replace(plotName.find(".root"), 5, "")+"_obsData_0.pdf";
+	makePlots( *m_pdf, *m_data,  plotName);
+      }
+      
+      if(clearMemory){SafeDelete(asimovData); asimovData = NULL; }
 
       if(simple){
         asimovData = asimovDatasetNominal(m_mc, 1);
@@ -1214,21 +1224,27 @@ void asimovUtils::makePlots( const RooAbsPdf& pdf, const RooAbsData& data, std::
       std::cout << "fit for mu = 1" << std::endl;
 
       asimovData = asimovUtils::asimovDatasetWithFit( m_mc, *m_data, snapshot, nll_1, mu, tolerance );
-      assert( asimovData );
+
       m_comb->saveSnapshot( "conditionalNuis_1", *m_mc->GetNuisanceParameters(), true );
       m_comb->saveSnapshot( "conditionalGlobs_1", snapshot, true );
-      asimovData->SetName( "asimovData_1" );
-      m_comb->import( *asimovData );
+      if(generateAsimov_){
+	assert( asimovData );
+	asimovData->SetName( "asimovData_1" );
+	m_comb->import( *asimovData );
+      }
 
-      plotName = m_outputFileName;
-      plotName = plotName.replace(plotName.find(".root"), 5, "")+"_asimovData_1.pdf";
-      makePlots( *m_pdf, *asimovData,  plotName);
-      plotName = m_outputFileName;
-      plotName = plotName.replace(plotName.find(".root"), 5, "")+"_obsData_1.pdf";
-      makePlots( *m_pdf, *m_data,  plotName);
+      if(makePlots_){
+	if(generateAsimov_){
+	  plotName = m_outputFileName;
+	  plotName = plotName.replace(plotName.find(".root"), 5, "")+"_asimovData_1.pdf";
+	  makePlots( *m_pdf, *asimovData,  plotName);
+	}
+	plotName = m_outputFileName;
+	plotName = plotName.replace(plotName.find(".root"), 5, "")+"_obsData_1.pdf";
+	makePlots( *m_pdf, *m_data,  plotName);
+      }
 
-
-      if(clearMemory){delete asimovData; asimovData = NULL; }
+      if(clearMemory){SafeDelete(asimovData); asimovData = NULL; }
     }
 
     // if ( nll_float>nll_1 ) {
