@@ -8,4 +8,5 @@ bool generateAsimov_=false;
 bool writemuhatWS_=false;
 bool makePlots_=false;
 bool nllOffset_=true;
+bool preFit_=false;
 #endif

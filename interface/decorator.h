@@ -45,7 +45,7 @@ class decorator {
   RooAbsData* m_data;
   // RooRealVar* m_poi;
   RooArgSet m_poi;
-  const RooArgSet* m_nuis;
+  RooArgSet* m_nuis;
   const RooArgSet* m_gobs;
   TList* m_dataList;
   int numChannels;

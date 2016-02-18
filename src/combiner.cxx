@@ -610,7 +610,10 @@ void combiner::initWorkspace(std::string tmpFileName, keepTmp what)
 	    std::string oldPdfName, oldObsName, oldMeanName;
 	    double oldSigma;
 	    deCompose(oldPdfStr, oldPdfName, oldObsName, oldMeanName, oldSigma);
-
+	    // Hack from Hongtao to understand better what is going on with vvqq
+	    // std::cout<<pdfName<<" "<<obsName<<" "<<meanName<<std::endl;
+	    // std::cout<<oldPdfName<<" "<<oldObsName<<" "<<oldMeanName<<std::endl;
+	    // getchar();
 	    /* if the old gaus pdf is not normal */
 	    if ( fabs(oldSigma-1)>10e-4 ) {
 
@@ -690,6 +693,10 @@ void combiner::initWorkspace(std::string tmpFileName, keepTmp what)
 		  renamedMap[pdfName] = pdfName;
 		  renamedMap[obsName] = obsName;
 		  renamedMap[meanName] = meanName;
+
+		  // Hack from Hongtao: to understand better what is going on with the vvqq analysis
+		  // std::cout<<pdfName<<" "<<obsName<<" "<<meanName<<std::endl;
+		  // std::cout<<"Successfully implemented"<<std::endl;
 		}
 	    }
 	  }
@@ -702,13 +709,13 @@ void combiner::initWorkspace(std::string tmpFileName, keepTmp what)
 	  for ( RooRealVar* v = (RooRealVar*)iter->Next(); v!=0; v = (RooRealVar*)iter->Next() ) {
 	    if ( renamedMap.find(v->GetName()) != renamedMap.end() ) {
 	      std::string newName = renamedMap[v->GetName()];
+	      std::cout << "Setting name: " << std::string(v->GetName()) << " -> " << newName << std::endl;
 	      v->SetName(newName.c_str());
-	      // std::cout << "Setting name: " << std::string(v->GetName()) << " -> " << newName << std::endl;
 	    }else{
 	      TString newName = v->GetName();
 	      if ( !newName.EndsWith((std::string("_")+channelName).c_str()) ) {
+		std::cout << "Setting name: " << std::string(v->GetName()) << " -> " << std::string(v->GetName())+"_"+channelName << std::endl;
 		v->SetName((std::string(v->GetName())+"_"+channelName).c_str());
-		// std::cout << "Setting name: " << std::string(v->GetName()) << " -> " << std::string(v->GetName())+"_"+channelName << std::endl;
 	      }
 	    }
 	  }
@@ -871,8 +878,8 @@ void combiner::initWorkspace(std::string tmpFileName, keepTmp what)
 	  std::string oldStr = "";
 	  std::string newStr = "";
 	  linkMap( m_summary[i].renameMap_, oldStr, newStr, "," );
-	  // std::cout << "oldStr: " << oldStr << std::endl;
-	  // std::cout << "newStr: " << newStr << std::endl;
+	  std::cout << "oldStr: " << oldStr << std::endl;
+	  std::cout << "newStr: " << newStr << std::endl;
 	  // assert ( false );
 
 	  pdf->SetName(( m_summary[i].name_ + "_pdf" ).c_str() );
@@ -1615,6 +1622,7 @@ void combiner::makeSnapshots(
     std::cout << "\tOutput plot: " << outputPlotName << std::endl;
     asimovUtils::makeSnapshots(w, mc, data, pdf, outputPlotName.Data(), minimizerType, tolerance, simple, snapshotHintFile, fitFlag);
   }
+  w->importClassCode();
   w->writeToFile(combinedFile.c_str());
   delete w;
   delete f;

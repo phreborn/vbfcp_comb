@@ -101,7 +101,8 @@ int main( int argc, char** argv )
     ("improveFit", po::value<bool>(&improveFit_)->default_value(improveFit_), "Whether to call improve() after fit converges")
     ("robustFit", po::value<bool>(&robustFit_)->default_value(robustFit_), "Whether to fit again after fit converges")
     ("setVar", po::value<std::string>(&setVar_)->default_value(setVar_), "Manipulating variables in the workspace")
-    ("generateAsimov", po::value<bool>(&generateAsimov_)->default_value(generateAsimov_), "Generate Asimov data or not")
+    ("generateAsimov", po::value<bool>(&generateAsimov_)->default_value(generateAsimov_), "Generate Asimov or not")
+    ("preFit", po::value<bool>(&preFit_)->default_value(preFit_), "Generate prefit Asimov (default post-fit)")
     ("histToData", po::value<bool>(&histToData_)->default_value(histToData_), "Convert RooDataHist to RooDataSet")
     ;
   po::variables_map vm0;

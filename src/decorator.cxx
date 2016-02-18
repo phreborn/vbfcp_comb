@@ -18,6 +18,8 @@
 #include <stdlib.h>
 #include <list>
 #include "decorator.h"
+#include <memory>
+#include <iostream>
 
 decorator::decorator(std::string combinedFile, std::string splittedFile, std::string dataName, std::string wsName, std::string mcName)
 {
@@ -59,6 +61,7 @@ decorator::decorator(std::string combinedFile, std::string splittedFile, std::st
   m_pdf = dynamic_cast<RooSimultaneous*>(m_mc->GetPdf()); assert (m_pdf);
   m_cat = (RooCategory*)&m_pdf->indexCat();
   m_gobs = dynamic_cast<const RooArgSet*>(m_mc->GetGlobalObservables()); assert(m_gobs);
+  m_nuis = const_cast<RooArgSet*>(m_mc->GetNuisanceParameters()); assert(m_nuis);
   numChannels = m_cat->numBins(0);
 
   if(!m_comb){
@@ -132,7 +135,7 @@ void decorator::decorate()
 
   // Save nominal global observable values in a snapshot
   if(!m_comb->loadSnapshot("nominalGlobs")){
-    TIterator *iter = m_gobs -> createIterator();
+    TIterator *iter=m_gobs -> createIterator();
     RooRealVar* parg = NULL;
     while((parg=(RooRealVar*)iter->Next()) ){
       TString globName=parg->GetName();
@@ -143,8 +146,27 @@ void decorator::decorate()
 		 <<std::endl;
       }
     }
+    m_comb->saveSnapshot( "nominalGlobs", *m_gobs);
     SafeDelete(iter);
-    m_comb->saveSnapshot( "nominalGlobs", *m_mc->GetGlobalObservables() );
+  }
+  
+  // Save nominal nuisance parameter values in a snapshot
+  {
+    TIterator* iter=m_nuis -> createIterator();
+    RooRealVar* parg = NULL;
+    while((parg=dynamic_cast<RooRealVar*>(iter->Next())) ){
+      TString nuisName=parg->GetName();
+      double nuisValue=parg->getVal();
+      if(parg->isConstant()||(parg->getMin()>=parg->getMax())){
+	std::cerr<<"\t\t!!!!!!WARNING: nuisance parameter "<<nuisName
+		 <<" is constant. It will be removed from the nuisance parameter set "
+		 <<std::endl;
+	parg->setConstant(true);
+	m_nuis->remove(*parg);
+      }
+    }
+    if(!m_comb->loadSnapshot("nominalNuis")) m_comb->saveSnapshot("nominalNuis", *m_nuis);
+    SafeDelete(iter);
   }
   // std::cout<<"~~~~~~~~~~~~~ Nominal global observable values ~~~~~~~~~~~~~"<<std::endl;
   // m_gobs->Print("v");

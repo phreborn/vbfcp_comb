@@ -506,7 +506,13 @@ RooAbsData* asimovUtils::asimovDatasetWithFit(
     // delete weightVar;
 
     RooAbsData* asimov=NULL;
-    if(generateAsimov_) asimov=AsymptoticCalculator::GenerateAsimovData( *mc->GetPdf(), *mc->GetObservables() );
+    if(generateAsimov_){
+      if(preFit_){
+	mc->GetWS()->loadSnapshot("nominalNuis");
+	mc->GetWS()->loadSnapshot("nominalGlobs");
+      }
+      asimov=AsymptoticCalculator::GenerateAsimovData( *mc->GetPdf(), *mc->GetObservables() );
+    }
     std::cout<<"Done."<<std::endl;
     // NOW SNAPSHOT THE GLOBAL OBSERVABLES
     // GOBS find NUIS
