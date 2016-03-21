@@ -31,7 +31,6 @@ else
 	INCLUDES += $(BOOST_INC) 
 endif
 
-CXXFLAGS += -Wall -Wno-overloaded-virtual -Wno-unused -std=c++11
 
 MOREROOTLIBS = -lRooFit -lRooFitCore -lRooStats -lHistFactory -lMinuit -lMathMore -lSmatrix
 
