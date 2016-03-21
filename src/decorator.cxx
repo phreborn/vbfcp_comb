@@ -59,6 +59,7 @@ decorator::decorator(std::string combinedFile, std::string splittedFile, std::st
   m_pdf = dynamic_cast<RooSimultaneous*>(m_mc->GetPdf()); assert (m_pdf);
   m_cat = (RooCategory*)&m_pdf->indexCat();
   m_gobs = dynamic_cast<const RooArgSet*>(m_mc->GetGlobalObservables()); assert(m_gobs);
+  m_nuis = const_cast<RooArgSet*>(m_mc->GetNuisanceParameters()); assert(m_nuis);
   numChannels = m_cat->numBins(0);
 
   if(!m_comb){
@@ -146,6 +147,24 @@ void decorator::decorate()
     SafeDelete(iter);
     m_comb->saveSnapshot( "nominalGlobs", *m_mc->GetGlobalObservables() );
   }
+  // Save nominal global observable values in a snapshot
+  if(!m_comb->loadSnapshot("nominalNuis")){
+    TIterator *iter = m_nuis -> createIterator();
+    RooRealVar* parg = NULL;
+    while((parg=(RooRealVar*)iter->Next()) ){
+      TString nuisName=parg->GetName();
+      if(parg->isConstant()||parg->getMin()>=parg->getMax()){
+	std::cout<<"\t\t!!!!!!WARNING: nuisance parameter "<<nuisName
+		 <<" is a constant. It will be removed from nuisance parameter set."
+		 <<std::endl;
+	parg->setConstant(true);
+	m_nuis->remove(*parg);
+      }
+    }
+    SafeDelete(iter);
+    m_comb->saveSnapshot( "nominalNuis", *m_mc->GetNuisanceParameters() );
+  }
+
   // std::cout<<"~~~~~~~~~~~~~ Nominal global observable values ~~~~~~~~~~~~~"<<std::endl;
   // m_gobs->Print("v");
 
