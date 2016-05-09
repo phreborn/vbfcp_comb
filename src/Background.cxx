@@ -16,6 +16,9 @@
 #include "RooBinning.h"
 #include <math.h>
 #include "TMath.h"
+
+ClassImp(Background)
+
 ///////////////////////////////////////////////////////////DEFINES BACKGROUND
 double Background::dndx(double mass, double p2, double p3, double xi) const
 {
@@ -98,7 +101,7 @@ double Background::Integrate(double m1, double m2, double p2, double p3, double 
     return dndx_avg*fabs(m1-m2);
 }
 ///////////////////////////////////////////////////////////
-ClassImp(Background)
+
 ///////////////////////////////////////////////////////////
 Int_t Background::getAnalyticalIntegral(RooArgSet& allVars, RooArgSet& analVars, const char* /*rangeName*/) const
 {

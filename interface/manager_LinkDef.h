@@ -11,6 +11,7 @@
 #pragma link C++ class FlexibleInterpVarExt+;
 #pragma link C++ class FlexibleInterpVarMkII+;
 #pragma link C++ class HggGravitonLineShapePdf+;
+#pragma link C++ class HggScalarLineShapePdf+;
 #pragma link C++ class HggTwoSidedCBPdf+;
 
 #pragma link C++ class std::list<RooAbsData*>::iterator;
