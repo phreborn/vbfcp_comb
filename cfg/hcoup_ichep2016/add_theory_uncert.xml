@@ -45,6 +45,7 @@
   <Item Name="pdf_Higgs_ttH_In[0]"/>
 
   <!-- Construnct constraint p.d.f. -->
+  <!-- It is EXTREMELY IMPORTANT to include "ConstraintPdf" in the constraint pdf name, such that the code can identify it -->
   <Item Name="RooGaussian::ConstraintPdf_QCDscale_ggH(QCDscale_ggH, QCDscale_ggH_In, 1)"/>
   <Item Name="RooGaussian::ConstraintPdf_QCDscale_qqH(QCDscale_qqH, QCDscale_qqH_In, 1)"/>
   <Item Name="RooGaussian::ConstraintPdf_QCDscale_VH(QCDscale_VH, QCDscale_VH_In, 1)"/>
