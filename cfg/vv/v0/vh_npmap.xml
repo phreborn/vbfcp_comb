@@ -1,0 +1,27 @@
+<Syst OldName =                                         "lumiConstraint(Lumi, nominalLumi)"     NewName =                    "ATLAS_LUMI_2015" />
+<Syst OldName = "alpha_EG_RESOLUTION_ALLConstraint(alpha_EG_RESOLUTION_ALL, nom_alpha_EG_RESOLUTION_ALL)"       NewName =       "EG_RESOLUTION_ALL" />
+<Syst OldName =  "alpha_EG_SCALE_ALLConstraint(alpha_EG_SCALE_ALL, nom_alpha_EG_SCALE_ALL)"     NewName =            "EG_SCALE_ALL" />
+<Syst OldName = "alpha_EL_EFF_ID_TotalCorrUncertaintyConstraint(alpha_EL_EFF_ID_TotalCorrUncertainty, nom_alpha_EL_EFF_ID_TotalCorrUncertainty)"        NewName = "EL_EFF_ID_TotalCorrUncertainty" />
+<Syst OldName = "alpha_FT_EFF_Eigen_B_0Constraint(alpha_FT_EFF_Eigen_B_0, nom_alpha_FT_EFF_Eigen_B_0)"  NewName =        "FT_EFF_Eigen_B_0" />
+<Syst OldName = "alpha_FT_EFF_Eigen_C_0Constraint(alpha_FT_EFF_Eigen_C_0, nom_alpha_FT_EFF_Eigen_C_0)"  NewName =        "FT_EFF_Eigen_C_0" />
+<Syst OldName = "alpha_FT_EFF_Eigen_Light_0Constraint(alpha_FT_EFF_Eigen_Light_0, nom_alpha_FT_EFF_Eigen_Light_0)"      NewName =    "FT_EFF_Eigen_Light_0" />
+<Syst OldName = "alpha_FT_EFF_extrapolationConstraint(alpha_FT_EFF_extrapolation, nom_alpha_FT_EFF_extrapolation)"      NewName =    "FT_EFF_extrapolation" />
+<Syst OldName = "alpha_JET_GroupedNP_1Constraint(alpha_JET_GroupedNP_1, nom_alpha_JET_GroupedNP_1)"     NewName =         "JET_GroupedNP_1" />
+<Syst OldName = "alpha_JET_GroupedNP_2Constraint(alpha_JET_GroupedNP_2, nom_alpha_JET_GroupedNP_2)"     NewName =         "JET_GroupedNP_2" />
+<Syst OldName = "alpha_JET_GroupedNP_3Constraint(alpha_JET_GroupedNP_3, nom_alpha_JET_GroupedNP_3)"     NewName =         "JET_GroupedNP_3" />
+<Syst OldName =              "alpha_MUONS_IDConstraint(alpha_MUONS_ID, nom_alpha_MUONS_ID)"     NewName =                "MUONS_ID" />
+<Syst OldName =              "alpha_MUONS_MSConstraint(alpha_MUONS_MS, nom_alpha_MUONS_MS)"     NewName =                "MUONS_MS" />
+<Syst OldName =     "alpha_MUONS_SCALEConstraint(alpha_MUONS_SCALE, nom_alpha_MUONS_SCALE)"     NewName =             "MUONS_SCALE" />
+<Syst OldName = "alpha_MUON_EFF_STATConstraint(alpha_MUON_EFF_STAT, nom_alpha_MUON_EFF_STAT)"   NewName =           "MUON_EFF_STAT" />
+<Syst OldName =  "alpha_MUON_EFF_SYSConstraint(alpha_MUON_EFF_SYS, nom_alpha_MUON_EFF_SYS)"     NewName =            "MUON_EFF_SYS" />
+<Syst OldName =  "alpha_MUON_ISO_SYSConstraint(alpha_MUON_ISO_SYS, nom_alpha_MUON_ISO_SYS)"     NewName =            "MUON_ISO_SYS" />
+<Syst OldName =                       "alpha_XS_WbConstraint(alpha_XS_Wb, nom_alpha_XS_Wb)"     NewName =                   "XS_Wb" />
+<Syst OldName =                       "alpha_XS_WcConstraint(alpha_XS_Wc, nom_alpha_XS_Wc)"     NewName =                   "XS_Wc" />
+<Syst OldName =                       "alpha_XS_WlConstraint(alpha_XS_Wl, nom_alpha_XS_Wl)"     NewName =                   "XS_Wl" />
+<Syst OldName =                       "alpha_XS_ZbConstraint(alpha_XS_Zb, nom_alpha_XS_Zb)"     NewName =                   "XS_Zb" />
+<Syst OldName =                       "alpha_XS_ZcConstraint(alpha_XS_Zc, nom_alpha_XS_Zc)"     NewName =                   "XS_Zc" />
+<Syst OldName =                       "alpha_XS_ZlConstraint(alpha_XS_Zl, nom_alpha_XS_Zl)"     NewName =                   "XS_Zl" />
+<Syst OldName =        "alpha_XS_dibosonConstraint(alpha_XS_diboson, nom_alpha_XS_diboson)"     NewName =              "XS_diboson" />
+<Syst OldName =                       "alpha_XS_stConstraint(alpha_XS_st, nom_alpha_XS_st)"     NewName =                   "XS_st" />
+<Syst OldName =              "alpha_XS_ttbarConstraint(alpha_XS_ttbar, nom_alpha_XS_ttbar)"     NewName =                "XS_ttbar" />
+<Syst OldName =                    "channelCat"       NewName =                    "Cat_vh" />

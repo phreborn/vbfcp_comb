@@ -1,0 +1,51 @@
+<!DOCTYPE Combination  SYSTEM 'Combination.dtd'>
+<!-- Range 1: from 700 GeV (included) to 1000 GeV (not included). lvqq+llqq  -->
+<Combination>
+  <Channel Name="combined" IsCombined="true" Mass="750">
+    <File Name="./combined.root"/>
+    <Workspace Name="combWS"/>
+    <ModelConfig  Name="ModelConfig"/>
+    <ModelData Name="combData"/>
+    <ModelPOI Name="xs[0~100],dxs[-100~100],mG[760~760],GkM[0.2~0.2]"/>
+  </Channel>
+  <Channel Name="high_mass_diphoton_13TeV">
+    <File Name="workspace/high_mass_diphoton/2015_Graviton_histfactory_EKHI_v6_pdf_dxs.root"/>
+    <Workspace Name="combWS"/>
+    <ModelConfig Name="ModelConfig"/>
+    <ModelPOI Name="xs_new,dxs,mG,GkM"/>
+    <ModelData Name="combDatabinned"/>
+    <RenameMap>
+<Syst OldName =     "constr__ATLAS_lumi_2015(ATLAS_lumi_2015,RNDM__ATLAS_lumi_2015)"       NewName =       "ATLAS_lumi_2015" />
+<Syst OldName =     "constr__pdf_gg(pdf_gg,RNDM__pdf_gg)"       NewName =       "pdf_gg" />
+<Syst OldName =       "constr__ATLAS_PH_EFF(ATLAS_PH_EFF,RNDM__ATLAS_PH_EFF)"       NewName =       "ATLAS_PH_EFF_2015" />
+<Syst OldName =       "constr__ATLAS_mRes(ATLAS_mRes,RNDM__ATLAS_mRes)"       NewName =       "ATLAS_mRes_2015" />
+<Syst OldName =       "constr__ATLAS_PH_ISO(ATLAS_PH_ISO,RNDM__ATLAS_PH_ISO)"       NewName =       "ATLAS_PH_ISO_2015" />
+<Syst OldName =       "constr__alpha_bkg_irreducible_13TeV(alpha_bkg_irreducible_13TeV, RNDM__alpha_bkg_irreducible_13TeV)"       NewName =       "ATLAS_bkg_irreducible" />
+<Syst OldName =       "constr__alpha_bkg_reducible_13TeV(alpha_bkg_reducible_13TeV, RNDM__alpha_bkg_reducible_13TeV)"       NewName =       "ATLAS_bkg_reducible" />
+<Syst OldName =       "constr__alpha_bkg_purity_13TeV(alpha_bkg_purity_13TeV, RNDM__alpha_bkg_purity_13TeV)"       NewName =       "ATLAS_bkg_purity" />
+<Syst OldName =       "constr__alpha_bkg_isolation_13TeV(alpha_bkg_isolation_13TeV, RNDM__alpha_bkg_isolation_13TeV)"       NewName =       "ATLAS_bkg_isolation" />
+<Syst OldName =                    "channellist"       NewName =                    "Cat_13TeV" />
+    </RenameMap>
+  </Channel>
+  <Channel Name="high_mass_diphoton_8TeV">
+    <File Name="workspace/high_mass_diphoton/2012_Graviton_histfactory_EKEI_v2_pdf.root"/>
+    <Workspace Name="combWS"/>
+    <ModelConfig Name="ModelConfig"/>
+    <ModelPOI Name="xs,dummy,mG,GkM"/>
+    <ModelData Name="combDatabinned"/>
+    <RenameMap>
+<Syst OldName =     "constr__ATLAS_lumi_2012(ATLAS_lumi_2012,RNDM__ATLAS_lumi_2012)"       NewName =       "ATLAS_lumi_2012" />
+<Syst OldName =     "constr__pdf_gg(pdf_gg,RNDM__pdf_gg)"       NewName =       "pdf_gg" />
+<Syst OldName =       "constr__ATLAS_PH_EFF(ATLAS_PH_EFF,RNDM__ATLAS_PH_EFF)"       NewName =       "ATLAS_PH_EFF_2012" />
+<Syst OldName =       "constr__ATLAS_mRes(ATLAS_mRes,RNDM__ATLAS_mRes)"       NewName =       "ATLAS_mRes_2012" />
+<Syst OldName =       "constr__ATLAS_PH_ISO(ATLAS_PH_ISO,RNDM__ATLAS_PH_ISO)"       NewName =       "ATLAS_PH_ISO_2012" />
+<Syst OldName =       "constr__ATLAS_PH_Trigger(ATLAS_PH_Trigger,RNDM__ATLAS_PH_Trigger)"       NewName =       "ATLAS_PH_Trigger_2012" />
+<Syst OldName =       "constr__alpha_bkg_irreducible(alpha_bkg_irreducible, RNDM__alpha_bkg_irreducible)"       NewName =       "ATLAS_bkg_irreducible" />
+<Syst OldName =       "constr__alpha_bkg_reducible(alpha_bkg_reducible, RNDM__alpha_bkg_reducible)"       NewName =       "ATLAS_bkg_reducible" />
+<Syst OldName =       "constr__alpha_bkg_purity(alpha_bkg_purity, RNDM__alpha_bkg_purity)"       NewName =       "ATLAS_bkg_purity" />
+<Syst OldName =       "constr__alpha_bkg_isolation(alpha_bkg_isolation, RNDM__alpha_bkg_isolation)"       NewName =       "ATLAS_bkg_isolation" />
+<Syst OldName =       "constr__alpha_geo(alpha_geo, RNDM__alpha_geo)"       NewName =       "ATLAS_bkg_GEO20" />
+<Syst OldName =                    "channellist"       NewName =                    "Cat_8TeV" />
+    </RenameMap>
+  </Channel>
+</Combination>

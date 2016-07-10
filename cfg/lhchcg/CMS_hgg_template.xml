@@ -1,0 +1,24 @@
+<!DOCTYPE Combination  SYSTEM 'Combination.dtd'>
+<Combination>
+  <Channel Name="combined" IsCombined="true" Mass="125"> <!-- is combined file -->
+    <File Name="combined.root"/>
+    <Workspace Name="combWS"/>
+    <ModelConfig  Name="ModelConfig"/>
+    <ModelData Name="combData"/>
+    <ModelPOI Name="mH[120~130], dmH_gZ[0~0], dmH_exp[0~0], 
+		    mu[1~1], muF_gg[0~5], muV_gg[-5~5], mu_ZZ[0~5],
+		    lambda_mu[1~1], lambda_muF_gg[1~1], lambda_muV_gg[1~1],lambda_mu_ZZ[1~1]"/>
+  </Channel>
+  <Channel Name="Cat_CMS_hgg">
+    <File Name="#INPUT1#"/>
+    <Workspace Name="combWS"/>
+    <ModelConfig Name="ModelConfig"/>
+    <ModelPOI Name="MH, dmH_gZ, dummy,
+		    mu, muF_gg, muV_gg, dummy,
+		    dummy, dummy, dummy, dummy"/>
+    <ModelData Name="combData"/>
+    <RenameMap>
+      &CMS_hgg_npmap.xml;
+    </RenameMap>
+  </Channel>
+</Combination>

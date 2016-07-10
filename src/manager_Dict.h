@@ -34,8 +34,7 @@ extern void G__set_cpp_environmentmanager_Dict();
 #include "interface/Background.h"
 #include "interface/FlexibleInterpVarExt.h"
 #include "interface/FlexibleInterpVarMkII.h"
-#include "interface/HggGravitonLineShapePdf.h"
-#include "interface/HggScalarLineShapePdf.h"
+#include "interface/HggMG5aMCNLOLineShapePdf.h"
 #include "interface/HggTwoSidedCBPdf.h"
 #include "interface/RooFormulaVarExt.h"
 #include <algorithm>
@@ -119,8 +118,7 @@ extern G__linked_taginfo G__manager_DictLN_RooStatscLcLHistFactorycLcLFlexibleIn
 extern G__linked_taginfo G__manager_DictLN_FlexibleInterpVarMkII;
 extern G__linked_taginfo G__manager_DictLN_complexlEdoublegR;
 extern G__linked_taginfo G__manager_DictLN_maplEstringcORooSharedPropertiesmUcOlesslEstringgRcOallocatorlEpairlEconstsPstringcORooSharedPropertiesmUgRsPgRsPgR;
-extern G__linked_taginfo G__manager_DictLN_HggGravitonLineShapePdf;
-extern G__linked_taginfo G__manager_DictLN_HggScalarLineShapePdf;
+extern G__linked_taginfo G__manager_DictLN_HggMG5aMCNLOLineShapePdf;
 extern G__linked_taginfo G__manager_DictLN_HggTwoSidedCBPdf;
 extern G__linked_taginfo G__manager_DictLN_RooFormula;
 extern G__linked_taginfo G__manager_DictLN_maplETClassmUcOintcOlesslETClassmUgRcOallocatorlEpairlETClassmUsPconstcOintgRsPgRsPgR;

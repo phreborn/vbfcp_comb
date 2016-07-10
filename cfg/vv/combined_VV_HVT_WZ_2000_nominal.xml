@@ -1,0 +1,255 @@
+<!DOCTYPE Combination  SYSTEM 'Combination.dtd'>
+<!-- Range 3: from 1200 GeV (included) to 2400 GeV (included). lvqq+llqq+vvqq+qqqq  -->
+<Combination>
+  <Channel Name="combined" IsCombined="true" Mass="2000">
+    <File Name="./combined.root"/>
+    <Workspace Name="combWS"/>
+    <ModelConfig  Name="ModelConfig"/>
+    <ModelData Name="combData"/>
+    <ModelPOI Name="mu[0~100]"/>
+  </Channel>
+  <Channel Name="qqqq">
+    <File Name="workspace/vv/VVJJConfig/decorated/2000_HVT_WZ_decorated.root"/>
+    <Workspace Name="combWS"/>
+    <ModelConfig Name="ModelConfig"/>
+    <ModelPOI Name="mu"/>
+    <ModelData Name="combData"/>
+    <RenameMap>
+<Syst OldName =     "ATLAS_norm_qqqq_bkg"       NewName =       "unconstr_ATLAS_qqqq_norm_bkg" />
+<Syst OldName =       "ATLAS_qqqq_bkg_p2"       NewName =       "unconstr_ATLAS_qqqq_bkg_p2" />
+<Syst OldName =       "ATLAS_qqqq_bkg_p3"       NewName =       "unconstr_ATLAS_qqqq_bkg_p3" />
+<Syst OldName =                      "xi"       NewName =       "unconstr_ATLAS_qqqq_bkg_xi" />
+
+<Syst OldName =                                                                                   "alpha_ATLAS_LumiConstraint(alpha_ATLAS_Lumi, nom_alpha_ATLAS_Lumi)"  NewName =        "ATLAS_LUMI_2015" />
+
+<Syst OldName =                                                                 "alpha_ATLAS_FATJET_D2RConstraint(alpha_ATLAS_FATJET_D2R, nom_alpha_ATLAS_FATJET_D2R)"  NewName =  "ATLAS_FATJET_D2R" />
+<Syst OldName =                                                                 "alpha_ATLAS_LargeR_Res1Constraint(alpha_ATLAS_LargeR_Res1, nom_alpha_ATLAS_LargeR_Res1)"  NewName =  "ATLAS_LargeR_Res1" />
+<Syst OldName =                                                                 "alpha_ATLAS_LargeR_Res2Constraint(alpha_ATLAS_LargeR_Res2, nom_alpha_ATLAS_LargeR_Res2)"  NewName =  "ATLAS_LargeR_Res2" />
+
+<Syst OldName =                                            "alpha_ATLAS_JET_WZ_CrossCalibConstraint(alpha_ATLAS_JET_WZ_CrossCalib, nom_alpha_ATLAS_JET_WZ_CrossCalib)"  NewName = "ATLAS_JET_WZ_CrossCalib" />
+<Syst OldName =                                                     "alpha_ATLAS_Jet_Scale1Constraint(alpha_ATLAS_Jet_Scale1, nom_alpha_ATLAS_Jet_Scale1)"  NewName = "ATLAS_Jet_Scale1" />
+<Syst OldName =                                               "alpha_ATLAS_Jet_Scale1Constraint(alpha_ATLAS_Jet_Scale1, nom_alpha_ATLAS_Jet_Scale1)"  NewName = "ATLAS_Jet_Scale1" />
+<Syst OldName =                                                     "alpha_ATLAS_Jet_Scale1Constraint(alpha_ATLAS_Jet_Scale1, nom_alpha_ATLAS_Jet_Scale1)"  NewName = "ATLAS_Jet_Scale1" />
+
+<Syst OldName =                                                        "alpha_ATLAS_qqqq_sig_ntrkConstraint(alpha_ATLAS_qqqq_sig_ntrk, nom_alpha_ATLAS_qqqq_sig_ntrk)"  NewName = "ATLAS_qqqq_sig_ntrk" />
+
+<Syst OldName =                    "channelCat"       NewName =                    "Cat_qqqq" />
+    </RenameMap>
+  </Channel>
+  <Channel Name="llqq_binned">
+    <File Name="workspace/vv/llqqConfig/decorated/2000_HVT_WZ_decorated.root"/>
+    <Workspace Name="combWS"/>
+    <ModelConfig Name="ModelConfig"/>
+    <ModelPOI Name="mu"/>
+    <ModelData Name="combData"/>
+    <RenameMap>
+<Syst OldName =                "mu_bkg_Z"       NewName =                "unconstr_ATLAS_norm_ZJets" />
+<!-- <Syst OldName =                 "mu_lumi"       NewName =                 "unconstr_ATLAS_norm_lumi" /> -->
+
+<Syst OldName =                                                                                            "alpha_lumiSysConstraint(alpha_lumiSys, nom_alpha_lumiSys)"  NewName =           "ATLAS_LUMI_2015" />
+
+<Syst OldName =                                                              "alpha_EG_RESOLUTION_ALLConstraint(alpha_EG_RESOLUTION_ALL, nom_alpha_EG_RESOLUTION_ALL)"  NewName = "ATLAS_EG_RESOLUTION_ALL" />
+<Syst OldName =                                                                             "alpha_EG_SCALE_ALLConstraint(alpha_EG_SCALE_ALL, nom_alpha_EG_SCALE_ALL)"  NewName =      "ATLAS_EG_SCALE_ALL" />
+
+<Syst OldName =                       "alpha_EL_EFF_ID_TotalCorrUncertaintyConstraint(alpha_EL_EFF_ID_TotalCorrUncertainty, nom_alpha_EL_EFF_ID_TotalCorrUncertainty)"  NewName = "ATLAS_EL_EFF_ID_TotalCorrUncertainty" />
+<Syst OldName =                    "alpha_EL_EFF_Iso_TotalCorrUncertaintyConstraint(alpha_EL_EFF_Iso_TotalCorrUncertainty, nom_alpha_EL_EFF_Iso_TotalCorrUncertainty)"  NewName = "ATLAS_EL_EFF_Iso_TotalCorrUncertainty" />
+<Syst OldName =                 "alpha_EL_EFF_Reco_TotalCorrUncertaintyConstraint(alpha_EL_EFF_Reco_TotalCorrUncertainty, nom_alpha_EL_EFF_Reco_TotalCorrUncertainty)"  NewName = "ATLAS_EL_EFF_Reco_TotalCorrUncertainty" />
+<Syst OldName =        "alpha_EL_EFF_Trigger_TotalCorrUncertaintyConstraint(alpha_EL_EFF_Trigger_TotalCorrUncertainty, nom_alpha_EL_EFF_Trigger_TotalCorrUncertainty)"  NewName = "ATLAS_EL_EFF_Trigger_TotalCorrUncertainty" />
+
+<Syst OldName =                                                                                         "alpha_MUONS_IDConstraint(alpha_MUONS_ID, nom_alpha_MUONS_ID)"  NewName =          "ATLAS_MUONS_ID" />
+<Syst OldName =                                                                                         "alpha_MUONS_MSConstraint(alpha_MUONS_MS, nom_alpha_MUONS_MS)"  NewName =          "ATLAS_MUONS_MS" />
+<Syst OldName =                                                                                "alpha_MUONS_SCALEConstraint(alpha_MUONS_SCALE, nom_alpha_MUONS_SCALE)"  NewName =       "ATLAS_MUONS_SCALE" />
+<Syst OldName =                                                                          "alpha_MUON_EFF_STATConstraint(alpha_MUON_EFF_STAT, nom_alpha_MUON_EFF_STAT)"  NewName =     "ATLAS_MUON_EFF_STAT" />
+<Syst OldName =                                                                             "alpha_MUON_EFF_SYSConstraint(alpha_MUON_EFF_SYS, nom_alpha_MUON_EFF_SYS)"  NewName =      "ATLAS_MUON_EFF_SYS" />
+<Syst OldName =                             "alpha_MUON_EFF_TrigStatUncertaintyConstraint(alpha_MUON_EFF_TrigStatUncertainty, nom_alpha_MUON_EFF_TrigStatUncertainty)"  NewName = "ATLAS_MUON_EFF_TrigStatUncertainty" />
+<Syst OldName =                             "alpha_MUON_EFF_TrigSystUncertaintyConstraint(alpha_MUON_EFF_TrigSystUncertainty, nom_alpha_MUON_EFF_TrigSystUncertainty)"  NewName = "ATLAS_MUON_EFF_TrigSystUncertainty" />
+<Syst OldName =                                                                          "alpha_MUON_ISO_STATConstraint(alpha_MUON_ISO_STAT, nom_alpha_MUON_ISO_STAT)"  NewName =     "ATLAS_MUON_ISO_STAT" />
+<Syst OldName =                                                                             "alpha_MUON_ISO_SYSConstraint(alpha_MUON_ISO_SYS, nom_alpha_MUON_ISO_SYS)"  NewName =      "ATLAS_MUON_ISO_SYS" />
+
+<Syst OldName =                                                                                   "alpha_FATJET_D2RConstraint(alpha_FATJET_D2R, nom_alpha_FATJET_D2R)"  NewName =        "ATLAS_FATJET_D2R" />
+<Syst OldName =                                                                                   "alpha_FATJET_JERConstraint(alpha_FATJET_JER, nom_alpha_FATJET_JER)"  NewName =        "ATLAS_LargeR_Res1" />
+<Syst OldName =                                                                                   "alpha_FATJET_JMRConstraint(alpha_FATJET_JMR, nom_alpha_FATJET_JMR)"  NewName =        "ATLAS_LargeR_Res2" />
+
+<Syst OldName =                                                              "alpha_JET_WZ_CrossCalibConstraint(alpha_JET_WZ_CrossCalib, nom_alpha_JET_WZ_CrossCalib)"  NewName = "ATLAS_JET_WZ_CrossCalib" />
+<Syst OldName =                                                                       "alpha_JET_WZ_Run1_D2Constraint(alpha_JET_WZ_Run1_D2, nom_alpha_JET_WZ_Run1_D2)"  NewName =    "ATLAS_Jet_Scale1" />
+<Syst OldName =                                                                 "alpha_JET_WZ_Run1_massConstraint(alpha_JET_WZ_Run1_mass, nom_alpha_JET_WZ_Run1_mass)"  NewName =  "ATLAS_Jet_Scale1" />
+<Syst OldName =                                                                       "alpha_JET_WZ_Run1_pTConstraint(alpha_JET_WZ_Run1_pT, nom_alpha_JET_WZ_Run1_pT)"  NewName =    "ATLAS_Jet_Scale1" />
+
+<Syst OldName =                                                                          "alpha_SystTheoryPDFConstraint(alpha_SystTheoryPDF, nom_alpha_SystTheoryPDF)"  NewName =     "Theory_PDF" />
+<Syst OldName =                                                                          "alpha_SystTheoryRadConstraint(alpha_SystTheoryRad, nom_alpha_SystTheoryRad)"  NewName =     "Theory_Rad" />
+
+<Syst OldName =                                                                                      "alpha_XsecSysDBConstraint(alpha_XsecSysDB, nom_alpha_XsecSysDB)"  NewName =         "Theory_XS_DB" />
+<Syst OldName =                                                                          "alpha_DIBOSON_PARAMConstraint(alpha_DIBOSON_PARAM, nom_alpha_DIBOSON_PARAM)"  NewName =     "ATLAS_llqq_Diboson_PARAM" />
+<Syst OldName =                                                                    "alpha_Diboson_GenSystConstraint(alpha_Diboson_GenSyst, nom_alpha_Diboson_GenSyst)"  NewName =     "ATLAS_llqq_Diboson_GenSyst" />
+
+<Syst OldName =                                                                                   "alpha_XsecSysTopConstraint(alpha_XsecSysTop, nom_alpha_XsecSysTop)"  NewName =        "Theory_XS_ttbar" />
+<Syst OldName =                                                                                "alpha_Top_GenSystConstraint(alpha_Top_GenSyst, nom_alpha_Top_GenSyst)"  NewName =        "ATLAS_MODEL_PAR_TTbar_aMcAtNlo" />
+<Syst OldName =                                                                                      "alpha_TOP_PARAMConstraint(alpha_TOP_PARAM, nom_alpha_TOP_PARAM)"  NewName =        "ATLAS_llqq_ttbar_PARAM" />
+
+<Syst OldName =                                                                                         "alpha_XsecSysZConstraint(alpha_XsecSysZ, nom_alpha_XsecSysZ)"  NewName =        "Theory_XS_ZJets" />
+<Syst OldName =                                                                    "alpha_Zjets_ShapeSystConstraint(alpha_Zjets_ShapeSyst, nom_alpha_Zjets_ShapeSyst)"  NewName =   "ATLAS_llqq_Zjets_ShapeSyst" />
+
+<Syst OldName =    "gamma_stat_WSR_bin_0"       NewName =    "gamma_stat_WSR_bin_0" />
+<Syst OldName =    "gamma_stat_WSR_bin_1"       NewName =    "gamma_stat_WSR_bin_1" />
+<Syst OldName =   "gamma_stat_WSR_bin_10"       NewName =   "gamma_stat_WSR_bin_10" />
+<Syst OldName =   "gamma_stat_WSR_bin_11"       NewName =   "gamma_stat_WSR_bin_11" />
+<Syst OldName =   "gamma_stat_WSR_bin_12"       NewName =   "gamma_stat_WSR_bin_12" />
+<Syst OldName =   "gamma_stat_WSR_bin_13"       NewName =   "gamma_stat_WSR_bin_13" />
+<Syst OldName =   "gamma_stat_WSR_bin_14"       NewName =   "gamma_stat_WSR_bin_14" />
+<Syst OldName =   "gamma_stat_WSR_bin_15"       NewName =   "gamma_stat_WSR_bin_15" />
+<Syst OldName =   "gamma_stat_WSR_bin_16"       NewName =   "gamma_stat_WSR_bin_16" />
+<Syst OldName =   "gamma_stat_WSR_bin_17"       NewName =   "gamma_stat_WSR_bin_17" />
+<Syst OldName =   "gamma_stat_WSR_bin_18"       NewName =   "gamma_stat_WSR_bin_18" />
+<Syst OldName =    "gamma_stat_WSR_bin_2"       NewName =    "gamma_stat_WSR_bin_2" />
+<Syst OldName =   "gamma_stat_WSR_bin_20"       NewName =   "gamma_stat_WSR_bin_20" />
+<Syst OldName =   "gamma_stat_WSR_bin_21"       NewName =   "gamma_stat_WSR_bin_21" />
+<Syst OldName =   "gamma_stat_WSR_bin_22"       NewName =   "gamma_stat_WSR_bin_22" />
+<Syst OldName =    "gamma_stat_WSR_bin_3"       NewName =    "gamma_stat_WSR_bin_3" />
+<Syst OldName =    "gamma_stat_WSR_bin_4"       NewName =    "gamma_stat_WSR_bin_4" />
+<Syst OldName =    "gamma_stat_WSR_bin_5"       NewName =    "gamma_stat_WSR_bin_5" />
+<Syst OldName =    "gamma_stat_WSR_bin_6"       NewName =    "gamma_stat_WSR_bin_6" />
+<Syst OldName =    "gamma_stat_WSR_bin_7"       NewName =    "gamma_stat_WSR_bin_7" />
+<Syst OldName =    "gamma_stat_WSR_bin_8"       NewName =    "gamma_stat_WSR_bin_8" />
+<Syst OldName =    "gamma_stat_WSR_bin_9"       NewName =    "gamma_stat_WSR_bin_9" />
+<Syst OldName =    "gamma_stat_ZCR_bin_0"       NewName =    "gamma_stat_ZCR_bin_0" />
+<Syst OldName =    "gamma_stat_ZCR_bin_1"       NewName =    "gamma_stat_ZCR_bin_1" />
+<Syst OldName =   "gamma_stat_ZCR_bin_18"       NewName =   "gamma_stat_ZCR_bin_18" />
+<Syst OldName =   "gamma_stat_ZCR_bin_19"       NewName =   "gamma_stat_ZCR_bin_19" />
+<Syst OldName =    "gamma_stat_ZCR_bin_2"       NewName =    "gamma_stat_ZCR_bin_2" />
+<Syst OldName =   "gamma_stat_ZCR_bin_20"       NewName =   "gamma_stat_ZCR_bin_20" />
+<Syst OldName =   "gamma_stat_ZCR_bin_21"       NewName =   "gamma_stat_ZCR_bin_21" />
+<Syst OldName =   "gamma_stat_ZCR_bin_22"       NewName =   "gamma_stat_ZCR_bin_22" />
+<Syst OldName =    "gamma_stat_ZCR_bin_3"       NewName =    "gamma_stat_ZCR_bin_3" />
+<Syst OldName =    "gamma_stat_ZCR_bin_4"       NewName =    "gamma_stat_ZCR_bin_4" />
+<Syst OldName =    "gamma_stat_ZCR_bin_5"       NewName =    "gamma_stat_ZCR_bin_5" />
+
+<Syst OldName =                    "channelCat"       NewName =                    "Cat_llqq" />
+    </RenameMap>
+  </Channel>
+  <Channel Name="lvqq_binned">
+    <File Name="workspace/vv/lvqqConfig/decorated/2000_HVT_WZ_decorated.root"/>
+    <Workspace Name="combWS"/>
+    <ModelConfig Name="ModelConfig"/>
+    <ModelPOI Name="mu"/>
+    <ModelData Name="combData"/>
+    <RenameMap>
+<Syst OldName =                                                                                           "XS_Top"  NewName =          "unconstr_ATLAS_norm_ttbar" />
+<Syst OldName =                                                                                         "XS_WJets"  NewName =          "unconstr_ATLAS_norm_WJets" />
+
+<Syst OldName =                                                                                               "alpha_LumiNPConstraint(alpha_LumiNP, nom_alpha_LumiNP)"  NewName =         "ATLAS_LUMI_2015" />
+
+<Syst OldName =                                                              "alpha_EG_RESOLUTION_ALLConstraint(alpha_EG_RESOLUTION_ALL, nom_alpha_EG_RESOLUTION_ALL)"  NewName = "ATLAS_EG_RESOLUTION_ALL" />
+<Syst OldName =                                                                             "alpha_EG_SCALE_ALLConstraint(alpha_EG_SCALE_ALL, nom_alpha_EG_SCALE_ALL)"  NewName =      "ATLAS_EG_SCALE_ALL" />
+<Syst OldName =                       "alpha_EL_EFF_ID_TotalCorrUncertaintyConstraint(alpha_EL_EFF_ID_TotalCorrUncertainty, nom_alpha_EL_EFF_ID_TotalCorrUncertainty)"  NewName = "ATLAS_EL_EFF_ID_TotalCorrUncertainty" />
+<Syst OldName =                    "alpha_EL_EFF_Iso_TotalCorrUncertaintyConstraint(alpha_EL_EFF_Iso_TotalCorrUncertainty, nom_alpha_EL_EFF_Iso_TotalCorrUncertainty)"  NewName = "ATLAS_EL_EFF_Iso_TotalCorrUncertainty" />
+<Syst OldName =                 "alpha_EL_EFF_Reco_TotalCorrUncertaintyConstraint(alpha_EL_EFF_Reco_TotalCorrUncertainty, nom_alpha_EL_EFF_Reco_TotalCorrUncertainty)"  NewName = "ATLAS_EL_EFF_Reco_TotalCorrUncertainty" />
+<Syst OldName =        "alpha_EL_EFF_Trigger_TotalCorrUncertaintyConstraint(alpha_EL_EFF_Trigger_TotalCorrUncertainty, nom_alpha_EL_EFF_Trigger_TotalCorrUncertainty)"  NewName = "ATLAS_EL_EFF_Trigger_TotalCorrUncertainty" />
+
+<Syst OldName =                                                                                         "alpha_MUONS_IDConstraint(alpha_MUONS_ID, nom_alpha_MUONS_ID)"  NewName =          "ATLAS_MUONS_ID" />
+<Syst OldName =                                                                                         "alpha_MUONS_MSConstraint(alpha_MUONS_MS, nom_alpha_MUONS_MS)"  NewName =          "ATLAS_MUONS_MS" />
+<Syst OldName =                                                                                "alpha_MUONS_SCALEConstraint(alpha_MUONS_SCALE, nom_alpha_MUONS_SCALE)"  NewName =       "ATLAS_MUONS_SCALE" />
+<Syst OldName =                                                                    "alpha_MUONS_TTVA_STATConstraint(alpha_MUONS_TTVA_STAT, nom_alpha_MUONS_TTVA_STAT)"  NewName =   "ATLAS_MUONS_TTVA_STAT" />
+<Syst OldName =                                                                       "alpha_MUONS_TTVA_SYSConstraint(alpha_MUONS_TTVA_SYS, nom_alpha_MUONS_TTVA_SYS)"  NewName =    "ATLAS_MUONS_TTVA_SYS" />
+<Syst OldName =                                                                          "alpha_MUON_EFF_STATConstraint(alpha_MUON_EFF_STAT, nom_alpha_MUON_EFF_STAT)"  NewName =     "ATLAS_MUON_EFF_STAT" />
+<Syst OldName =                                                                             "alpha_MUON_EFF_SYSConstraint(alpha_MUON_EFF_SYS, nom_alpha_MUON_EFF_SYS)"  NewName =      "ATLAS_MUON_EFF_SYS" />
+<Syst OldName =                             "alpha_MUON_EFF_TrigStatUncertaintyConstraint(alpha_MUON_EFF_TrigStatUncertainty, nom_alpha_MUON_EFF_TrigStatUncertainty)"  NewName = "ATLAS_MUON_EFF_TrigStatUncertainty" />
+<Syst OldName =                             "alpha_MUON_EFF_TrigSystUncertaintyConstraint(alpha_MUON_EFF_TrigSystUncertainty, nom_alpha_MUON_EFF_TrigSystUncertainty)"  NewName = "ATLAS_MUON_EFF_TrigSystUncertainty" />
+<Syst OldName =                                                                          "alpha_MUON_ISO_STATConstraint(alpha_MUON_ISO_STAT, nom_alpha_MUON_ISO_STAT)"  NewName =     "ATLAS_MUON_ISO_STAT" />
+<Syst OldName =                                                                             "alpha_MUON_ISO_SYSConstraint(alpha_MUON_ISO_SYS, nom_alpha_MUON_ISO_SYS)"  NewName =      "ATLAS_MUON_ISO_SYS" />
+
+<Syst OldName =                                                                                   "alpha_FATJET_D2RConstraint(alpha_FATJET_D2R, nom_alpha_FATJET_D2R)"  NewName =        "ATLAS_FATJET_D2R" />
+<Syst OldName =                                                                                   "alpha_FATJET_JERConstraint(alpha_FATJET_JER, nom_alpha_FATJET_JER)"  NewName =        "ATLAS_LargeR_Res1" />
+<Syst OldName =                                                                                   "alpha_FATJET_JMRConstraint(alpha_FATJET_JMR, nom_alpha_FATJET_JMR)"  NewName =        "ATLAS_LargeR_Res2" />
+
+<Syst OldName =                                                                    "alpha_JET_GroupedNP_1Constraint(alpha_JET_GroupedNP_1, nom_alpha_JET_GroupedNP_1)"  NewName =   "ATLAS_JET_GroupedNP_1" />
+<Syst OldName =                                                                    "alpha_JET_GroupedNP_2Constraint(alpha_JET_GroupedNP_2, nom_alpha_JET_GroupedNP_2)"  NewName =   "ATLAS_Jet_Scale1" />
+<Syst OldName =                                                                    "alpha_JET_GroupedNP_3Constraint(alpha_JET_GroupedNP_3, nom_alpha_JET_GroupedNP_3)"  NewName =   "ATLAS_JET_GroupedNP_3" />
+<Syst OldName =                                                              "alpha_JET_JER_SINGLE_NPConstraint(alpha_JET_JER_SINGLE_NP, nom_alpha_JET_JER_SINGLE_NP)"  NewName = "ATLAS_JET_JER_SINGLE_NP" />
+<Syst OldName =                                                              "alpha_JET_WZ_CrossCalibConstraint(alpha_JET_WZ_CrossCalib, nom_alpha_JET_WZ_CrossCalib)"  NewName = "ATLAS_JET_WZ_CrossCalib" />
+<Syst OldName =                                                                       "alpha_JET_WZ_Run1_D2Constraint(alpha_JET_WZ_Run1_D2, nom_alpha_JET_WZ_Run1_D2)"  NewName =    "ATLAS_Jet_Scale1" />
+<Syst OldName =                                                                 "alpha_JET_WZ_Run1_massConstraint(alpha_JET_WZ_Run1_mass, nom_alpha_JET_WZ_Run1_mass)"  NewName =  "ATLAS_Jet_Scale1" />
+<Syst OldName =                                                                       "alpha_JET_WZ_Run1_pTConstraint(alpha_JET_WZ_Run1_pT, nom_alpha_JET_WZ_Run1_pT)"  NewName =    "ATLAS_Jet_Scale1" />
+
+<Syst OldName =                                                                 "alpha_FT_EFF_Eigen_B_0Constraint(alpha_FT_EFF_Eigen_B_0, nom_alpha_FT_EFF_Eigen_B_0)"  NewName =  "ATLAS_FT_EFF_Eigen_B_0" />
+<Syst OldName =                                                                 "alpha_FT_EFF_Eigen_B_1Constraint(alpha_FT_EFF_Eigen_B_1, nom_alpha_FT_EFF_Eigen_B_1)"  NewName =  "ATLAS_FT_EFF_Eigen_B_1" />
+<Syst OldName =                                                                 "alpha_FT_EFF_Eigen_B_2Constraint(alpha_FT_EFF_Eigen_B_2, nom_alpha_FT_EFF_Eigen_B_2)"  NewName =  "ATLAS_FT_EFF_Eigen_B_2" />
+<Syst OldName =                                                                 "alpha_FT_EFF_Eigen_C_0Constraint(alpha_FT_EFF_Eigen_C_0, nom_alpha_FT_EFF_Eigen_C_0)"  NewName =  "ATLAS_FT_EFF_Eigen_C_0" />
+<Syst OldName =                                                                 "alpha_FT_EFF_Eigen_C_1Constraint(alpha_FT_EFF_Eigen_C_1, nom_alpha_FT_EFF_Eigen_C_1)"  NewName =  "ATLAS_FT_EFF_Eigen_C_1" />
+<Syst OldName =                                                                 "alpha_FT_EFF_Eigen_C_2Constraint(alpha_FT_EFF_Eigen_C_2, nom_alpha_FT_EFF_Eigen_C_2)"  NewName =  "ATLAS_FT_EFF_Eigen_C_2" />
+<Syst OldName =                                                                 "alpha_FT_EFF_Eigen_C_3Constraint(alpha_FT_EFF_Eigen_C_3, nom_alpha_FT_EFF_Eigen_C_3)"  NewName =  "ATLAS_FT_EFF_Eigen_C_3" />
+<Syst OldName =                                                     "alpha_FT_EFF_Eigen_Light_0Constraint(alpha_FT_EFF_Eigen_Light_0, nom_alpha_FT_EFF_Eigen_Light_0)"  NewName = "ATLAS_FT_EFF_Eigen_Light_0" />
+<Syst OldName =                                                     "alpha_FT_EFF_Eigen_Light_1Constraint(alpha_FT_EFF_Eigen_Light_1, nom_alpha_FT_EFF_Eigen_Light_1)"  NewName = "ATLAS_FT_EFF_Eigen_Light_1" />
+<Syst OldName =                                                     "alpha_FT_EFF_Eigen_Light_2Constraint(alpha_FT_EFF_Eigen_Light_2, nom_alpha_FT_EFF_Eigen_Light_2)"  NewName = "ATLAS_FT_EFF_Eigen_Light_2" />
+<Syst OldName =                                                     "alpha_FT_EFF_Eigen_Light_3Constraint(alpha_FT_EFF_Eigen_Light_3, nom_alpha_FT_EFF_Eigen_Light_3)"  NewName = "ATLAS_FT_EFF_Eigen_Light_3" />
+<Syst OldName =                                                     "alpha_FT_EFF_Eigen_Light_4Constraint(alpha_FT_EFF_Eigen_Light_4, nom_alpha_FT_EFF_Eigen_Light_4)"  NewName = "ATLAS_FT_EFF_Eigen_Light_4" />
+<Syst OldName =                                                     "alpha_FT_EFF_extrapolationConstraint(alpha_FT_EFF_extrapolation, nom_alpha_FT_EFF_extrapolation)"  NewName = "ATLAS_FT_EFF_extrapolation" />
+<Syst OldName =                    "alpha_FT_EFF_extrapolation_from_charmConstraint(alpha_FT_EFF_extrapolation_from_charm, nom_alpha_FT_EFF_extrapolation_from_charm)"  NewName = "ATLAS_FT_EFF_extrapolation_from_charm" />
+
+<Syst OldName =                                                     "alpha_MET_SoftTrk_ResoParaConstraint(alpha_MET_SoftTrk_ResoPara, nom_alpha_MET_SoftTrk_ResoPara)"  NewName = "ATLAS_MET_SoftTrk_ResoPara" />
+<Syst OldName =                                                     "alpha_MET_SoftTrk_ResoPerpConstraint(alpha_MET_SoftTrk_ResoPerp, nom_alpha_MET_SoftTrk_ResoPerp)"  NewName = "ATLAS_MET_SoftTrk_ResoPerp" />
+<Syst OldName =                                                              "alpha_MET_SoftTrk_ScaleConstraint(alpha_MET_SoftTrk_Scale, nom_alpha_MET_SoftTrk_Scale)"  NewName = "ATLAS_MET_SoftTrk_Scale" />
+
+<Syst OldName =                                                                       "alpha_Signal_ISR_FSRConstraint(alpha_Signal_ISR_FSR, nom_alpha_Signal_ISR_FSR)"  NewName =    "Theory_Rad" />
+
+<Syst OldName =                                                                                "alpha_XS_DibosonsConstraint(alpha_XS_Dibosons, nom_alpha_XS_Dibosons)"  NewName =       "Theory_XS_DB" />
+
+<Syst OldName =                                                                                      "alpha_TopHerwigConstraint(alpha_TopHerwig, nom_alpha_TopHerwig)"  NewName =         "ATLAS_MODEL_PAR_TTbar_Herwig" />
+<Syst OldName =                                                                                      "alpha_TopMCaNLOConstraint(alpha_TopMCaNLO, nom_alpha_TopMCaNLO)"  NewName =         "ATLAS_MODEL_PAR_TTbar_aMcAtNlo" />
+<Syst OldName =                                                                                               "alpha_TopRadConstraint(alpha_TopRad, nom_alpha_TopRad)"  NewName =            "ATLAS_MODEL_PAR_TTbar_rad" />
+
+<Syst OldName =                                                                                         "alpha_XS_ZJetsConstraint(alpha_XS_ZJets, nom_alpha_XS_ZJets)"  NewName =       "Theory_XS_ZJets" />
+<Syst OldName =                                               "alpha_VJetsMlvJShapeModelingConstraint(alpha_VJetsMlvJShapeModeling, nom_alpha_VJetsMlvJShapeModeling)"  NewName = "ATLAS_lvqq_VJetsMlvJShapeModeling" />
+
+<Syst OldName =   "gamma_stat_Btag_bin_1"       NewName =   "gamma_stat_Btag_bin_1" />
+<Syst OldName =  "gamma_stat_Btag_bin_10"       NewName =  "gamma_stat_Btag_bin_10" />
+<Syst OldName =  "gamma_stat_Btag_bin_11"       NewName =  "gamma_stat_Btag_bin_11" />
+<Syst OldName =  "gamma_stat_Btag_bin_12"       NewName =  "gamma_stat_Btag_bin_12" />
+<Syst OldName =  "gamma_stat_Btag_bin_13"       NewName =  "gamma_stat_Btag_bin_13" />
+<Syst OldName =  "gamma_stat_Btag_bin_14"       NewName =  "gamma_stat_Btag_bin_14" />
+<Syst OldName =  "gamma_stat_Btag_bin_15"       NewName =  "gamma_stat_Btag_bin_15" />
+<Syst OldName =  "gamma_stat_Btag_bin_16"       NewName =  "gamma_stat_Btag_bin_16" />
+<Syst OldName =  "gamma_stat_Btag_bin_17"       NewName =  "gamma_stat_Btag_bin_17" />
+<Syst OldName =  "gamma_stat_Btag_bin_18"       NewName =  "gamma_stat_Btag_bin_18" />
+<Syst OldName =   "gamma_stat_Btag_bin_2"       NewName =   "gamma_stat_Btag_bin_2" />
+<Syst OldName =   "gamma_stat_Btag_bin_3"       NewName =   "gamma_stat_Btag_bin_3" />
+<Syst OldName =   "gamma_stat_Btag_bin_4"       NewName =   "gamma_stat_Btag_bin_4" />
+<Syst OldName =   "gamma_stat_Btag_bin_5"       NewName =   "gamma_stat_Btag_bin_5" />
+<Syst OldName =   "gamma_stat_Btag_bin_6"       NewName =   "gamma_stat_Btag_bin_6" />
+<Syst OldName =   "gamma_stat_Btag_bin_7"       NewName =   "gamma_stat_Btag_bin_7" />
+<Syst OldName =   "gamma_stat_Btag_bin_8"       NewName =   "gamma_stat_Btag_bin_8" />
+<Syst OldName =   "gamma_stat_Btag_bin_9"       NewName =   "gamma_stat_Btag_bin_9" />
+<Syst OldName =   "gamma_stat_SRWZ_bin_0"       NewName =   "gamma_stat_SRWZ_bin_0" />
+<Syst OldName =   "gamma_stat_SRWZ_bin_1"       NewName =   "gamma_stat_SRWZ_bin_1" />
+<Syst OldName =  "gamma_stat_SRWZ_bin_10"       NewName =  "gamma_stat_SRWZ_bin_10" />
+<Syst OldName =  "gamma_stat_SRWZ_bin_11"       NewName =  "gamma_stat_SRWZ_bin_11" />
+<Syst OldName =  "gamma_stat_SRWZ_bin_12"       NewName =  "gamma_stat_SRWZ_bin_12" />
+<Syst OldName =  "gamma_stat_SRWZ_bin_13"       NewName =  "gamma_stat_SRWZ_bin_13" />
+<Syst OldName =  "gamma_stat_SRWZ_bin_14"       NewName =  "gamma_stat_SRWZ_bin_14" />
+<Syst OldName =  "gamma_stat_SRWZ_bin_15"       NewName =  "gamma_stat_SRWZ_bin_15" />
+<Syst OldName =  "gamma_stat_SRWZ_bin_16"       NewName =  "gamma_stat_SRWZ_bin_16" />
+<Syst OldName =  "gamma_stat_SRWZ_bin_17"       NewName =  "gamma_stat_SRWZ_bin_17" />
+<Syst OldName =  "gamma_stat_SRWZ_bin_18"       NewName =  "gamma_stat_SRWZ_bin_18" />
+<Syst OldName =   "gamma_stat_SRWZ_bin_2"       NewName =   "gamma_stat_SRWZ_bin_2" />
+<Syst OldName =   "gamma_stat_SRWZ_bin_3"       NewName =   "gamma_stat_SRWZ_bin_3" />
+<Syst OldName =   "gamma_stat_SRWZ_bin_4"       NewName =   "gamma_stat_SRWZ_bin_4" />
+<Syst OldName =   "gamma_stat_SRWZ_bin_5"       NewName =   "gamma_stat_SRWZ_bin_5" />
+<Syst OldName =   "gamma_stat_SRWZ_bin_6"       NewName =   "gamma_stat_SRWZ_bin_6" />
+<Syst OldName =   "gamma_stat_SRWZ_bin_7"       NewName =   "gamma_stat_SRWZ_bin_7" />
+<Syst OldName =   "gamma_stat_SRWZ_bin_8"       NewName =   "gamma_stat_SRWZ_bin_8" />
+<Syst OldName =   "gamma_stat_SRWZ_bin_9"       NewName =   "gamma_stat_SRWZ_bin_9" />
+<Syst OldName = "gamma_stat_Sideband_bin_0"     NewName = "gamma_stat_Sideband_bin_0" />
+<Syst OldName = "gamma_stat_Sideband_bin_1"     NewName = "gamma_stat_Sideband_bin_1" />
+<Syst OldName = "gamma_stat_Sideband_bin_12"    NewName = "gamma_stat_Sideband_bin_12" />
+<Syst OldName = "gamma_stat_Sideband_bin_13"    NewName = "gamma_stat_Sideband_bin_13" />
+<Syst OldName = "gamma_stat_Sideband_bin_14"    NewName = "gamma_stat_Sideband_bin_14" />
+<Syst OldName = "gamma_stat_Sideband_bin_15"    NewName = "gamma_stat_Sideband_bin_15" />
+<Syst OldName = "gamma_stat_Sideband_bin_16"    NewName = "gamma_stat_Sideband_bin_16" />
+<Syst OldName = "gamma_stat_Sideband_bin_17"    NewName = "gamma_stat_Sideband_bin_17" />
+<Syst OldName = "gamma_stat_Sideband_bin_18"    NewName = "gamma_stat_Sideband_bin_18" />
+<Syst OldName = "gamma_stat_Sideband_bin_2"     NewName = "gamma_stat_Sideband_bin_2" />
+<Syst OldName = "gamma_stat_Sideband_bin_8"     NewName = "gamma_stat_Sideband_bin_8" />
+
+<Syst OldName =                    "channelCat"       NewName =                    "Cat_lvqq" />
+    </RenameMap>
+  </Channel>
+</Combination>

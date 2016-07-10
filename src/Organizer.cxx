@@ -56,9 +56,9 @@ bool Organizer::run(bool makeSnapshot)
 
   std::string oldPdfName = pdf->GetName();
   std::string newPdfName = oldPdfName+"_"+m_modelName;
-  bool addtionalTerm(false);
-  std::vector<std::string> addtionalNames;
-  std::vector<std::string> addtionalVarNames, additionalGlobs;
+  bool additionalTerm(false);
+  std::vector<std::string> additionalNames;
+  std::vector<std::string> additionalVarNames, additionalGlobs;
 
   bool action(true);
   TString actionStr = "";
@@ -101,52 +101,35 @@ bool Organizer::run(bool makeSnapshot)
     }
     std::cout << "\tItem " << i << ", " << actionStr << std::endl;
 
-    nW->factory(actionStr.Data());
+    if(actionStr.Contains("FlexibleInterpVar")) implementFlexibleInterpVar(nW, actionStr);
+    else nW->factory(actionStr);
 
-    if (actionStr.Contains("RooGaussian")) {
-      TString pdfName  =  actionStr.ReplaceAll("RooGaussian::",  "");
-      pdfName  =  pdfName(0,  pdfName.First("("));
-      addtionalNames.push_back(pdfName.Data());
-
-      pdfName  =  actionStr.ReplaceAll("RooGaussian::",  "");
-      std::cout << "pdf: " << pdfName << std::endl;
-      Size_t begin = pdfName.First("(")+1;
-      Size_t end = pdfName.First(",");
-      TString varName  =  pdfName(begin, end-begin);
-      addtionalVarNames.push_back(varName.Data());
-      Size_t begin_glob = pdfName.First(",")+1;
-      Size_t end_glob = pdfName.Last(',');
-      TString varName_glob=pdfName(begin_glob, end_glob-begin_glob);
-      additionalGlobs.push_back(varName_glob.Data());
-      addtionalTerm  =  true;
-    }
-
-    // added by Hongtao: attach the DFD constraint term to PDF
     if (actionStr.Contains("ConstraintPdf")) {
-      TString pdfName  =  actionStr;
-      pdfName=pdfName.ReplaceAll("RooGaussian::",  "");
-      pdfName=pdfName.ReplaceAll("EXPR::",  "");
-      pdfName  =  pdfName(0,  pdfName.First("("));
-      addtionalNames.push_back(pdfName.Data());
+      actionStr.ReplaceAll(" ","");
+      actionStr=actionStr.ReplaceAll("RooGaussian::",  "");
+      actionStr=actionStr.ReplaceAll("EXPR::",  "");
 
-      pdfName  =  actionStr;
+      TString pdfName  =  actionStr;
+
+      pdfName  =  pdfName(0,  pdfName.First("("));
+      additionalNames.push_back(pdfName.Data());
+
       std::cout << "pdf: " << pdfName << std::endl;
-      std::vector<TString> compoents=SplitString(pdfName,',');
       
-      int npart=compoents.size();
-      for(int ipart=0;ipart<npart;ipart++){
-	TString varName  =  compoents[ipart];
-	varName=varName.ReplaceAll("(","");
-	varName=varName.ReplaceAll(")","");
-	if(varName.Contains("_nuis")) addtionalVarNames.push_back(varName.Data());
-	if(varName.Contains("_gobs")) additionalGlobs.push_back(varName.Data());
-      }
-      addtionalTerm  =  true;
+      Size_t begin = actionStr.First("(")+1;
+      Size_t end = actionStr.First(",");
+      TString varName  =  actionStr(begin, end-begin);
+      additionalVarNames.push_back(varName.Data());
+      Size_t begin_glob = actionStr.First(",")+1;
+      Size_t end_glob = actionStr.Last(',');
+      TString varName_glob=actionStr(begin_glob, end_glob-begin_glob);
+      additionalGlobs.push_back(varName_glob.Data());
+      additionalTerm  =  true;
     }
   }
 
-  /* add addtionalTerm */
-  if (addtionalTerm) {
+  /* add additionalTerm */
+  if (additionalTerm) {
     std::cout<<"Adding additional constraint terms"<<std::endl;
     RooAbsCategoryLValue*  m_cat = (RooAbsCategoryLValue*)&pdf->indexCat();
     int numChannels = m_cat->numBins(0);
@@ -165,7 +148,7 @@ bool Organizer::run(bool makeSnapshot)
 	//std::cout<<"PDF decomposed."<<std::endl;
 	/* insert additional constraints */
 	for (std::vector<std::string>::iterator it  =
-	       addtionalNames.begin(); it !=  addtionalNames.end(); ++it)
+	       additionalNames.begin(); it !=  additionalNames.end(); ++it)
 	  {
 	    RooAbsPdf* pdf_tmp  =  nW->pdf((*it).c_str());
 	    assert(pdf_tmp);
@@ -338,7 +321,7 @@ bool Organizer::run(bool makeSnapshot)
 
   // nuis.Print();
   for (std::vector<std::string>::iterator it  =
-       addtionalVarNames.begin(); it !=  addtionalVarNames.end(); ++it)
+       additionalVarNames.begin(); it !=  additionalVarNames.end(); ++it)
   {
     RooAbsArg* arg = dynamic_cast<RooAbsArg*>(nW->obj((*it).c_str()));
     std::cout << "\tadding " << *it << " to Nuisance Parameters... " << std::endl;
@@ -468,3 +451,47 @@ std::vector<TString> Organizer::SplitString(const TString& theOpt, const char se
   }
   return splitV;
 }
+
+void Organizer::implementFlexibleInterpVar(RooWorkspace *w, TString actionStr){
+  actionStr=actionStr.ReplaceAll(" ","");
+  actionStr=actionStr.ReplaceAll("FlexibleInterpVar::",  "");
+
+  TString responseName=actionStr;
+  responseName=responseName(0, actionStr.First("("));
+
+  Size_t begin=actionStr.First("(")+1;
+  Size_t end=actionStr.First(")");
+  actionStr=actionStr(begin, end-begin);
+  TObjArray* iArray=actionStr.Tokenize(",");
+  int iNum=iArray->GetEntries();
+  if(iNum!=5){
+    std::cerr<<"ERROR: the format of FlexibleInterpVar is not correct."<<std::endl;
+    abort();
+  }
+
+  TString NPName=((TObjString*)iArray->At(0))->GetString();
+  if(!w->var(NPName)){
+    std::cerr<<"ERROR: nuisance parameter "<<NPName<<" is missing."<<std::endl;
+    abort();
+  }
+  
+  RooArgList nuiList(*w->var(NPName));
+
+  double nominal=atof(((TObjString*)iArray->At(1))->GetString());
+  double errHi=atof(((TObjString*)iArray->At(2))->GetString());
+  double errLo=atof(((TObjString*)iArray->At(3))->GetString());
+  int interpolation=atoi(((TObjString*)iArray->At(4))->GetString());
+
+  vector<double> sigma_var_low, sigma_var_high;
+  vector<int> code;
+
+  sigma_var_low.push_back(nominal+errLo);
+  sigma_var_high.push_back(nominal+errHi);
+  code.push_back(interpolation);
+  
+  RooStats::HistFactory::FlexibleInterpVar expected_var(responseName,responseName,nuiList,nominal,sigma_var_low,sigma_var_high,code);
+
+  expected_var.Print();
+  w->import(expected_var);
+}
+

@@ -1,0 +1,51 @@
+<!DOCTYPE Combination  SYSTEM 'Combination.dtd'>
+<!-- Range 3: from 1200 GeV (included) to 2400 GeV (included). lvqq+llqq+vvqq+qqqq  -->
+<Combination>
+  <Channel Name="combined" IsCombined="true" Mass="#MASS#">
+    <File Name="./combined.root"/>
+    <Workspace Name="combWS"/>
+    <ModelConfig  Name="ModelConfig"/>
+    <ModelData Name="combData"/>
+    <ModelPOI Name="mu[0~100]"/>
+  </Channel>
+  <Channel Name="qqqq">
+    <File Name="#INPUTqqqq#"/>
+    <Workspace Name="combWS"/>
+    <ModelConfig Name="ModelConfig"/>
+    <ModelPOI Name="mu"/>
+    <ModelData Name="combData"/>
+    <RenameMap>
+      &qqqq_npmap_jes.xml;
+    </RenameMap>
+  </Channel>
+  <Channel Name="vvqq_binned">
+    <File Name="#INPUTvvqq#"/>
+    <Workspace Name="combWS"/>
+    <ModelConfig Name="ModelConfig"/>
+    <ModelPOI Name="SigXsecOverSM"/>
+    <ModelData Name="combData"/>
+    <RenameMap>
+      &vvqq_npmap_jes.xml;
+    </RenameMap>
+  </Channel>
+  <Channel Name="llqq_binned">
+    <File Name="#INPUTllqq#"/>
+    <Workspace Name="combWS"/>
+    <ModelConfig Name="ModelConfig"/>
+    <ModelPOI Name="mu"/>
+    <ModelData Name="combData"/>
+    <RenameMap>
+      &llqq_npmap_jes.xml;
+    </RenameMap>
+  </Channel>
+  <Channel Name="lvqq_binned">
+    <File Name="#INPUTlvqq#"/>
+    <Workspace Name="combWS"/>
+    <ModelConfig Name="ModelConfig"/>
+    <ModelPOI Name="mu"/>
+    <ModelData Name="combData"/>
+    <RenameMap>
+      &lvqq_npmap_jes.xml;
+    </RenameMap>
+  </Channel>
+</Combination>

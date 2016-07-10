@@ -1,0 +1,51 @@
+<!DOCTYPE Combination  SYSTEM 'Combination.dtd'>
+<!-- Range 3: from 1200 GeV (included) to 2400 GeV (included). lvqq+llqq+vvqq+qqqq  -->
+<Combination>
+  <Channel Name="combined" IsCombined="true" Mass="2000">
+    <File Name="./combined.root"/>
+    <Workspace Name="combWS"/>
+    <ModelConfig  Name="ModelConfig"/>
+    <ModelData Name="combData"/>
+    <ModelPOI Name="mu[0~100]"/>
+  </Channel>
+  <Channel Name="qqqq">
+    <File Name="workspace/vv/VVJJConfig/decorated/2000_HVT_WZ_decorated.root"/>
+    <Workspace Name="combWS"/>
+    <ModelConfig Name="ModelConfig"/>
+    <ModelPOI Name="mu"/>
+    <ModelData Name="combData"/>
+    <RenameMap>
+      &qqqq_npmap.xml;
+    </RenameMap>
+  </Channel>
+  <Channel Name="vvqq_binned">
+    <File Name="workspace/vv/vvqqConfig/modified/2000_HVT_WZ_modified.root"/>
+    <Workspace Name="combWS"/>
+    <ModelConfig Name="ModelConfig"/>
+    <ModelPOI Name="SigXsecOverSM"/>
+    <ModelData Name="combData"/>
+    <RenameMap>
+      &vvqq_npmap.xml;
+    </RenameMap>
+  </Channel>
+  <Channel Name="llqq_binned">
+    <File Name="workspace/vv/llqqConfig/decorated/2000_HVT_WZ_decorated.root"/>
+    <Workspace Name="combWS"/>
+    <ModelConfig Name="ModelConfig"/>
+    <ModelPOI Name="mu"/>
+    <ModelData Name="combData"/>
+    <RenameMap>
+      &llqq_npmap.xml;
+    </RenameMap>
+  </Channel>
+  <Channel Name="lvqq_binned">
+    <File Name="workspace/vv/lvqqConfig/decorated/2000_HVT_WZ_decorated.root"/>
+    <Workspace Name="combWS"/>
+    <ModelConfig Name="ModelConfig"/>
+    <ModelPOI Name="mu"/>
+    <ModelData Name="combData"/>
+    <RenameMap>
+      &lvqq_npmap.xml;
+    </RenameMap>
+  </Channel>
+</Combination>

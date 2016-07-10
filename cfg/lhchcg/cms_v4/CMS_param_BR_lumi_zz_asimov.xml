@@ -1,0 +1,76 @@
+<!DOCTYPE Orgnization  SYSTEM 'Orgnization.dtd'>
+<Orgnization InFile="workspace/lhchcg/myrep/cms/handler/hzz.mH.prefit.asimov_handler.root" OutFile="workspace/lhchcg/myrep/cms/parambrlumi/hzz.mH.prefit.asimov_parambrlumi.root"
+	     ModelName="param_BR"
+	     POINames="MH,mu_zz">
+  <Item Name="zero[0]"/>
+  <Item Name="one[1]"/>
+
+  <!-- Introducing kappa values -->
+  <!-- H->zz -->
+  <Item Name="kappa_value_BR_param_alphaS_zz[1.012]"/>
+  <Item Name="kappa_value_BR_param_mB_zz[0.981]"/>
+  <Item Name="kappa_value_BR_HiggsDecayWidthTHU_hqq_zz[0.988]"/>
+  <Item Name="kappa_value_BR_HiggsDecayWidthTHU_hvv_zz[1.004]"/>
+
+  <Item Name="expr::log_kappa_value_LHC_LUMI_2011('sqrt(log(1+@0*@0))', uncert_LUMI_2011_correlate[0.006])"/>
+  <Item Name="expr::log_kappa_value_LHC_LUMI_2012('sqrt(log(1+@0*@0))', uncert_LUMI_2012_correlate[0.021])"/>
+  <Item Name="expr::log_kappa_value_CMS_LUMI_uncor_2011('sqrt(log(1+@0*@0))', uncert_LUMI_2011_uncorrelate[0.021])"/>
+  <Item Name="expr::log_kappa_value_CMS_LUMI_uncor_2012('sqrt(log(1+@0*@0))', uncert_LUMI_2012_uncorrelate[0.015])"/>
+
+  <!-- Introducing nuisance parameter names -->
+  <Item Name="BR_param_alphaS[0,-5,5]"/>
+  <Item Name="BR_param_mB[0,-5,5]"/>
+  <Item Name="BR_HiggsDecayWidthTHU_hqq[0,-5,5]"/>
+  <Item Name="BR_HiggsDecayWidthTHU_hvv[0,-5,5]"/>
+
+  <Item Name="LHC_LUMI_2011[0,-5,5]"/>
+  <Item Name="LHC_LUMI_2012[0,-5,5]"/>
+  <Item Name="CMS_LUMI_uncor_2011[0,-5,5]"/>
+  <Item Name="CMS_LUMI_uncor_2012[0,-5,5]"/>
+
+  <!-- Introducing global observables -->
+  <Item Name="BR_param_alphaS_In[0]"/>
+  <Item Name="BR_param_mB_In[0]"/>
+  <Item Name="BR_HiggsDecayWidthTHU_hqq_In[0]"/>
+  <Item Name="BR_HiggsDecayWidthTHU_hvv_In[0]"/>
+
+  <Item Name="LHC_LUMI_2011_In[0]"/>
+  <Item Name="LHC_LUMI_2012_In[0]"/>
+  <Item Name="CMS_LUMI_uncor_2011_In[0]"/>
+  <Item Name="CMS_LUMI_uncor_2012_In[0]"/>
+
+  <!-- Introducing constraint terms -->
+  <Item Name="RooGaussian::BR_param_alphaS_Pdf(BR_param_alphaS,BR_param_alphaS_In,1)"/>
+  <Item Name="RooGaussian::BR_param_mB_Pdf(BR_param_mB,BR_param_mB_In,1)"/>
+  <Item Name="RooGaussian::BR_HiggsDecayWidthTHU_hqq_Pdf(BR_HiggsDecayWidthTHU_hqq,BR_HiggsDecayWidthTHU_hqq_In,1)"/>
+  <Item Name="RooGaussian::BR_HiggsDecayWidthTHU_hvv_Pdf(BR_HiggsDecayWidthTHU_hvv,BR_HiggsDecayWidthTHU_hvv_In,1)"/>
+
+  <Item Name="RooGaussian::LHC_LUMI_2011_Pdf(LHC_LUMI_2011,LHC_LUMI_2011_In,1)"/>
+  <Item Name="RooGaussian::LHC_LUMI_2012_Pdf(LHC_LUMI_2012,LHC_LUMI_2012_In,1)"/>
+  <Item Name="RooGaussian::CMS_LUMI_uncor_2011_Pdf(CMS_LUMI_uncor_2011,CMS_LUMI_uncor_2011_In,1)"/>
+  <Item Name="RooGaussian::CMS_LUMI_uncor_2012_Pdf(CMS_LUMI_uncor_2012,CMS_LUMI_uncor_2012_In,1)"/>
+
+  <!-- Introducing response terms -->
+  <!-- H->zz -->
+  <Item Name="prod::expected_BR_param_alphaS_zz(RooExponential::expTerm_BR_param_alphaS_zz(BR_param_alphaS, expr::log_kappa_value_BR_param_alphaS_zz('log(@0)', kappa_value_BR_param_alphaS_zz)),nominal_BR_param_alphaS_zz[1])"/>
+  <Item Name="prod::expected_BR_param_mB_zz(RooExponential::expTerm_BR_param_mB_zz(BR_param_mB, expr::log_kappa_value_BR_param_mB_zz('log(@0)', kappa_value_BR_param_mB_zz)),nominal_BR_param_mB_zz[1])"/>
+  <Item Name="prod::expected_BR_HiggsDecayWidthTHU_hqq_zz(RooExponential::expTerm_BR_HiggsDecayWidthTHU_hqq_zz(BR_HiggsDecayWidthTHU_hqq, expr::log_kappa_value_BR_HiggsDecayWidthTHU_hqq_zz('log(@0)', kappa_value_BR_HiggsDecayWidthTHU_hqq_zz)),nominal_BR_HiggsDecayWidthTHU_hqq_zz[1])"/>
+  <Item Name="prod::expected_BR_HiggsDecayWidthTHU_hvv_zz(RooExponential::expTerm_BR_HiggsDecayWidthTHU_hvv_zz(BR_HiggsDecayWidthTHU_hvv, expr::log_kappa_value_BR_HiggsDecayWidthTHU_hvv_zz('log(@0)', kappa_value_BR_HiggsDecayWidthTHU_hvv_zz)),nominal_BR_HiggsDecayWidthTHU_hvv_zz[1])"/>
+
+  <Item Name="prod::expected_LHC_LUMI_2011(RooExponential::expTerm_LHC_LUMI_2011(LHC_LUMI_2011, log_kappa_value_LHC_LUMI_2011),nominal_LHC_LUMI_2011[1])"/>
+  <Item Name="prod::expected_LHC_LUMI_2012(RooExponential::expTerm_LHC_LUMI_2012(LHC_LUMI_2012, log_kappa_value_LHC_LUMI_2012),nominal_LHC_LUMI_2012[1])"/>
+  <Item Name="prod::expected_CMS_LUMI_uncor_2011(RooExponential::expTerm_CMS_LUMI_uncor_2011(CMS_LUMI_uncor_2011, log_kappa_value_CMS_LUMI_uncor_2011),nominal_CMS_LUMI_uncor_2011[1])"/>
+  <Item Name="prod::expected_CMS_LUMI_uncor_2012(RooExponential::expTerm_CMS_LUMI_uncor_2012(CMS_LUMI_uncor_2012, log_kappa_value_CMS_LUMI_uncor_2012),nominal_CMS_LUMI_uncor_2012[1])"/>
+
+  <Item Name="prod:expected_BR_zz_new(expected_BR_param_alphaS_zz,expected_BR_param_mB_zz,expected_BR_HiggsDecayWidthTHU_hqq_zz,expected_BR_HiggsDecayWidthTHU_hvv_zz, expected_LHC_LUMI_2011, expected_LHC_LUMI_2012, expected_CMS_LUMI_uncor_2011, expected_CMS_LUMI_uncor_2012, ,mu_BR_ZZ[1])"/>
+
+  <Item Name= "EDIT::NEWPDF(OLDPDF,
+       	       BRhiggs_ZZ4l=zero,
+	       lumi_7TeV=zero,
+	       lumi_8TeV=zero,
+	       BRhiggs_ZZ4l_Pdf=one,
+	       lumi_7TeV_Pdf=one,
+	       lumi_8TeV_Pdf=one,
+	       mu_BR_ZZ_temp=expected_BR_zz_new,
+       	       )" />
+</Orgnization>

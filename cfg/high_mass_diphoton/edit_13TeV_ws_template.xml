@@ -1,0 +1,15 @@
+<!DOCTYPE Organization  SYSTEM 'Organization.dtd'>
+<Organization InFile="#INPUT#" OutFile="#OUTPUT#"
+	     ModelName="deltamu"
+	     POINames="xs_new, dxs, mG, GkM">
+  <Item Name="xs_new[1,0,100]"/>
+  <Item Name="dxs[0,-100,100]"/>
+  <!-- <Item Name="expr::xs_modified('(@0*@2+@1)',xs_new,dxs,scale_factor[5.292686])"/> -->
+  <!-- <Item Name="expr::xs_modified('(@0*@2+@1)',xs_new,dxs,scale_factor[4.693])"/> -->
+  <Item Name="expr::xs_modified('(@0*@2+@1)',xs_new,dxs,scale_factor[2.692])"/>
+
+  <!-- PDF -->
+  <Item Name="EDIT::NEWPDF(OLDPDF,
+	      xs=xs_modified,
+	      )"/>
+</Organization>

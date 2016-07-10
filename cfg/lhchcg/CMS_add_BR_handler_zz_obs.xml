@@ -1,0 +1,13 @@
+<!DOCTYPE Orgnization  SYSTEM 'Orgnization.dtd'>
+<Orgnization InFile="workspace/lhchcg/myrep/cms/decorated/hzz.mH.obs_decorated.root" OutFile="workspace/lhchcg/myrep/cms/handler/hzz.mH.obs_handler.root"
+	     ModelName="param_BR"
+	     POINames="MH,mu_zz">
+  <Item Name="mu_zz[1,0,10]"/>
+  <Item Name="mu_BR_ZZ_temp[1]"/>
+
+  <Item Name="prod::mu_zz_comp(mu_zz,mu_BR_ZZ_temp)"/>
+
+  <Item Name= "EDIT::NEWPDF(OLDPDF,
+	       r=mu_zz_comp
+       	       )" />
+</Orgnization>

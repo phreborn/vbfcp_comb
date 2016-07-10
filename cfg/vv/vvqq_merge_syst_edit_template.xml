@@ -1,0 +1,18 @@
+<!DOCTYPE Organization  SYSTEM 'Organization.dtd'>
+<Organization InFile="#INPUT#" OutFile="#OUTPUT#"
+	     ModelName="vvqq"
+	     POINames="SigXsecOverSM">
+  <Item Name="one[1]"/>
+  <Item Name="Theory_XS_DB[0, -5, 5]"/>
+  <Item Name="nom_Theory_XS_DB[0]"/>
+  <Item Name="RooGaussian::Theory_XS_DBConstraint(Theory_XS_DB, nom_Theory_XS_DB, 1)"/>
+  <!-- PDF -->
+  <Item Name="EDIT::NEWPDF(OLDPDF,
+	      alpha_SysWWNormConstraint=one,
+	      alpha_SysZZNormConstraint=one,
+	      alpha_SysWZNormConstraint=one,
+	      alpha_SysWWNorm=Theory_XS_DB,
+	      alpha_SysZZNorm=Theory_XS_DB,
+	      alpha_SysWZNorm=Theory_XS_DB,
+	      )"/>
+</Organization>

@@ -1,0 +1,52 @@
+<!DOCTYPE Combination  SYSTEM 'Combination.dtd'>
+<Combination>
+  <Channel Name="combined" IsCombined="true" Mass="125.5">
+    <File Name="./combined.root"/>
+    <Workspace Name="combWS"/>
+    <ModelConfig  Name="ModelConfig"/>
+    <ModelData Name="combData"/>
+    <ModelPOI Name="mH[120~130], dmH_gZ[0~0], dmH_exp[0~0], 
+		    mu[1~1], muF_gg[0~5], muV_gg[-5~5], mu_ZZ[0~5],
+		    lambda_mu[1~1], lambda_muF_gg[1~1], lambda_muV_gg[1~1],lambda_mu_ZZ[1~1]"/>
+  </Channel>
+  <Channel Name="Cat_ATLAS_hzz">
+    <File Name="workspace/lhchcg/myrep/atlas/decorated/atlas_h4l_postfit_decorated.root"/>
+    <Workspace Name="combWS"/>
+    <ModelConfig Name="ModelConfig"/>
+    <ModelPOI Name="mH, dummy, dmH_exp,
+		    mu, dummy, dummy, mu_ZZ,
+		    lambda_mu, dummy, dummy, lambda_mu_ZZ"/>
+    <ModelData Name="combData"/>
+    <RenameMap>
+<Syst OldName =                  "ATLAS_lumi_2011_Pdf(ATLAS_lumi_2011, ATLAS_lumi_2011_In)"	NewName =         "ATLAS_lumi_2011" />
+<Syst OldName =                                    "lumi_2011_Pdf(lumi_2011, lumi_2011_In)"	NewName =               "lumi_2011" />
+<Syst OldName =                  "ATLAS_lumi_2012_Pdf(ATLAS_lumi_2012, ATLAS_lumi_2012_In)"	NewName =         "ATLAS_lumi_2012" />
+<Syst OldName =                                    "lumi_2012_Pdf(lumi_2012, lumi_2012_In)"	NewName =               "lumi_2012" />
+
+<Syst OldName =                           "param_alphaS_Pdf(param_alphaS, param_alphaS_In)"	NewName =            "param_alphaS" />
+<Syst OldName =                                       "param_mB_Pdf(param_mB, param_mB_In)"	NewName =                "param_mB" />
+<Syst OldName = "HiggsDecayWidthTHU_hvv_Pdf(HiggsDecayWidthTHU_hvv, HiggsDecayWidthTHU_hvv_In)"	NewName =  "HiggsDecayWidthTHU_hvv" />
+<Syst OldName = "HiggsDecayWidthTHU_hqq_Pdf(HiggsDecayWidthTHU_hqq, HiggsDecayWidthTHU_hqq_In)"	NewName =  "HiggsDecayWidthTHU_hqq" />
+<Syst OldName =                                             "pdf_gg_Pdf(pdf_gg, pdf_gg_In)"	NewName =                  "pdf_gg" />
+<Syst OldName =                                    "pdf_qqbar_Pdf(pdf_qqbar, pdf_qqbar_In)"	NewName =               "pdf_qqbar" />
+<Syst OldName =                           "QCDscale_ggH_Pdf(QCDscale_ggH, QCDscale_ggH_In)"	NewName =            "QCDscale_ggH" />
+<Syst OldName =                              "QCDscale_VV_Pdf(QCDscale_VV, QCDscale_VV_In)"	NewName =             "QCDscale_VV" />
+
+<Syst OldName =                        "ATLAS_EM_ES_Z_Pdf(ATLAS_EM_ES_Z, ATLAS_EM_ES_Z_In)"	NewName =           "ATLAS_EM_ES_Z" />
+
+<Syst OldName =                              "ATLAS_MU_MS_Pdf(ATLAS_MU_MS, ATLAS_MU_MS_In)"	NewName =             "ATLAS_MU_MS" />
+<Syst OldName =                           "ATLAS_MU_EFF_Pdf(ATLAS_MU_EFF, ATLAS_MU_EFF_In)"	NewName =            "ATLAS_MU_EFF" />
+<Syst OldName = "ATLAS_norm_SF_H4l_Zbb_llmumu_2011_Pdf(ATLAS_norm_SF_H4l_Zbb_llmumu_2011, ATLAS_norm_SF_H4l_Zbb_llmumu_2011_In)"	NewName = "ATLAS_norm_SF_H4l_Zbb_llmumu_2011" />
+<Syst OldName = "ATLAS_shape_SF_H4l_EL_EFF_ISOIP_2011_Pdf(ATLAS_shape_SF_H4l_EL_EFF_ISOIP_2011, ATLAS_shape_SF_H4l_EL_EFF_ISOIP_2011_In)"	NewName = "ATLAS_shape_SF_H4l_EL_EFF_ISOIP_2011" />
+<Syst OldName = "ATLAS_norm_SF_H4l_Z_llee_2011_Pdf(ATLAS_norm_SF_H4l_Z_llee_2011, ATLAS_norm_SF_H4l_Z_llee_2011_In)"	NewName = "ATLAS_norm_SF_H4l_Z_llee_2011" />
+<Syst OldName = "ATLAS_norm_SF_H4l_Zbb_llmumu_2012_Pdf(ATLAS_norm_SF_H4l_Zbb_llmumu_2012, ATLAS_norm_SF_H4l_Zbb_llmumu_2012_In)"	NewName = "ATLAS_norm_SF_H4l_Zbb_llmumu_2012" />
+<Syst OldName =   "ATLAS_EL_2012_ID_low_Pdf(ATLAS_EL_2012_ID_low, ATLAS_EL_2012_ID_low_In)"	NewName =    "ATLAS_EL_2012_ID_low" />
+<Syst OldName = "ATLAS_EL_2012_IDST_high_Pdf(ATLAS_EL_2012_IDST_high, ATLAS_EL_2012_IDST_high_In)"	NewName = "ATLAS_EL_2012_IDST_high" />
+<Syst OldName = "ATLAS_EL_2012_REC_low_Pdf(ATLAS_EL_2012_REC_low, ATLAS_EL_2012_REC_low_In)"	NewName =   "ATLAS_EL_2012_REC_low" />
+<Syst OldName = "ATLAS_shape_SF_H4l_EL_EFF_ISOIP_2012_Pdf(ATLAS_shape_SF_H4l_EL_EFF_ISOIP_2012, ATLAS_shape_SF_H4l_EL_EFF_ISOIP_2012_In)"	NewName = "ATLAS_shape_SF_H4l_EL_EFF_ISOIP_2012" />
+<Syst OldName = "ATLAS_norm_SF_H4l_Z_llee_2012_Pdf(ATLAS_norm_SF_H4l_Z_llee_2012, ATLAS_norm_SF_H4l_Z_llee_2012_In)"	NewName = "ATLAS_norm_SF_H4l_Z_llee_2012" />
+
+<Syst OldName=       "channelCat" 		NewName=      "Cat_ATLAS_hzz"/>
+    </RenameMap>
+  </Channel>
+</Combination>

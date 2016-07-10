@@ -1,0 +1,13 @@
+<!DOCTYPE Organization  SYSTEM 'Organization.dtd'>
+<Organization InFile="workspace/high_mass_diphoton/2015_Scalar_2D_v3.root" OutFile="workspace/high_mass_diphoton/2015_Scalar_2D_v3_dxs.root"
+	     ModelName="deltamu"
+	     POINames="xs_8tev, dxs, mX, wX">
+  <Item Name="xs_8tev[1,0,100]"/>
+  <Item Name="dxs[0,-100,100]"/>
+  <Item Name="expr::xs_modified('(@0*@2+@1)',xs_8tev,dxs,scale_factor[4.693])"/>
+
+  <!-- PDF -->
+  <Item Name="EDIT::NEWPDF(OLDPDF,
+	      xs=xs_modified,
+	      )"/>
+</Organization>

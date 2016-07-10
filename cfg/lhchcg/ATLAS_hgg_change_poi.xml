@@ -1,0 +1,19 @@
+<!DOCTYPE Orgnization  SYSTEM 'Orgnization.dtd'>
+<Orgnization InFile="workspace/gg/mass_runI_narei/combined_decorated.root" OutFile="workspace/lhchcg/myrep/atlas/original/atlas_hgamgam_change_poi.root"
+	     ModelName="Hgamgam_mass"
+	     POINames="mH,RF,RV">
+  <Item Name="one[1]"/>
+  <Item Name="RF[1,0,10]"/>
+  <Item Name="RV[1,-10,10]"/>
+     <Item Name="EDIT::NEWPDF(OLDPDF,
+        mu_XS_ggF=RF,
+	mu_XS_VBF=RV,
+	mu_XS_WH=RV,
+	mu_XS_ZH=RV,
+	mu_XS_ttH=RF,
+	mu_XS_bbH=RF,
+	mu=one,
+	mu_ATLAS_BR_gamgam=one
+	)"/>
+</Orgnization>
+

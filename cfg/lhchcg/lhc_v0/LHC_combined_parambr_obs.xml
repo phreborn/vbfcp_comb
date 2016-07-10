@@ -1,0 +1,385 @@
+<!DOCTYPE Combination  SYSTEM 'Combination.dtd'>
+<Combination>
+<Channel Name="combined" IsCombined="true" Mass="125.5">
+<File Name="./combined.root"/>
+<Workspace Name="combWS"/>
+<ModelConfig  Name="ModelConfig"/>
+<ModelData Name="combData"/>
+<ModelPOI Name="MH(125~120~130)*MH_gg_atlas(1-1), RF_gg(1~0~5)*RF_gg_atlas(1-1), RV_gg(1~-5~5)*RV_gg_atlas(1-1), MH(125~120~130)*MH_zz_atlas(1-1), mu_zz(1~0~5)*mu_zz_atlas(1-1),
+		MH(125~120~130)*MH_gg_cms(1-1), RF_gg(1~0~5)*RF_gg_cms(1-1), RV_gg(1~-5~5)*RV_gg_cms(1-1), MH(125~120~130)*MH_zz_cms(1-1), mu_zz(1~0~5)*mu_zz_cms(1-1)
+		"/>
+</Channel>
+  <Channel Name="Cat_ATLAS_hgg">
+    <File Name="workspace/lhchcg/myrep/atlas/parambr/atlas_hgamgam_obs_parambr.root"/>
+    <Workspace Name="combWS"/>
+    <ModelConfig Name="ModelConfig"/>
+    <ModelPOI Name="MH, RF_gg, RV_gg, dummy, dummy,
+		    dummy, dummy, dummy, dummy, dummy"/>
+    <ModelData Name="combData"/>
+    <RenameMap>
+      <Syst OldName =                       "nui_trigger_MoriondCat1_2011(trigger, RNDM_trigger)"	NewName =                 "ATLAS_Hgg_Trigger" />
+      <Syst OldName = "nui_ATLAS_LUMI_2011_MoriondCat1_2011(ATLAS_LUMI_2011, RNDM_ATLAS_LUMI_2011)"	NewName =         "ATLAS_LUMI_2011" />
+      <Syst OldName = "nui_ATLAS_LUMI_2012_MoriondCat1_2012(ATLAS_LUMI_2012, RNDM_ATLAS_LUMI_2012)"	NewName =         "ATLAS_LUMI_2012" />
+      <Syst OldName =                        "LHC_LUMI_2011_Pdf(LHC_LUMI_2011, LHC_LUMI_2011_In)"	NewName =           "LHC_LUMI_2011" />
+      <Syst OldName =                        "LHC_LUMI_2012_Pdf(LHC_LUMI_2012, LHC_LUMI_2012_In)"	NewName =           "LHC_LUMI_2012" />
+      <Syst OldName = "ATLAS_LUMI_uncor_2011_Pdf(ATLAS_LUMI_uncor_2011, ATLAS_LUMI_uncor_2011_In)"	NewName =   "ATLAS_LUMI_uncor_2011" />
+      <Syst OldName = "ATLAS_LUMI_uncor_2012_Pdf(ATLAS_LUMI_uncor_2012, ATLAS_LUMI_uncor_2012_In)"	NewName =   "ATLAS_LUMI_uncor_2012" />
+
+      <Syst OldName =                                   "nui_Iso_MoriondCat1_2011(Iso, RNDM_Iso)"	NewName =                     "ATLAS_PH_ISO" />
+      <Syst OldName =                                   "nui_pES_MoriondCat1_2011(pES, RNDM_pES)"	NewName =             "ATLAS_PH_ESS" />
+      <Syst OldName =                 "nui_isEM_2011_MoriondCat1_2011(isEM_2011, RNDM_isEM_2011)"		NewName =               "ATLAS_PH_ID_2011" />
+      <Syst OldName =                 "nui_isEM_2012_MoriondCat1_2012(isEM_2012, RNDM_isEM_2012)"		NewName =               "ATLAS_PH_ID_2012" />
+
+      <Syst OldName =           "nui_ConvEff_Mig_MoriondCat1_2011(ConvEff_Mig, RNDM_ConvEff_Mig)"	NewName =        "ATLAS_Hgg_MIGR_CONVEFF" />
+      <Syst OldName = "nui_ConvFakeRate_Mig_MoriondCat1_2011(ConvFakeRate_Mig, RNDM_ConvFakeRate_Mig)"	NewName =        "ATLAS_Hgg_MIGR_CONVFR" />
+      <Syst OldName =                                   "nui_mat_MoriondCat1_2011(mat, RNDM_mat)"       NewName =        "ATLAS_Hgg_MIGR_MAT" />
+
+      <Syst OldName = "nui_ATLAS_EM_mRes_CT_MoriondCat1_2011(ATLAS_EM_mRes_CT, RNDM_ATLAS_EM_mRes_CT)"	NewName =        "ATLAS_EM_mRes_CT" />
+      <Syst OldName = "nui_ATLAS_EM_mRes_MAT_MoriondCat1_2011(ATLAS_EM_mRes_MAT, RNDM_ATLAS_EM_mRes_MAT)"	NewName =       "ATLAS_EM_mRes_MAT" />
+      <Syst OldName = "nui_ATLAS_EM_mRes_PU_MoriondCat1_2011(ATLAS_EM_mRes_PU, RNDM_ATLAS_EM_mRes_PU)"	NewName =        "ATLAS_EM_mRes_PU" />
+      <Syst OldName = "nui_ATLAS_EM_mRes_ST_MoriondCat1_2011(ATLAS_EM_mRes_ST, RNDM_ATLAS_EM_mRes_ST)"	NewName =        "ATLAS_EM_mRes_ST" />
+
+      <Syst OldName =                    "nui_ATLAS_BR_MoriondCat1_2011(ATLAS_BR, RNDM_ATLAS_BR)"	NewName =                "BR_gamgam" />
+      <Syst OldName =           "nui_QCDscale_VH_MoriondCat1_2011(QCDscale_VH, RNDM_QCDscale_VH)"	NewName =             "QCDscale_Higgs_VH" />
+      <Syst OldName =        "nui_QCDscale_bbH_MoriondCat1_2011(QCDscale_bbH, RNDM_QCDscale_bbH)"	NewName =            "QCDscale_Higgs_bbH" />
+      <Syst OldName =        "nui_QCDscale_ggH_MoriondCat1_2011(QCDscale_ggH, RNDM_QCDscale_ggH)"	NewName =            "QCDscale_Higgs_ggH" />
+      <Syst OldName =        "nui_QCDscale_qqH_MoriondCat1_2011(QCDscale_qqH, RNDM_QCDscale_qqH)"	NewName =            "QCDscale_Higgs_qqH" />
+      <Syst OldName =        "nui_QCDscale_ttH_MoriondCat1_2011(QCDscale_ttH, RNDM_QCDscale_ttH)"	NewName =            "QCDscale_Higgs_ttH" />
+      <Syst OldName =     "nui_pdf_Higgs_ggH_MoriondCat1_2011(pdf_Higgs_ggH, RNDM_pdf_Higgs_ggH)"	NewName =           "pdf_gg" />
+      <Syst OldName =     "nui_pdf_Higgs_qqH_MoriondCat1_2011(pdf_Higgs_qqH, RNDM_pdf_Higgs_qqH)"	NewName =           "pdf_qqbar" />
+      <Syst OldName =           "nui_pTmodel_ggH_MoriondCat1_2011(pTmodel_ggH, RNDM_pTmodel_ggH)"	NewName =             "QCDscale_Higgs_ggH_ptH_m01" />
+      <Syst OldName =                  "BR_param_alphaS_Pdf(BR_param_alphaS, BR_param_alphaS_In)"	NewName =         "BR_param_alphaS" />
+      <Syst OldName =                              "BR_param_mB_Pdf(BR_param_mB, BR_param_mB_In)"	NewName =             "BR_param_mB" />
+      <Syst OldName = "BR_HiggsDecayWidthTHU_hqq_Pdf(BR_HiggsDecayWidthTHU_hqq, BR_HiggsDecayWidthTHU_hqq_In)"	NewName = "BR_HiggsDecayWidthTHU_hqq" />
+      <Syst OldName = "BR_HiggsDecayWidthTHU_hgg_Pdf(BR_HiggsDecayWidthTHU_hgg, BR_HiggsDecayWidthTHU_hgg_In)"	NewName = "BR_HiggsDecayWidthTHU_hgg" />
+
+      <Syst OldName = "nui_ATLAS_EM_ConvEfficiency_MoriondCat1_2011(ATLAS_EM_ConvEfficiency, RNDM_ATLAS_EM_ConvEfficiency)"	NewName = "ATLAS_EM_ConvEfficiency" />
+      <Syst OldName = "nui_ATLAS_EM_ConvFakeRate_MoriondCat1_2011(ATLAS_EM_ConvFakeRate, RNDM_ATLAS_EM_ConvFakeRate)"	NewName =   "ATLAS_EM_ConvFakeRate" />
+      <Syst OldName = "nui_ATLAS_EM_ConvRadius_MoriondCat1_2011(ATLAS_EM_ConvRadius, RNDM_ATLAS_EM_ConvRadius)"	NewName =     "ATLAS_EM_ConvRadius" />
+      <Syst OldName =     "nui_ATLAS_EM_ES_Z_MoriondCat1_2011(ATLAS_EM_ES_Z, RNDM_ATLAS_EM_ES_Z)"	NewName =           "ATLAS_EM_ES_Z" />
+      <Syst OldName = "nui_ATLAS_EM_Geant4_MoriondCat1_2011(ATLAS_EM_Geant4, RNDM_ATLAS_EM_Geant4)"	NewName =         "ATLAS_EM_Geant4" />
+      <Syst OldName = "nui_ATLAS_EM_L1Gain_MoriondCat1_2011(ATLAS_EM_L1Gain, RNDM_ATLAS_EM_L1Gain)"	NewName =         "ATLAS_EM_L1Gain" />
+      <Syst OldName = "nui_ATLAS_EM_L2Gain_MoriondCat1_2011(ATLAS_EM_L2Gain, RNDM_ATLAS_EM_L2Gain)"	NewName =         "ATLAS_EM_L2Gain" />
+      <Syst OldName = "nui_ATLAS_EM_LArCalib_Barrel_MoriondCat1_2011(ATLAS_EM_LArCalib_Barrel, RNDM_ATLAS_EM_LArCalib_Barrel)"	NewName = "ATLAS_EM_LArCalib_Barrel" />
+      <Syst OldName = "nui_ATLAS_EM_LArCalib_EC_MoriondCat1_2011(ATLAS_EM_LArCalib_EC, RNDM_ATLAS_EM_LArCalib_EC)"	NewName =    "ATLAS_EM_LArCalib_EC" />
+      <Syst OldName = "nui_ATLAS_EM_LArElecCalib_MoriondCat1_2011(ATLAS_EM_LArElecCalib, RNDM_ATLAS_EM_LArElecCalib)"	NewName =   "ATLAS_EM_LArElecCalib" />
+      <Syst OldName = "nui_ATLAS_EM_LArElecUnconv_Barrel_MoriondCat1_2011(ATLAS_EM_LArElecUnconv_Barrel, RNDM_ATLAS_EM_LArElecUnconv_Barrel)"	NewName = "ATLAS_EM_LArElecUnconv_Barrel" />
+      <Syst OldName = "nui_ATLAS_EM_LArElecUnconv_EC_MoriondCat1_2011(ATLAS_EM_LArElecUnconv_EC, RNDM_ATLAS_EM_LArElecUnconv_EC)"	NewName = "ATLAS_EM_LArElecUnconv_EC" />
+      <Syst OldName = "nui_ATLAS_EM_LArUnconvCalib_Barrel_MoriondCat1_2011(ATLAS_EM_LArUnconvCalib_Barrel, RNDM_ATLAS_EM_LArUnconvCalib_Barrel)"	NewName = "ATLAS_EM_LArUnconvCalib_Barrel" />
+      <Syst OldName = "nui_ATLAS_EM_LArUnconvCalib_EC_MoriondCat1_2011(ATLAS_EM_LArUnconvCalib_EC, RNDM_ATLAS_EM_LArUnconvCalib_EC)"	NewName = "ATLAS_EM_LArUnconvCalib_EC" />
+      <Syst OldName = "nui_ATLAS_EM_LatLeakConv_MoriondCat1_2011(ATLAS_EM_LatLeakConv, RNDM_ATLAS_EM_LatLeakConv)"	NewName =    "ATLAS_EM_LatLeakConv" />
+      <Syst OldName = "nui_ATLAS_EM_LatLeakUnconv_MoriondCat1_2011(ATLAS_EM_LatLeakUnconv, RNDM_ATLAS_EM_LatLeakUnconv)"	NewName =  "ATLAS_EM_LatLeakUnconv" />
+      <Syst OldName = "nui_ATLAS_EM_MatCalo_Barrel_MoriondCat1_2011(ATLAS_EM_MatCalo_Barrel, RNDM_ATLAS_EM_MatCalo_Barrel)"	NewName = "ATLAS_EM_MatCalo_Barrel" />
+      <Syst OldName = "nui_ATLAS_EM_MatCalo_EC_MoriondCat1_2011(ATLAS_EM_MatCalo_EC, RNDM_ATLAS_EM_MatCalo_EC)"	NewName =     "ATLAS_EM_MatCalo_EC" />
+      <Syst OldName = "nui_ATLAS_EM_MatCryo_Barrel_MoriondCat1_2011(ATLAS_EM_MatCryo_Barrel, RNDM_ATLAS_EM_MatCryo_Barrel)"	NewName = "ATLAS_EM_MatCryo_Barrel" />
+      <Syst OldName = "nui_ATLAS_EM_MatCryo_EC_MoriondCat1_2011(ATLAS_EM_MatCryo_EC, RNDM_ATLAS_EM_MatCryo_EC)"	NewName =     "ATLAS_EM_MatCryo_EC" />
+      <Syst OldName = "nui_ATLAS_EM_MatID_1_MoriondCat1_2011(ATLAS_EM_MatID_1, RNDM_ATLAS_EM_MatID_1)"	NewName =        "ATLAS_EM_MatID_1" />
+      <Syst OldName = "nui_ATLAS_EM_MatID_2_MoriondCat1_2011(ATLAS_EM_MatID_2, RNDM_ATLAS_EM_MatID_2)"	NewName =        "ATLAS_EM_MatID_2" />
+      <Syst OldName = "nui_ATLAS_EM_MatID_3_MoriondCat1_2011(ATLAS_EM_MatID_3, RNDM_ATLAS_EM_MatID_3)"	NewName =        "ATLAS_EM_MatID_3" />
+      <Syst OldName = "nui_ATLAS_EM_MatID_4_MoriondCat1_2011(ATLAS_EM_MatID_4, RNDM_ATLAS_EM_MatID_4)"	NewName =        "ATLAS_EM_MatID_4" />
+      <Syst OldName = "nui_ATLAS_EM_PS_Barrel_MoriondCat1_2011(ATLAS_EM_PS_Barrel, RNDM_ATLAS_EM_PS_Barrel)"	NewName =      "ATLAS_EM_PS_Barrel" />
+      <Syst OldName =  "nui_ATLAS_EM_PS_EC_MoriondCat1_2011(ATLAS_EM_PS_EC, RNDM_ATLAS_EM_PS_EC)"	NewName =          "ATLAS_EM_PS_EC" />
+      <Syst OldName =           "nui_ATLAS_EM_PV_MoriondCat1_2011(ATLAS_EM_PV, RNDM_ATLAS_EM_PV)"	NewName =             "ATLAS_EM_PV" />
+      <Syst OldName = "nui_ATLAS_EM_Pedestal_2011_MoriondCat1_2011(ATLAS_EM_Pedestal_2011, RNDM_ATLAS_EM_Pedestal_2011)"	NewName =  "ATLAS_EM_Pedestal_2011" />
+      <Syst OldName = "nui_ATLAS_EM_Pedestal_2012_MoriondCat1_2012(ATLAS_EM_Pedestal_2012, RNDM_ATLAS_EM_Pedestal_2012)"	NewName =  "ATLAS_EM_Pedestal_2012" />
+      <Syst OldName = "nui_ATLAS_EM_S12_Barrel_MoriondCat1_2011(ATLAS_EM_S12_Barrel, RNDM_ATLAS_EM_S12_Barrel)"	NewName =     "ATLAS_EM_S12_Barrel" />
+      <Syst OldName = "nui_ATLAS_EM_S12_EC_MoriondCat1_2011(ATLAS_EM_S12_EC, RNDM_ATLAS_EM_S12_EC)"	NewName =         "ATLAS_EM_S12_EC" />
+
+      <Syst OldName = "nui_ATLAS_EM_BCKG_MoriondCat1_MoriondCat1_2011(ATLAS_EM_BCKG_MoriondCat1, RNDM_ATLAS_EM_BCKG_MoriondCat1)"	NewName = "ATLAS_Hgg_BIAS_MASS_MoriondCat1" />
+      <Syst OldName = "nui_ATLAS_EM_BCKG_MoriondCat10_MoriondCat10_2011(ATLAS_EM_BCKG_MoriondCat10, RNDM_ATLAS_EM_BCKG_MoriondCat10)"	NewName = "ATLAS_Hgg_BIAS_MASS_MoriondCat10" />
+      <Syst OldName = "nui_ATLAS_EM_BCKG_MoriondCat2_MoriondCat2_2011(ATLAS_EM_BCKG_MoriondCat2, RNDM_ATLAS_EM_BCKG_MoriondCat2)"	NewName = "ATLAS_Hgg_BIAS_MASS_MoriondCat2" />
+      <Syst OldName = "nui_ATLAS_EM_BCKG_MoriondCat3_MoriondCat3_2011(ATLAS_EM_BCKG_MoriondCat3, RNDM_ATLAS_EM_BCKG_MoriondCat3)"	NewName = "ATLAS_Hgg_BIAS_MASS_MoriondCat3" />
+      <Syst OldName = "nui_ATLAS_EM_BCKG_MoriondCat4_MoriondCat4_2011(ATLAS_EM_BCKG_MoriondCat4, RNDM_ATLAS_EM_BCKG_MoriondCat4)"	NewName = "ATLAS_Hgg_BIAS_MASS_MoriondCat4" />
+      <Syst OldName = "nui_ATLAS_EM_BCKG_MoriondCat5_MoriondCat5_2011(ATLAS_EM_BCKG_MoriondCat5, RNDM_ATLAS_EM_BCKG_MoriondCat5)"	NewName = "ATLAS_Hgg_BIAS_MASS_MoriondCat5" />
+      <Syst OldName = "nui_ATLAS_EM_BCKG_MoriondCat6_MoriondCat6_2011(ATLAS_EM_BCKG_MoriondCat6, RNDM_ATLAS_EM_BCKG_MoriondCat6)"	NewName = "ATLAS_Hgg_BIAS_MASS_MoriondCat6" />
+      <Syst OldName = "nui_ATLAS_EM_BCKG_MoriondCat7_MoriondCat7_2011(ATLAS_EM_BCKG_MoriondCat7, RNDM_ATLAS_EM_BCKG_MoriondCat7)"	NewName = "ATLAS_Hgg_BIAS_MASS_MoriondCat7" />
+      <Syst OldName = "nui_ATLAS_EM_BCKG_MoriondCat8_MoriondCat8_2011(ATLAS_EM_BCKG_MoriondCat8, RNDM_ATLAS_EM_BCKG_MoriondCat8)"	NewName = "ATLAS_Hgg_BIAS_MASS_MoriondCat8" />
+      <Syst OldName = "nui_ATLAS_EM_BCKG_MoriondCat9_MoriondCat9_2011(ATLAS_EM_BCKG_MoriondCat9, RNDM_ATLAS_EM_BCKG_MoriondCat9)"	NewName = "ATLAS_Hgg_BIAS_MASS_MoriondCat9" />
+      <Syst OldName = "nui_bias_MoriondCat1_MoriondCat1_2011(bias_MoriondCat1, RNDM_bias_MoriondCat1)"	   	NewName =        "ATLAS_Hgg_BIAS_YLD_MoriondCat1" />
+      <Syst OldName = "nui_bias_MoriondCat10_MoriondCat10_2011(bias_MoriondCat10, RNDM_bias_MoriondCat10)" 	NewName =        "ATLAS_Hgg_BIAS_YLD_MoriondCat10" />
+      <Syst OldName = "nui_bias_MoriondCat2_MoriondCat2_2011(bias_MoriondCat2, RNDM_bias_MoriondCat2)"	   	NewName =        "ATLAS_Hgg_BIAS_YLD_MoriondCat2" />
+      <Syst OldName = "nui_bias_MoriondCat3_MoriondCat3_2011(bias_MoriondCat3, RNDM_bias_MoriondCat3)"		NewName =        "ATLAS_Hgg_BIAS_YLD_MoriondCat3" />
+      <Syst OldName = "nui_bias_MoriondCat4_MoriondCat4_2011(bias_MoriondCat4, RNDM_bias_MoriondCat4)"		NewName =        "ATLAS_Hgg_BIAS_YLD_MoriondCat4" />
+      <Syst OldName = "nui_bias_MoriondCat5_MoriondCat5_2011(bias_MoriondCat5, RNDM_bias_MoriondCat5)"		NewName =        "ATLAS_Hgg_BIAS_YLD_MoriondCat5" />
+      <Syst OldName = "nui_bias_MoriondCat6_MoriondCat6_2011(bias_MoriondCat6, RNDM_bias_MoriondCat6)"		NewName =        "ATLAS_Hgg_BIAS_YLD_MoriondCat6" />
+      <Syst OldName = "nui_bias_MoriondCat7_MoriondCat7_2011(bias_MoriondCat7, RNDM_bias_MoriondCat7)"		NewName =        "ATLAS_Hgg_BIAS_YLD_MoriondCat7" />
+      <Syst OldName = "nui_bias_MoriondCat8_MoriondCat8_2011(bias_MoriondCat8, RNDM_bias_MoriondCat8)"		NewName =        "ATLAS_Hgg_BIAS_YLD_MoriondCat8" />
+      <Syst OldName = "nui_bias_MoriondCat9_MoriondCat9_2011(bias_MoriondCat9, RNDM_bias_MoriondCat9)"		NewName =        "ATLAS_Hgg_BIAS_YLD_MoriondCat9" />
+
+      <Syst OldName =  "a1EP_MoriondCat10_2011"	NewName =   "scale_a1EP_MoriondCat10_2011" />
+      <Syst OldName =  "a1EP_MoriondCat10_2012"	NewName =   "scale_a1EP_MoriondCat10_2012" />
+      <Syst OldName =   "a1EP_MoriondCat1_2011"	NewName =   "scale_a1EP_MoriondCat1_2011" />
+      <Syst OldName =   "a1EP_MoriondCat1_2012"	NewName =   "scale_a1EP_MoriondCat1_2012" />
+      <Syst OldName =   "a1EP_MoriondCat3_2011"	NewName =   "scale_a1EP_MoriondCat3_2011" />
+      <Syst OldName =   "a1EP_MoriondCat3_2012"	NewName =   "scale_a1EP_MoriondCat3_2012" />
+      <Syst OldName =   "a1EP_MoriondCat5_2011"	NewName =   "scale_a1EP_MoriondCat5_2011" />
+      <Syst OldName =   "a1EP_MoriondCat5_2012"	NewName =   "scale_a1EP_MoriondCat5_2012" />
+      <Syst OldName =   "a1EP_MoriondCat6_2011"	NewName =   "scale_a1EP_MoriondCat6_2011" />
+      <Syst OldName =   "a1EP_MoriondCat6_2012"	NewName =   "scale_a1EP_MoriondCat6_2012" />
+      <Syst OldName =   "a1EP_MoriondCat8_2011"	NewName =   "scale_a1EP_MoriondCat8_2011" />
+      <Syst OldName =   "a1EP_MoriondCat8_2012"	NewName =   "scale_a1EP_MoriondCat8_2012" />
+      <Syst OldName =  "a2EP_MoriondCat10_2011"	NewName =   "scale_a2EP_MoriondCat10_2011" />
+      <Syst OldName =  "a2EP_MoriondCat10_2012"	NewName =   "scale_a2EP_MoriondCat10_2012" />
+      <Syst OldName =   "a2EP_MoriondCat1_2011"	NewName =   "scale_a2EP_MoriondCat1_2011" />
+      <Syst OldName =   "a2EP_MoriondCat1_2012"	NewName =   "scale_a2EP_MoriondCat1_2012" />
+      <Syst OldName =   "a2EP_MoriondCat3_2011"	NewName =   "scale_a2EP_MoriondCat3_2011" />
+      <Syst OldName =   "a2EP_MoriondCat3_2012"	NewName =   "scale_a2EP_MoriondCat3_2012" />
+      <Syst OldName =   "a2EP_MoriondCat5_2011"	NewName =   "scale_a2EP_MoriondCat5_2011" />
+      <Syst OldName =   "a2EP_MoriondCat5_2012"	NewName =   "scale_a2EP_MoriondCat5_2012" />
+      <Syst OldName =   "a2EP_MoriondCat6_2011"	NewName =   "scale_a2EP_MoriondCat6_2011" />
+      <Syst OldName =   "a2EP_MoriondCat6_2012"	NewName =   "scale_a2EP_MoriondCat6_2012" />
+      <Syst OldName =   "a2EP_MoriondCat8_2011"	NewName =   "scale_a2EP_MoriondCat8_2011" />
+      <Syst OldName =   "a2EP_MoriondCat8_2012"	NewName =   "scale_a2EP_MoriondCat8_2012" />
+      <Syst OldName =  "nbkg_MoriondCat10_2011"	NewName =   "scale_nbkg_MoriondCat10_2011" />
+      <Syst OldName =  "nbkg_MoriondCat10_2012"	NewName =   "scale_nbkg_MoriondCat10_2012" />
+      <Syst OldName =   "nbkg_MoriondCat1_2011"	NewName =   "scale_nbkg_MoriondCat1_2011" />
+      <Syst OldName =   "nbkg_MoriondCat1_2012"	NewName =   "scale_nbkg_MoriondCat1_2012" />
+      <Syst OldName =   "nbkg_MoriondCat2_2011"	NewName =   "scale_nbkg_MoriondCat2_2011" />
+      <Syst OldName =   "nbkg_MoriondCat2_2012"	NewName =   "scale_nbkg_MoriondCat2_2012" />
+      <Syst OldName =   "nbkg_MoriondCat3_2011"	NewName =   "scale_nbkg_MoriondCat3_2011" />
+      <Syst OldName =   "nbkg_MoriondCat3_2012"	NewName =   "scale_nbkg_MoriondCat3_2012" />
+      <Syst OldName =   "nbkg_MoriondCat4_2011"	NewName =   "scale_nbkg_MoriondCat4_2011" />
+      <Syst OldName =   "nbkg_MoriondCat4_2012"	NewName =   "scale_nbkg_MoriondCat4_2012" />
+      <Syst OldName =   "nbkg_MoriondCat5_2011"	NewName =   "scale_nbkg_MoriondCat5_2011" />
+      <Syst OldName =   "nbkg_MoriondCat5_2012"	NewName =   "scale_nbkg_MoriondCat5_2012" />
+      <Syst OldName =   "nbkg_MoriondCat6_2011"	NewName =   "scale_nbkg_MoriondCat6_2011" />
+      <Syst OldName =   "nbkg_MoriondCat6_2012"	NewName =   "scale_nbkg_MoriondCat6_2012" />
+      <Syst OldName =   "nbkg_MoriondCat7_2011"	NewName =   "scale_nbkg_MoriondCat7_2011" />
+      <Syst OldName =   "nbkg_MoriondCat7_2012"	NewName =   "scale_nbkg_MoriondCat7_2012" />
+      <Syst OldName =   "nbkg_MoriondCat8_2011"	NewName =   "scale_nbkg_MoriondCat8_2011" />
+      <Syst OldName =   "nbkg_MoriondCat8_2012"	NewName =   "scale_nbkg_MoriondCat8_2012" />
+      <Syst OldName =   "nbkg_MoriondCat9_2011"	NewName =   "scale_nbkg_MoriondCat9_2011" />
+      <Syst OldName =   "nbkg_MoriondCat9_2012"	NewName =   "scale_nbkg_MoriondCat9_2012" />
+      <Syst OldName =  "slope_MoriondCat2_2011"	NewName =  "scale_slope_MoriondCat2_2011" />
+      <Syst OldName =  "slope_MoriondCat2_2012"	NewName =  "scale_slope_MoriondCat2_2012" />
+      <Syst OldName =  "slope_MoriondCat4_2011"	NewName =  "scale_slope_MoriondCat4_2011" />
+      <Syst OldName =  "slope_MoriondCat4_2012"	NewName =  "scale_slope_MoriondCat4_2012" />
+      <Syst OldName =  "slope_MoriondCat7_2011"	NewName =  "scale_slope_MoriondCat7_2011" />
+      <Syst OldName =  "slope_MoriondCat7_2012"	NewName =  "scale_slope_MoriondCat7_2012" />
+      <Syst OldName =  "slope_MoriondCat9_2011"	NewName =  "scale_slope_MoriondCat9_2011" />
+      <Syst OldName =  "slope_MoriondCat9_2012"	NewName =  "scale_slope_MoriondCat9_2012" />
+
+      <Syst OldName=       "combCat" 		NewName=      "Cat_ATLAS_hgg"/>
+    </RenameMap>
+  </Channel>
+  <Channel Name="Cat_ATLAS_hzz">
+    <File Name="workspace/lhchcg/myrep/atlas/parambr/atlas_h4l_obs_parambr.root"/>
+    <Workspace Name="combWS"/>
+    <ModelConfig Name="ModelConfig"/>
+    <ModelPOI Name="dummy, dummy, dummy, MH, mu_zz,
+		    dummy, dummy, dummy, dummy, dummy"/>
+    <ModelData Name="combData"/>
+    <RenameMap>
+      <Syst OldName =   "alpha_ATLAS_LUMI_2011"	NewName =   "ATLAS_LUMI_2011" />
+      <Syst OldName =   "alpha_ATLAS_LUMI_2012"	NewName =   "ATLAS_LUMI_2012" />
+      <Syst OldName =                        "LHC_LUMI_2011_Pdf(LHC_LUMI_2011, LHC_LUMI_2011_In)"	NewName =           "LHC_LUMI_2011" />
+      <Syst OldName =                        "LHC_LUMI_2012_Pdf(LHC_LUMI_2012, LHC_LUMI_2012_In)"	NewName =           "LHC_LUMI_2012" />
+      <Syst OldName = "ATLAS_LUMI_uncor_2011_Pdf(ATLAS_LUMI_uncor_2011, ATLAS_LUMI_uncor_2011_In)"	NewName =   "ATLAS_LUMI_uncor_2011" />
+      <Syst OldName = "ATLAS_LUMI_uncor_2012_Pdf(ATLAS_LUMI_uncor_2012, ATLAS_LUMI_uncor_2012_In)"	NewName =   "ATLAS_LUMI_uncor_2012" />
+
+      <Syst OldName =       "alpha_QCDscale_VV"	NewName =       "QCDscale_Bkg_VV" />
+      <Syst OldName =      "alpha_QCDscale_ggH"	NewName =      "QCDscale_Higgs_ggH" />
+      <Syst OldName =     "alpha_pdf_Higgs_ggH"	NewName =     "pdf_gg" />
+      <Syst OldName =            "alpha_pdf_qq"	NewName =            "pdf_qqbar" />
+      <Syst OldName =       "alpha_ATLAS_BR_VV"	NewName =       "BR_VV" />
+      <Syst OldName =                  "BR_param_alphaS_Pdf(BR_param_alphaS, BR_param_alphaS_In)"	NewName =         "BR_param_alphaS" />
+      <Syst OldName =                              "BR_param_mB_Pdf(BR_param_mB, BR_param_mB_In)"	NewName =             "BR_param_mB" />
+      <Syst OldName = "BR_HiggsDecayWidthTHU_hqq_Pdf(BR_HiggsDecayWidthTHU_hqq, BR_HiggsDecayWidthTHU_hqq_In)"	NewName = "BR_HiggsDecayWidthTHU_hqq" />
+      <Syst OldName = "BR_HiggsDecayWidthTHU_hvv_Pdf(BR_HiggsDecayWidthTHU_hvv, BR_HiggsDecayWidthTHU_hvv_In)"	NewName = "BR_HiggsDecayWidthTHU_hvv" />
+
+      <Syst OldName =      "alpha_ATLAS_MU_EFF"	NewName =      "ATLAS_MU_EFF" />
+      <Syst OldName =       "alpha_ATLAS_MU_MS"	NewName =       "ATLAS_MU_MS" />
+      <Syst OldName = "alpha_ATLAS_EL_2012_IDST_high"	NewName = "ATLAS_EL_2012_IDST_high" />
+      <Syst OldName = "alpha_ATLAS_EL_2012_ID_low"	NewName = "ATLAS_EL_2012_ID_low" />
+      <Syst OldName = "alpha_ATLAS_EL_2012_REC_low"	NewName = "ATLAS_EL_2012_REC_low" />
+
+      <Syst OldName =     "alpha_ATLAS_EM_ES_Z"	NewName =     "ATLAS_EM_ES_Z" />
+
+      <Syst OldName = "alpha_ATLAS_norm_SF_H4l_Zbb_llmumu_2011"	NewName = "ATLAS_norm_SF_H4l_Zbb_llmumu_2011" />
+      <Syst OldName = "alpha_ATLAS_norm_SF_H4l_Z_llee_2011"	NewName = "ATLAS_norm_SF_H4l_Z_llee_2011" />
+      <Syst OldName = "alpha_ATLAS_shape_SF_H4l_EL_EFF_ISOIP_2011"	NewName = "ATLAS_shape_SF_H4l_EL_EFF_ISOIP_2011" />
+      <Syst OldName = "alpha_ATLAS_norm_SF_H4l_Zbb_llmumu_2012"	NewName = "ATLAS_norm_SF_H4l_Zbb_llmumu_2012" />
+      <Syst OldName = "alpha_ATLAS_norm_SF_H4l_Z_llee_2012"	NewName = "ATLAS_norm_SF_H4l_Z_llee_2012" />
+      <Syst OldName = "alpha_ATLAS_shape_SF_H4l_EL_EFF_ISOIP_2012"	NewName = "ATLAS_shape_SF_H4l_EL_EFF_ISOIP_2012" />
+
+      <Syst OldName=       "combCat" 		NewName=      "Cat_ATLAS_hzz"/>
+    </RenameMap>
+  </Channel>
+  <Channel Name="Cat_CMS_hgg">
+    <File Name="workspace/lhchcg/myrep/cms/parambr/hgg.mH.obs_parambr.root"/>
+    <Workspace Name="combWS"/>
+    <ModelConfig Name="ModelConfig"/>
+    <ModelPOI Name="dummy, dummy, dummy, dummy, dummy,
+		    MH, RF_gg, RV_gg, dummy, dummy"/>
+    <ModelData Name="combData"/>
+    <RenameMap>
+      <!-- Correlated with CMS H->4l -->
+      <!-- Luminosity -->
+      <Syst OldName = "lumi_7TeV_Pdf(lumi_7TeV, lumi_7TeV_In)" NewName = "CMS_LUMI_2011" />
+      <Syst OldName = "lumi_8TeV_Pdf(lumi_8TeV, lumi_8TeV_In)" NewName = "CMS_LUMI_2012" />
+      <Syst OldName =                        "LHC_LUMI_2011_Pdf(LHC_LUMI_2011, LHC_LUMI_2011_In)"	NewName =           "LHC_LUMI_2011" />
+      <Syst OldName =                        "LHC_LUMI_2012_Pdf(LHC_LUMI_2012, LHC_LUMI_2012_In)"	NewName =           "LHC_LUMI_2012" />
+      <Syst OldName = "CMS_LUMI_uncor_2011_Pdf(CMS_LUMI_uncor_2011, CMS_LUMI_uncor_2011_In)"	NewName =   "CMS_LUMI_uncor_2011" />
+      <Syst OldName = "CMS_LUMI_uncor_2012_Pdf(CMS_LUMI_uncor_2012, CMS_LUMI_uncor_2012_In)"	NewName =   "CMS_LUMI_uncor_2012" />
+
+      <!-- Theory uncertainties -->
+      <Syst OldName = "QCDscale_ggH_Pdf(QCDscale_ggH, QCDscale_ggH_In)" NewName = "QCDscale_Higgs_ggH" />
+      <Syst OldName = "QCDscale_qqH_Pdf(QCDscale_qqH, QCDscale_qqH_In)" NewName = "QCDscale_Higgs_qqH" />
+      <Syst OldName = "QCDscale_VH_Pdf(QCDscale_VH, QCDscale_VH_In)" NewName = "QCDscale_Higgs_VH" />
+      <Syst OldName = "QCDscale_ttH_Pdf(QCDscale_ttH, QCDscale_ttH_In)" NewName = "QCDscale_Higgs_ttH" />
+      <Syst OldName = "pdf_gg_Pdf(pdf_gg, pdf_gg_In)" NewName = "pdf_gg" />
+      <Syst OldName = "pdf_qqbar_Pdf(pdf_qqbar, pdf_qqbar_In)" NewName = "pdf_qqbar" />
+      <Syst OldName =                  "BR_param_alphaS_Pdf(BR_param_alphaS, BR_param_alphaS_In)"	NewName =         "BR_param_alphaS" />
+      <Syst OldName =                              "BR_param_mB_Pdf(BR_param_mB, BR_param_mB_In)"	NewName =             "BR_param_mB" />
+      <Syst OldName = "BR_HiggsDecayWidthTHU_hqq_Pdf(BR_HiggsDecayWidthTHU_hqq, BR_HiggsDecayWidthTHU_hqq_In)"	NewName = "BR_HiggsDecayWidthTHU_hqq" />
+      <Syst OldName = "BR_HiggsDecayWidthTHU_hgg_Pdf(BR_HiggsDecayWidthTHU_hgg, BR_HiggsDecayWidthTHU_hgg_In)"	NewName = "BR_HiggsDecayWidthTHU_hgg" />
+      <!-- Lepton efficiency -->
+      <Syst OldName = "CMS_eff_e_Pdf(CMS_eff_e, CMS_eff_e_In)" NewName = "CMS_eff_e" />
+      <Syst OldName = "CMS_eff_m_Pdf(CMS_eff_m, CMS_eff_m_In)" NewName = "CMS_eff_m" />
+
+      <!-- Decorrelated with CMS H->4l: Adding tag CMS_hgg when necessary -->
+      <Syst OldName = "CMS_hgg_BR_Pdf(CMS_hgg_BR, CMS_hgg_BR_In)" NewName = "BR_gamgam" />
+      <Syst OldName = "QCDscale_gg2in_Pdf(QCDscale_gg2in, QCDscale_gg2in_In)" NewName = "QCDscale_Higgs_gg2in_CMS" />
+      <Syst OldName = "QCDscale_gg2in_migration1_Pdf(QCDscale_gg2in_migration1, QCDscale_gg2in_migration1_In)" NewName = "QCDscale_gg2in_migration1_CMS" />
+      <Syst OldName = "QCDscale_gg2in_migration2_Pdf(QCDscale_gg2in_migration2, QCDscale_gg2in_migration2_In)" NewName = "QCDscale_gg2in_migration2_CMS" />
+
+
+      <Syst OldName = "CMS_eff_b_Pdf(CMS_eff_b, CMS_eff_b_In)" NewName = "CMS_eff_b" />
+      <Syst OldName = "CMS_eff_j_Pdf(CMS_eff_j, CMS_eff_j_In)" NewName = "CMS_eff_j" />
+
+      <Syst OldName = "CMS_hgg_n_pdf_1_Pdf(CMS_hgg_n_pdf_1, CMS_hgg_n_pdf_1_In)" NewName = "CMS_hgg_n_pdf_1" />
+      <Syst OldName = "CMS_hgg_n_pdf_10_Pdf(CMS_hgg_n_pdf_10, CMS_hgg_n_pdf_10_In)" NewName = "CMS_hgg_n_pdf_10" />
+      <Syst OldName = "CMS_hgg_n_pdf_11_Pdf(CMS_hgg_n_pdf_11, CMS_hgg_n_pdf_11_In)" NewName = "CMS_hgg_n_pdf_11" />
+      <Syst OldName = "CMS_hgg_n_pdf_12_Pdf(CMS_hgg_n_pdf_12, CMS_hgg_n_pdf_12_In)" NewName = "CMS_hgg_n_pdf_12" />
+      <Syst OldName = "CMS_hgg_n_pdf_13_Pdf(CMS_hgg_n_pdf_13, CMS_hgg_n_pdf_13_In)" NewName = "CMS_hgg_n_pdf_13" />
+      <Syst OldName = "CMS_hgg_n_pdf_14_Pdf(CMS_hgg_n_pdf_14, CMS_hgg_n_pdf_14_In)" NewName = "CMS_hgg_n_pdf_14" />
+      <Syst OldName = "CMS_hgg_n_pdf_15_Pdf(CMS_hgg_n_pdf_15, CMS_hgg_n_pdf_15_In)" NewName = "CMS_hgg_n_pdf_15" />
+      <Syst OldName = "CMS_hgg_n_pdf_16_Pdf(CMS_hgg_n_pdf_16, CMS_hgg_n_pdf_16_In)" NewName = "CMS_hgg_n_pdf_16" />
+      <Syst OldName = "CMS_hgg_n_pdf_17_Pdf(CMS_hgg_n_pdf_17, CMS_hgg_n_pdf_17_In)" NewName = "CMS_hgg_n_pdf_17" />
+      <Syst OldName = "CMS_hgg_n_pdf_18_Pdf(CMS_hgg_n_pdf_18, CMS_hgg_n_pdf_18_In)" NewName = "CMS_hgg_n_pdf_18" />
+      <Syst OldName = "CMS_hgg_n_pdf_19_Pdf(CMS_hgg_n_pdf_19, CMS_hgg_n_pdf_19_In)" NewName = "CMS_hgg_n_pdf_19" />
+      <Syst OldName = "CMS_hgg_n_pdf_2_Pdf(CMS_hgg_n_pdf_2, CMS_hgg_n_pdf_2_In)" NewName = "CMS_hgg_n_pdf_2" />
+      <Syst OldName = "CMS_hgg_n_pdf_20_Pdf(CMS_hgg_n_pdf_20, CMS_hgg_n_pdf_20_In)" NewName = "CMS_hgg_n_pdf_20" />
+      <Syst OldName = "CMS_hgg_n_pdf_21_Pdf(CMS_hgg_n_pdf_21, CMS_hgg_n_pdf_21_In)" NewName = "CMS_hgg_n_pdf_21" />
+      <Syst OldName = "CMS_hgg_n_pdf_22_Pdf(CMS_hgg_n_pdf_22, CMS_hgg_n_pdf_22_In)" NewName = "CMS_hgg_n_pdf_22" />
+      <Syst OldName = "CMS_hgg_n_pdf_23_Pdf(CMS_hgg_n_pdf_23, CMS_hgg_n_pdf_23_In)" NewName = "CMS_hgg_n_pdf_23" />
+      <Syst OldName = "CMS_hgg_n_pdf_24_Pdf(CMS_hgg_n_pdf_24, CMS_hgg_n_pdf_24_In)" NewName = "CMS_hgg_n_pdf_24" />
+      <Syst OldName = "CMS_hgg_n_pdf_25_Pdf(CMS_hgg_n_pdf_25, CMS_hgg_n_pdf_25_In)" NewName = "CMS_hgg_n_pdf_25" />
+      <Syst OldName = "CMS_hgg_n_pdf_26_Pdf(CMS_hgg_n_pdf_26, CMS_hgg_n_pdf_26_In)" NewName = "CMS_hgg_n_pdf_26" />
+      <Syst OldName = "CMS_hgg_n_pdf_3_Pdf(CMS_hgg_n_pdf_3, CMS_hgg_n_pdf_3_In)" NewName = "CMS_hgg_n_pdf_3" />
+      <Syst OldName = "CMS_hgg_n_pdf_4_Pdf(CMS_hgg_n_pdf_4, CMS_hgg_n_pdf_4_In)" NewName = "CMS_hgg_n_pdf_4" />
+      <Syst OldName = "CMS_hgg_n_pdf_5_Pdf(CMS_hgg_n_pdf_5, CMS_hgg_n_pdf_5_In)" NewName = "CMS_hgg_n_pdf_5" />
+      <Syst OldName = "CMS_hgg_n_pdf_6_Pdf(CMS_hgg_n_pdf_6, CMS_hgg_n_pdf_6_In)" NewName = "CMS_hgg_n_pdf_6" />
+      <Syst OldName = "CMS_hgg_n_pdf_7_Pdf(CMS_hgg_n_pdf_7, CMS_hgg_n_pdf_7_In)" NewName = "CMS_hgg_n_pdf_7" />
+      <Syst OldName = "CMS_hgg_n_pdf_8_Pdf(CMS_hgg_n_pdf_8, CMS_hgg_n_pdf_8_In)" NewName = "CMS_hgg_n_pdf_8" />
+      <Syst OldName = "CMS_hgg_n_pdf_9_Pdf(CMS_hgg_n_pdf_9, CMS_hgg_n_pdf_9_In)" NewName = "CMS_hgg_n_pdf_9" />
+      <Syst OldName = "CMS_hgg_n_id_eff_Pdf(CMS_hgg_n_id_eff, CMS_hgg_n_id_eff_In)" NewName = "CMS_hgg_n_id_eff" />
+      <Syst OldName = "CMS_hgg_n_id_mva_Pdf(CMS_hgg_n_id_mva, CMS_hgg_n_id_mva_In)" NewName = "CMS_hgg_n_id_mva" />
+      <Syst OldName = "CMS_hgg_n_sc_ggH_Pdf(CMS_hgg_n_sc_ggH, CMS_hgg_n_sc_ggH_In)" NewName = "CMS_hgg_n_sc_ggH" />
+      <Syst OldName = "CMS_hgg_n_sc_qqH_Pdf(CMS_hgg_n_sc_qqH, CMS_hgg_n_sc_qqH_In)" NewName = "CMS_hgg_n_sc_qqH" />
+      <Syst OldName = "CMS_hgg_n_sigmae_Pdf(CMS_hgg_n_sigmae, CMS_hgg_n_sigmae_In)" NewName = "CMS_hgg_n_sigmae" />
+      <Syst OldName = "CMS_hgg_n_trig_eff_Pdf(CMS_hgg_n_trig_eff, CMS_hgg_n_trig_eff_In)" NewName = "CMS_hgg_n_trig_eff" />
+
+      <Syst OldName = "CMS_hgg_tth_gluon_splitting_Pdf(CMS_hgg_tth_gluon_splitting, CMS_hgg_tth_gluon_splitting_In)" NewName = "CMS_hgg_tth_gluon_splitting" />
+      <Syst OldName = "CMS_hgg_tth_mc_low_stat_Pdf(CMS_hgg_tth_mc_low_stat, CMS_hgg_tth_mc_low_stat_In)" NewName = "CMS_hgg_tth_mc_low_stat" />
+      <Syst OldName = "CMS_hgg_tth_parton_shower_Pdf(CMS_hgg_tth_parton_shower, CMS_hgg_tth_parton_shower_In)" NewName = "CMS_hgg_tth_parton_shower" />
+      <Syst OldName = "CMS_scale_j_Pdf(CMS_scale_j, CMS_scale_j_In)" NewName = "CMS_hgg_scale_j" />
+      <Syst OldName = "CMS_scale_j_migration1_Pdf(CMS_scale_j_migration1, CMS_scale_j_migration1_In)" NewName = "CMS_hgg_scale_j_migration1" />
+      <Syst OldName = "CMS_scale_j_migration2_Pdf(CMS_scale_j_migration2, CMS_scale_j_migration2_In)" NewName = "CMS_hgg_scale_j_migration2" />
+      <Syst OldName = "CMS_scale_met_Pdf(CMS_scale_met, CMS_scale_met_In)" NewName = "CMS_hgg_scale_met" />
+      <Syst OldName = "UEPS_Pdf(UEPS, UEPS_In)" NewName = "CMS_hgg_UEPS" />
+      <Syst OldName = "UEPS_migration1_Pdf(UEPS_migration1, UEPS_migration1_In)" NewName = "CMS_hgg_UEPS_migration1" />
+      <Syst OldName = "UEPS_migration2_Pdf(UEPS_migration2, UEPS_migration2_In)" NewName = "CMS_hgg_UEPS_migration2" />
+
+      <Syst OldName = "CMS_hgg_nuisance_EElowR9_7TeVsmear_Pdf(CMS_hgg_nuisance_EElowR9_7TeVsmear, CMS_hgg_nuisance_EElowR9_7TeVsmear_In)" NewName = "CMS_hgg_nuisance_EElowR9_7TeVsmear" />
+      <Syst OldName = "CMS_hgg_nuisance_eigen1_EElowR9_scale_Pdf(CMS_hgg_nuisance_eigen1_EElowR9_scale, CMS_hgg_nuisance_eigen1_EElowR9_scale_In)" NewName = "CMS_hgg_nuisance_eigen1_EElowR9_scale" />
+      <Syst OldName = "CMS_hgg_nuisance_NonLinearity_7TeVscale_Pdf(CMS_hgg_nuisance_NonLinearity_7TeVscale, CMS_hgg_nuisance_NonLinearity_7TeVscale_In)" NewName = "CMS_hgg_nuisance_NonLinearity_7TeVscale" />
+      <Syst OldName = "CMS_hgg_nuisance_EBlowR9Phi_8TeVsmear_Pdf(CMS_hgg_nuisance_EBlowR9Phi_8TeVsmear, CMS_hgg_nuisance_EBlowR9Phi_8TeVsmear_In)" NewName = "CMS_hgg_nuisance_EBlowR9Phi_8TeVsmear" />
+      <Syst OldName = "CMS_hgg_nuisance_Geant4_scale_Pdf(CMS_hgg_nuisance_Geant4_scale, CMS_hgg_nuisance_Geant4_scale_In)" NewName = "CMS_hgg_nuisance_Geant4_scale" />
+      <Syst OldName = "CMS_hgg_nuisance_EBhighR9Phi_7TeVsmear_Pdf(CMS_hgg_nuisance_EBhighR9Phi_7TeVsmear, CMS_hgg_nuisance_EBhighR9Phi_7TeVsmear_In)" NewName = "CMS_hgg_nuisance_EBhighR9Phi_7TeVsmear" />
+      <Syst OldName = "CMS_hgg_nuisance_MaterialEBOuterEE_scale_Pdf(CMS_hgg_nuisance_MaterialEBOuterEE_scale, CMS_hgg_nuisance_MaterialEBOuterEE_scale_In)" NewName = "CMS_hgg_nuisance_MaterialEBOuterEE_scale" />
+      <Syst OldName = "CMS_hgg_nuisance_Absolute_scale_Pdf(CMS_hgg_nuisance_Absolute_scale, CMS_hgg_nuisance_Absolute_scale_In)" NewName = "CMS_hgg_nuisance_Absolute_scale" />
+      <Syst OldName = "CMS_hgg_nuisance_EElowR9_8TeVsmear_Pdf(CMS_hgg_nuisance_EElowR9_8TeVsmear, CMS_hgg_nuisance_EElowR9_8TeVsmear_In)" NewName = "CMS_hgg_nuisance_EElowR9_8TeVsmear" />
+      <Syst OldName = "CMS_hgg_nuisance_EEhighR9_8TeVsmear_Pdf(CMS_hgg_nuisance_EEhighR9_8TeVsmear, CMS_hgg_nuisance_EEhighR9_8TeVsmear_In)" NewName = "CMS_hgg_nuisance_EEhighR9_8TeVsmear" />
+      <Syst OldName = "CMS_hgg_nuisance_eigen1_EEhighR9_scale_Pdf(CMS_hgg_nuisance_eigen1_EEhighR9_scale, CMS_hgg_nuisance_eigen1_EEhighR9_scale_In)" NewName = "CMS_hgg_nuisance_eigen1_EEhighR9_scale" />
+      <Syst OldName = "CMS_hgg_nuisance_deltafracright_Pdf(CMS_hgg_nuisance_deltafracright, CMS_hgg_nuisance_deltafracright_In)" NewName = "CMS_hgg_nuisance_deltafracright" />
+      <Syst OldName = "CMS_hgg_nuisance_EBhighR9_8TeVsmear_Pdf(CMS_hgg_nuisance_EBhighR9_8TeVsmear, CMS_hgg_nuisance_EBhighR9_8TeVsmear_In)" NewName = "CMS_hgg_nuisance_EBhighR9_8TeVsmear" />
+      <Syst OldName = "CMS_hgg_nuisance_EBlowR9Phi_7TeVsmear_Pdf(CMS_hgg_nuisance_EBlowR9Phi_7TeVsmear, CMS_hgg_nuisance_EBlowR9Phi_7TeVsmear_In)" NewName = "CMS_hgg_nuisance_EBlowR9Phi_7TeVsmear" />
+      <Syst OldName = "CMS_hgg_nuisance_LightColl_scale_Pdf(CMS_hgg_nuisance_LightColl_scale, CMS_hgg_nuisance_LightColl_scale_In)" NewName = "CMS_hgg_nuisance_LightColl_scale" />
+      <Syst OldName = "CMS_hgg_nuisance_EBhighR9Phi_8TeVsmear_Pdf(CMS_hgg_nuisance_EBhighR9Phi_8TeVsmear, CMS_hgg_nuisance_EBhighR9Phi_8TeVsmear_In)" NewName = "CMS_hgg_nuisance_EBhighR9Phi_8TeVsmear" />
+      <Syst OldName = "CMS_hgg_nuisance_eigen1_EBhighR9_scale_Pdf(CMS_hgg_nuisance_eigen1_EBhighR9_scale, CMS_hgg_nuisance_eigen1_EBhighR9_scale_In)" NewName = "CMS_hgg_nuisance_eigen1_EBhighR9_scale" />
+      <Syst OldName = "CMS_hgg_nuisance_eigen2_EBhighR9_scale_Pdf(CMS_hgg_nuisance_eigen2_EBhighR9_scale, CMS_hgg_nuisance_eigen2_EBhighR9_scale_In)" NewName = "CMS_hgg_nuisance_eigen2_EBhighR9_scale" />
+      <Syst OldName = "CMS_hgg_nuisance_EBlowR9_7TeVsmear_Pdf(CMS_hgg_nuisance_EBlowR9_7TeVsmear, CMS_hgg_nuisance_EBlowR9_7TeVsmear_In)" NewName = "CMS_hgg_nuisance_EBlowR9_7TeVsmear" />
+      <Syst OldName = "CMS_hgg_nuisance_EBhighR9_7TeVsmear_Pdf(CMS_hgg_nuisance_EBhighR9_7TeVsmear, CMS_hgg_nuisance_EBhighR9_7TeVsmear_In)" NewName = "CMS_hgg_nuisance_EBhighR9_7TeVsmear" />
+      <Syst OldName = "CMS_hgg_nuisance_eigen2_EElowR9_scale_Pdf(CMS_hgg_nuisance_eigen2_EElowR9_scale, CMS_hgg_nuisance_eigen2_EElowR9_scale_In)" NewName = "CMS_hgg_nuisance_eigen2_EElowR9_scale" />
+      <Syst OldName = "CMS_hgg_nuisance_eigen2_EBlowR9_scale_Pdf(CMS_hgg_nuisance_eigen2_EBlowR9_scale, CMS_hgg_nuisance_eigen2_EBlowR9_scale_In)" NewName = "CMS_hgg_nuisance_eigen2_EBlowR9_scale" />
+      <Syst OldName = "CMS_hgg_nuisance_EEhighR9_7TeVsmear_Pdf(CMS_hgg_nuisance_EEhighR9_7TeVsmear, CMS_hgg_nuisance_EEhighR9_7TeVsmear_In)" NewName = "CMS_hgg_nuisance_EEhighR9_7TeVsmear" />
+      <Syst OldName = "CMS_hgg_nuisance_MaterialEBCentral_scale_Pdf(CMS_hgg_nuisance_MaterialEBCentral_scale, CMS_hgg_nuisance_MaterialEBCentral_scale_In)" NewName = "CMS_hgg_nuisance_MaterialEBCentral_scale" />
+      <Syst OldName = "CMS_hgg_nuisance_eigen1_EBlowR9_scale_Pdf(CMS_hgg_nuisance_eigen1_EBlowR9_scale, CMS_hgg_nuisance_eigen1_EBlowR9_scale_In)" NewName = "CMS_hgg_nuisance_eigen1_EBlowR9_scale" />
+      <Syst OldName = "CMS_hgg_nuisance_NonLinearity_scale_Pdf(CMS_hgg_nuisance_NonLinearity_scale, CMS_hgg_nuisance_NonLinearity_scale_In)" NewName = "CMS_hgg_nuisance_NonLinearity_scale" />
+      <Syst OldName = "CMS_hgg_nuisance_eigen2_EEhighR9_scale_Pdf(CMS_hgg_nuisance_eigen2_EEhighR9_scale, CMS_hgg_nuisance_eigen2_EEhighR9_scale_In)" NewName = "CMS_hgg_nuisance_eigen2_EEhighR9_scale" />
+      <Syst OldName = "CMS_hgg_nuisance_EBlowR9_8TeVsmear_Pdf(CMS_hgg_nuisance_EBlowR9_8TeVsmear, CMS_hgg_nuisance_EBlowR9_8TeVsmear_In)" NewName = "CMS_hgg_nuisance_EBlowR9_8TeVsmear" />
+
+      <Syst OldName= "CMS_channel" NewName= "Cat_CMS_hgg"/>
+    </RenameMap>
+  </Channel>
+  <Channel Name="Cat_CMS_hzz">
+    <File Name="workspace/lhchcg/myrep/cms/parambr/hzz.mH.obs_parambr.root"/>
+    <Workspace Name="combWS"/>
+    <ModelConfig Name="ModelConfig"/>
+    <ModelPOI Name="dummy, dummy, dummy, dummy, dummy,
+		    dummy, dummy, dummy, MH, mu_zz"/>
+    <ModelData Name="combData"/>
+    <RenameMap>
+      <!-- Correlated with CMS H->4l -->
+      <!-- Luminosity -->
+      <Syst OldName = "lumi_7TeV_Pdf(lumi_7TeV, lumi_7TeV_In)" NewName = "CMS_LUMI_2011" />
+      <Syst OldName = "lumi_8TeV_Pdf(lumi_8TeV, lumi_8TeV_In)" NewName = "CMS_LUMI_2012" />
+      <Syst OldName =                        "LHC_LUMI_2011_Pdf(LHC_LUMI_2011, LHC_LUMI_2011_In)"	NewName =           "LHC_LUMI_2011" />
+      <Syst OldName =                        "LHC_LUMI_2012_Pdf(LHC_LUMI_2012, LHC_LUMI_2012_In)"	NewName =           "LHC_LUMI_2012" />
+      <Syst OldName = "CMS_LUMI_uncor_2011_Pdf(CMS_LUMI_uncor_2011, CMS_LUMI_uncor_2011_In)"	NewName =   "CMS_LUMI_uncor_2011" />
+      <Syst OldName = "CMS_LUMI_uncor_2012_Pdf(CMS_LUMI_uncor_2012, CMS_LUMI_uncor_2012_In)"	NewName =   "CMS_LUMI_uncor_2012" />
+      <!-- Theory uncertainties -->
+      <Syst OldName = "QCDscale_ggH_Pdf(QCDscale_ggH, QCDscale_ggH_In)" NewName = "QCDscale_Higgs_ggH" />
+      <Syst OldName = "QCDscale_qqH_Pdf(QCDscale_qqH, QCDscale_qqH_In)" NewName = "QCDscale_Higgs_qqH" />
+      <Syst OldName = "QCDscale_WH_Pdf(QCDscale_WH, QCDscale_WH_In)" NewName = "QCDscale_Higgs_VH" />
+      <Syst OldName = "QCDscale_ZH_Pdf(QCDscale_ZH, QCDscale_ZH_In)" NewName = "QCDscale_Higgs_VH" />
+      <Syst OldName = "QCDscale_ttH_Pdf(QCDscale_ttH, QCDscale_ttH_In)" NewName = "QCDscale_Higgs_ttH" />
+      <Syst OldName = "pdf_gg_Pdf(pdf_gg, pdf_gg_In)" NewName = "pdf_gg" />
+      <Syst OldName = "pdf_qqbar_Pdf(pdf_qqbar, pdf_qqbar_In)" NewName = "pdf_qqbar" />
+      <Syst OldName =                  "BR_param_alphaS_Pdf(BR_param_alphaS, BR_param_alphaS_In)"	NewName =         "BR_param_alphaS" />
+      <Syst OldName =                              "BR_param_mB_Pdf(BR_param_mB, BR_param_mB_In)"	NewName =             "BR_param_mB" />
+      <Syst OldName = "BR_HiggsDecayWidthTHU_hqq_Pdf(BR_HiggsDecayWidthTHU_hqq, BR_HiggsDecayWidthTHU_hqq_In)"	NewName = "BR_HiggsDecayWidthTHU_hqq" />
+      <Syst OldName = "BR_HiggsDecayWidthTHU_hvv_Pdf(BR_HiggsDecayWidthTHU_hvv, BR_HiggsDecayWidthTHU_hvv_In)"	NewName = "BR_HiggsDecayWidthTHU_hvv" />
+      <!-- Lepton efficiency -->
+      <Syst OldName = "CMS_eff_e_Pdf(CMS_eff_e, CMS_eff_e_In)" NewName = "CMS_eff_e" />
+      <Syst OldName = "CMS_eff_m_Pdf(CMS_eff_m, CMS_eff_m_In)" NewName = "CMS_eff_m" />
+
+      <!-- Decorrelated with CMS H->gamgam: Adding tag CMS_hzz when necessary -->
+      <Syst OldName = "BRhiggs_ZZ4l_Pdf(BRhiggs_ZZ4l, BRhiggs_ZZ4l_In)" NewName = "BR_VV" />
+      <Syst OldName = "QCDscale_VV_Pdf(QCDscale_VV, QCDscale_VV_In)" NewName = "QCDscale_Bkg_VV" />
+      <Syst OldName = "QCDscale_ggVV_Pdf(QCDscale_ggVV, QCDscale_ggVV_In)" NewName = "QCDscale_Bkg_ggVV" />
+
+      <Syst OldName = "pdf_hzz4l_accept_Pdf(pdf_hzz4l_accept, pdf_hzz4l_accept_In)" NewName = "pdf_Higgs_ACC_H4l_CMS" />
+
+      <Syst OldName = "CMS_hzz2e2mu_Zjets_Pdf(CMS_hzz2e2mu_Zjets, CMS_hzz2e2mu_Zjets_In)" NewName = "CMS_hzz2e2mu_Zjets" />
+      <Syst OldName = "CMS_hzz4e_Zjets_Pdf(CMS_hzz4e_Zjets, CMS_hzz4e_Zjets_In)" NewName = "CMS_hzz4e_Zjets" />
+      <Syst OldName = "CMS_hzz4mu_Zjets_Pdf(CMS_hzz4mu_Zjets, CMS_hzz4mu_Zjets_In)" NewName = "CMS_hzz4mu_Zjets" />
+      <Syst OldName = "CMS_zz4l_bkgMELA_Pdf(CMS_zz4l_bkgMELA, CMS_zz4l_bkgMELA_In)" NewName = "CMS_hzz_bkgMELA" />
+
+      <Syst OldName = "CMS_zz4l_n_sig_4e_7TeV_Pdf(CMS_zz4l_n_sig_4e_7TeV, CMS_zz4l_n_sig_4e_7TeV_In)" NewName = "CMS_hzz_n_sig_4e_7TeV" />
+      <Syst OldName = "CMS_zz4l_n_sig_4mu_7TeV_Pdf(CMS_zz4l_n_sig_4mu_7TeV, CMS_zz4l_n_sig_4mu_7TeV_In)" NewName = "CMS_hzz_n_sig_4mu_7TeV" />
+      <Syst OldName = "CMS_zz4l_n_sig_4mu_8TeV_Pdf(CMS_zz4l_n_sig_4mu_8TeV, CMS_zz4l_n_sig_4mu_8TeV_In)" NewName = "CMS_hzz_n_sig_4mu_8TeV" />
+      <Syst OldName = "CMS_zz4l_n_sig_4e_8TeV_Pdf(CMS_zz4l_n_sig_4e_8TeV, CMS_zz4l_n_sig_4e_8TeV_In)" NewName = "CMS_hzz_n_sig_4e_8TeV" />
+      <Syst OldName = "CMS_zz4l_n_sig_2e2mu_7TeV_Pdf(CMS_zz4l_n_sig_2e2mu_7TeV, CMS_zz4l_n_sig_2e2mu_7TeV_In)" NewName = "CMS_hzz_n_sig_2e2mu_7TeV" />
+      <Syst OldName = "CMS_zz4l_n_sig_2e2mu_8TeV_Pdf(CMS_zz4l_n_sig_2e2mu_8TeV, CMS_zz4l_n_sig_2e2mu_8TeV_In)" NewName = "CMS_hzz_n_sig_2e2mu_8TeV" />
+
+      <Syst OldName = "CMS_zz4l_mean_m_sig_Pdf(CMS_zz4l_mean_m_sig, CMS_zz4l_mean_m_sig_In)" NewName = "CMS_hzz_mean_m_sig" />
+      <Syst OldName = "CMS_zz4l_sigma_m_sig_Pdf(CMS_zz4l_sigma_m_sig, CMS_zz4l_sigma_m_sig_In)" NewName = "CMS_hzz_sigma_m_sig" />
+      <Syst OldName = "CMS_zz4l_mean_e_sig_Pdf(CMS_zz4l_mean_e_sig, CMS_zz4l_mean_e_sig_In)" NewName = "CMS_hzz_mean_e_sig" />
+      <Syst OldName = "CMS_zz4l_sigma_e_sig_Pdf(CMS_zz4l_sigma_e_sig, CMS_zz4l_sigma_e_sig_In)" NewName = "CMS_hzz_sigma_e_sig" />
+
+      <Syst OldName= "CMS_channel"   NewName= "Cat_CMS_hzz"/>
+    </RenameMap>
+  </Channel>
+</Combination>

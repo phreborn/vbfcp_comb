@@ -1,0 +1,57 @@
+<!DOCTYPE Combination SYSTEM 'Combination.dtd'>
+<Combination>
+  <Channel Name="combined" IsCombined="true" Mass="125"> <!-- is combined file -->
+    <File Name="combined.root"/>
+    <Workspace Name="combWS"/>
+    <ModelConfig Name="ModelConfig"/>
+    <ModelData Name="combData"/>
+    <ModelPOI Name="MH[120~130], mu_zz[0~10]"/>
+  </Channel>
+  <Channel Name="Cat_CMS_hzz">
+    <File Name="workspace/lhchcg/myrep/cms/decorated/hzz.mH.toy_decorated.root"/>
+    <Workspace Name="combWS"/>
+    <ModelConfig Name="ModelConfig"/>
+    <ModelPOI Name="MH, r"/>
+    <ModelData Name="combData"/>
+    <RenameMap>
+      <!-- Correlated with CMS H->4l -->
+      <!-- Luminosity -->
+      <Syst OldName = "lumi_7TeV_Pdf(lumi_7TeV, lumi_7TeV_In)" NewName = "CMS_LUMI_2011" />
+      <Syst OldName = "lumi_8TeV_Pdf(lumi_8TeV, lumi_8TeV_In)" NewName = "CMS_LUMI_2012" />
+      <!-- Theory uncertainties -->
+      <Syst OldName = "QCDscale_ggH_Pdf(QCDscale_ggH, QCDscale_ggH_In)" NewName = "QCDscale_Higgs_ggH" />
+      <Syst OldName = "QCDscale_qqH_Pdf(QCDscale_qqH, QCDscale_qqH_In)" NewName = "QCDscale_Higgs_qqH" />
+      <Syst OldName = "QCDscale_WH_Pdf(QCDscale_WH, QCDscale_WH_In)" NewName = "QCDscale_Higgs_VH" />
+      <Syst OldName = "QCDscale_ZH_Pdf(QCDscale_ZH, QCDscale_ZH_In)" NewName = "QCDscale_Higgs_VH" />
+      <Syst OldName = "QCDscale_ttH_Pdf(QCDscale_ttH, QCDscale_ttH_In)" NewName = "QCDscale_Higgs_ttH" />
+      <Syst OldName = "pdf_gg_Pdf(pdf_gg, pdf_gg_In)" NewName = "pdf_Higgs_ggH" />
+      <!-- Lepton efficiency -->
+      <Syst OldName = "CMS_eff_e_Pdf(CMS_eff_e, CMS_eff_e_In)" NewName = "CMS_eff_e" />
+      <Syst OldName = "CMS_eff_m_Pdf(CMS_eff_m, CMS_eff_m_In)" NewName = "CMS_eff_m" />
+
+      <!-- Decorrelated with CMS H->gamgam: Adding tag CMS_hzz when necessary -->
+      <Syst OldName = "BRhiggs_ZZ4l_Pdf(BRhiggs_ZZ4l, BRhiggs_ZZ4l_In)" NewName = "BR_VV" />
+      <Syst OldName = "QCDscale_VV_Pdf(QCDscale_VV, QCDscale_VV_In)" NewName = "QCDscale_Bkg_VV_H4l" />
+      <Syst OldName = "QCDscale_ggVV_Pdf(QCDscale_ggVV, QCDscale_ggVV_In)" NewName = "QCDscale_Bkg_ggVV" />
+      <Syst OldName = "pdf_qqbar_Pdf(pdf_qqbar, pdf_qqbar_In)" NewName = "pdf_qqbar" />
+      <Syst OldName = "pdf_hzz4l_accept_Pdf(pdf_hzz4l_accept, pdf_hzz4l_accept_In)" NewName = "pdf_Higgs_ACC_H4l_CMS" />
+
+      <Syst OldName = "CMS_hzz2e2mu_Zjets_Pdf(CMS_hzz2e2mu_Zjets, CMS_hzz2e2mu_Zjets_In)" NewName = "CMS_hzz2e2mu_Zjets" />
+      <Syst OldName = "CMS_hzz4e_Zjets_Pdf(CMS_hzz4e_Zjets, CMS_hzz4e_Zjets_In)" NewName = "CMS_hzz4e_Zjets" />
+      <Syst OldName = "CMS_hzz4mu_Zjets_Pdf(CMS_hzz4mu_Zjets, CMS_hzz4mu_Zjets_In)" NewName = "CMS_hzz4mu_Zjets" />
+      <Syst OldName = "CMS_zz4l_n_sig_4e_7TeV_Pdf(CMS_zz4l_n_sig_4e_7TeV, CMS_zz4l_n_sig_4e_7TeV_In)" NewName = "CMS_hzz_n_sig_4e_7TeV" />
+      <Syst OldName = "CMS_zz4l_n_sig_4mu_7TeV_Pdf(CMS_zz4l_n_sig_4mu_7TeV, CMS_zz4l_n_sig_4mu_7TeV_In)" NewName = "CMS_hzz_n_sig_4mu_7TeV" />
+      <Syst OldName = "CMS_zz4l_n_sig_4mu_8TeV_Pdf(CMS_zz4l_n_sig_4mu_8TeV, CMS_zz4l_n_sig_4mu_8TeV_In)" NewName = "CMS_hzz_n_sig_4mu_8TeV" />
+      <Syst OldName = "CMS_zz4l_mean_m_sig_Pdf(CMS_zz4l_mean_m_sig, CMS_zz4l_mean_m_sig_In)" NewName = "CMS_hzz_mean_m_sig" />
+      <Syst OldName = "CMS_zz4l_bkgMELA_Pdf(CMS_zz4l_bkgMELA, CMS_zz4l_bkgMELA_In)" NewName = "CMS_hzz_bkgMELA" />
+      <Syst OldName = "CMS_zz4l_mean_e_sig_Pdf(CMS_zz4l_mean_e_sig, CMS_zz4l_mean_e_sig_In)" NewName = "CMS_hzz_mean_e_sig" />
+      <Syst OldName = "CMS_zz4l_sigma_m_sig_Pdf(CMS_zz4l_sigma_m_sig, CMS_zz4l_sigma_m_sig_In)" NewName = "CMS_hzz_sigma_m_sig" />
+      <Syst OldName = "CMS_zz4l_n_sig_2e2mu_7TeV_Pdf(CMS_zz4l_n_sig_2e2mu_7TeV, CMS_zz4l_n_sig_2e2mu_7TeV_In)" NewName = "CMS_hzz_n_sig_2e2mu_7TeV" />
+      <Syst OldName = "CMS_zz4l_sigma_e_sig_Pdf(CMS_zz4l_sigma_e_sig, CMS_zz4l_sigma_e_sig_In)" NewName = "CMS_hzz_sigma_e_sig" />
+      <Syst OldName = "CMS_zz4l_n_sig_4e_8TeV_Pdf(CMS_zz4l_n_sig_4e_8TeV, CMS_zz4l_n_sig_4e_8TeV_In)" NewName = "CMS_hzz_n_sig_4e_8TeV" />
+      <Syst OldName = "CMS_zz4l_n_sig_2e2mu_8TeV_Pdf(CMS_zz4l_n_sig_2e2mu_8TeV, CMS_zz4l_n_sig_2e2mu_8TeV_In)" NewName = "CMS_hzz_n_sig_2e2mu_8TeV" />
+
+      <Syst OldName= "CMS_channel"   NewName= "Cat_CMS_hzz"/>
+    </RenameMap>
+  </Channel>
+</Combination>

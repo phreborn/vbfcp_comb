@@ -1,0 +1,12 @@
+<!DOCTYPE Orgnization  SYSTEM 'Orgnization.dtd'>
+<Orgnization InFile="workspace/lhchcg/myrep_mass/CMS_hgg_toy.root" OutFile="workspace/lhchcg/myrep/cms/decorated/hgg.toy_from_mass.root"
+	     ModelName="Onemu"
+	     POINames="mu,mH">
+  <Item Name="r[1, 0, 5]"/>
+
+  <!-- PDF -->
+  <Item Name="EDIT::NEWPDF(OLDPDF,
+	      muF_gg=mu,
+	      muV_gg=mu,
+	      )"/>
+</Orgnization>

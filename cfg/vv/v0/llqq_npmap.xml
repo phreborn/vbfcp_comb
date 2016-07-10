@@ -1,0 +1,56 @@
+<Syst OldName =                                         "lumiConstraint(Lumi, nominalLumi)"     NewName =                    "ATLAS_LUMI_2015_llqq" />
+<Syst OldName = "alpha_EG_RESOLUTION_ALLConstraint(alpha_EG_RESOLUTION_ALL, nom_alpha_EG_RESOLUTION_ALL)"       NewName =       "EG_RESOLUTION_ALL" />
+<Syst OldName =  "alpha_EG_SCALE_ALLConstraint(alpha_EG_SCALE_ALL, nom_alpha_EG_SCALE_ALL)"     NewName =            "EG_SCALE_ALL" />
+<Syst OldName = "alpha_EL_EFF_ID_TotalCorrUncertaintyConstraint(alpha_EL_EFF_ID_TotalCorrUncertainty, nom_alpha_EL_EFF_ID_TotalCorrUncertainty)"        NewName = "EL_EFF_ID_TotalCorrUncertainty" />
+<Syst OldName = "alpha_EL_EFF_Iso_TotalCorrUncertaintyConstraint(alpha_EL_EFF_Iso_TotalCorrUncertainty, nom_alpha_EL_EFF_Iso_TotalCorrUncertainty)"     NewName = "EL_EFF_Iso_TotalCorrUncertainty" />
+<Syst OldName = "alpha_EL_EFF_Reco_TotalCorrUncertaintyConstraint(alpha_EL_EFF_Reco_TotalCorrUncertainty, nom_alpha_EL_EFF_Reco_TotalCorrUncertainty)"  NewName = "EL_EFF_Reco_TotalCorrUncertainty" />
+<Syst OldName = "alpha_EL_EFF_Trigger_TotalCorrUncertaintyConstraint(alpha_EL_EFF_Trigger_TotalCorrUncertainty, nom_alpha_EL_EFF_Trigger_TotalCorrUncertainty)" NewName = "EL_EFF_Trigger_TotalCorrUncertainty" />
+<Syst OldName = "alpha_JET_GroupedNP_1Constraint(alpha_JET_GroupedNP_1, nom_alpha_JET_GroupedNP_1)"     NewName =         "JET_GroupedNP_1" />
+<Syst OldName = "alpha_JET_GroupedNP_2Constraint(alpha_JET_GroupedNP_2, nom_alpha_JET_GroupedNP_2)"     NewName =         "JET_GroupedNP_2" />
+<Syst OldName = "alpha_JET_GroupedNP_3Constraint(alpha_JET_GroupedNP_3, nom_alpha_JET_GroupedNP_3)"     NewName =         "JET_GroupedNP_3" />
+<Syst OldName =              "alpha_MUONS_IDConstraint(alpha_MUONS_ID, nom_alpha_MUONS_ID)"     NewName =                "MUONS_ID" />
+<Syst OldName =              "alpha_MUONS_MSConstraint(alpha_MUONS_MS, nom_alpha_MUONS_MS)"     NewName =                "MUONS_MS" />
+<Syst OldName =     "alpha_MUONS_SCALEConstraint(alpha_MUONS_SCALE, nom_alpha_MUONS_SCALE)"     NewName =             "MUONS_SCALE" />
+<Syst OldName = "alpha_MUON_EFF_STATConstraint(alpha_MUON_EFF_STAT, nom_alpha_MUON_EFF_STAT)"   NewName =           "MUON_EFF_STAT" />
+<Syst OldName =  "alpha_MUON_EFF_SYSConstraint(alpha_MUON_EFF_SYS, nom_alpha_MUON_EFF_SYS)"     NewName =            "MUON_EFF_SYS" />
+<Syst OldName = "alpha_MUON_ISO_STATConstraint(alpha_MUON_ISO_STAT, nom_alpha_MUON_ISO_STAT)"   NewName =           "MUON_ISO_STAT" />
+<Syst OldName =  "alpha_MUON_ISO_SYSConstraint(alpha_MUON_ISO_SYS, nom_alpha_MUON_ISO_SYS)"     NewName =            "MUON_ISO_SYS" />
+<Syst OldName =           "alpha_mu_bkg_DBConstraint(alpha_mu_bkg_DB, nom_alpha_mu_bkg_DB)"     NewName =               "mu_bkg_DB" />
+<Syst OldName =        "alpha_mu_bkg_topConstraint(alpha_mu_bkg_top, nom_alpha_mu_bkg_top)"     NewName =              "mu_bkg_top" />
+<Syst OldName =    "gamma_stat_WSR_bin_0"       NewName =    "gamma_stat_WSR_bin_0" />
+<Syst OldName =    "gamma_stat_WSR_bin_1"       NewName =    "gamma_stat_WSR_bin_1" />
+<Syst OldName =   "gamma_stat_WSR_bin_10"       NewName =   "gamma_stat_WSR_bin_10" />
+<Syst OldName =   "gamma_stat_WSR_bin_11"       NewName =   "gamma_stat_WSR_bin_11" />
+<Syst OldName =   "gamma_stat_WSR_bin_12"       NewName =   "gamma_stat_WSR_bin_12" />
+<Syst OldName =   "gamma_stat_WSR_bin_13"       NewName =   "gamma_stat_WSR_bin_13" />
+<Syst OldName =   "gamma_stat_WSR_bin_14"       NewName =   "gamma_stat_WSR_bin_14" />
+<Syst OldName =   "gamma_stat_WSR_bin_15"       NewName =   "gamma_stat_WSR_bin_15" />
+<Syst OldName =   "gamma_stat_WSR_bin_16"       NewName =   "gamma_stat_WSR_bin_16" />
+<Syst OldName =   "gamma_stat_WSR_bin_17"       NewName =   "gamma_stat_WSR_bin_17" />
+<Syst OldName =   "gamma_stat_WSR_bin_18"       NewName =   "gamma_stat_WSR_bin_18" />
+<Syst OldName =    "gamma_stat_WSR_bin_2"       NewName =    "gamma_stat_WSR_bin_2" />
+<Syst OldName =   "gamma_stat_WSR_bin_20"       NewName =   "gamma_stat_WSR_bin_20" />
+<Syst OldName =   "gamma_stat_WSR_bin_21"       NewName =   "gamma_stat_WSR_bin_21" />
+<Syst OldName =   "gamma_stat_WSR_bin_22"       NewName =   "gamma_stat_WSR_bin_22" />
+<Syst OldName =    "gamma_stat_WSR_bin_3"       NewName =    "gamma_stat_WSR_bin_3" />
+<Syst OldName =    "gamma_stat_WSR_bin_4"       NewName =    "gamma_stat_WSR_bin_4" />
+<Syst OldName =    "gamma_stat_WSR_bin_5"       NewName =    "gamma_stat_WSR_bin_5" />
+<Syst OldName =    "gamma_stat_WSR_bin_6"       NewName =    "gamma_stat_WSR_bin_6" />
+<Syst OldName =    "gamma_stat_WSR_bin_7"       NewName =    "gamma_stat_WSR_bin_7" />
+<Syst OldName =    "gamma_stat_WSR_bin_8"       NewName =    "gamma_stat_WSR_bin_8" />
+<Syst OldName =    "gamma_stat_WSR_bin_9"       NewName =    "gamma_stat_WSR_bin_9" />
+<Syst OldName =    "gamma_stat_ZCR_bin_0"       NewName =    "gamma_stat_ZCR_bin_0" />
+<Syst OldName =    "gamma_stat_ZCR_bin_1"       NewName =    "gamma_stat_ZCR_bin_1" />
+<Syst OldName =   "gamma_stat_ZCR_bin_16"       NewName =   "gamma_stat_ZCR_bin_16" />
+<Syst OldName =   "gamma_stat_ZCR_bin_17"       NewName =   "gamma_stat_ZCR_bin_17" />
+<Syst OldName =   "gamma_stat_ZCR_bin_18"       NewName =   "gamma_stat_ZCR_bin_18" />
+<Syst OldName =   "gamma_stat_ZCR_bin_19"       NewName =   "gamma_stat_ZCR_bin_19" />
+<Syst OldName =    "gamma_stat_ZCR_bin_2"       NewName =    "gamma_stat_ZCR_bin_2" />
+<Syst OldName =   "gamma_stat_ZCR_bin_20"       NewName =   "gamma_stat_ZCR_bin_20" />
+<Syst OldName =   "gamma_stat_ZCR_bin_21"       NewName =   "gamma_stat_ZCR_bin_21" />
+<Syst OldName =    "gamma_stat_ZCR_bin_3"       NewName =    "gamma_stat_ZCR_bin_3" />
+<Syst OldName =    "gamma_stat_ZCR_bin_4"       NewName =    "gamma_stat_ZCR_bin_4" />
+<Syst OldName =    "gamma_stat_ZCR_bin_5"       NewName =    "gamma_stat_ZCR_bin_5" />
+<Syst OldName =                "mu_bkg_Z"       NewName =                "mu_bkg_Z" />
+<Syst OldName =                 "mu_lumi"       NewName =                 "mu_lumi" />
+<Syst OldName =                    "channelCat"       NewName =                    "Cat_llqq" />

@@ -1,0 +1,12 @@
+<!DOCTYPE Orgnization  SYSTEM 'Orgnization.dtd'>
+<Orgnization InFile="workspace/lhchcg/myrep/combined_hgg_asimov.root" OutFile="workspace/lhchcg/myrep/combined_hgg_asimov_single_mu.root"
+    ModelName="single_mu"
+    POINames="mu,MH">
+    <Item Name="mu[1,0,5]"/>
+
+    <!-- PDF -->
+    <Item Name="EDIT::NEWPDF(OLDPDF,
+        RF=mu,
+        RV=mu,
+        )"/>
+</Orgnization>

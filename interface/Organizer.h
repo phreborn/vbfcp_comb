@@ -134,6 +134,7 @@ class Organizer : public AlgoBase {
 
 
  private:
+	void implementFlexibleInterpVar(RooWorkspace *w, TString actionStr);
 	std::vector<TString> SplitString(const TString& theOpt, const char separator );
         std::vector<std::string> m_actionItems;
         std::string m_inFile;

@@ -53,3 +53,7 @@
 
 #include "RooFormulaVarExt.h"
 #include "FlexibleInterpVarExt.h"
+#include "FlexibleInterpVarMkII.h"
+#include "HggTwoSidedCBPdf.h"
+#include "HggMG5aMCNLOLineShapePdf.h"
+#include "Background.h"

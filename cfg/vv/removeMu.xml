@@ -1,0 +1,12 @@
+<!DOCTYPE Organization  SYSTEM 'Organization.dtd'>
+<Organization InFile="#INPUT#" OutFile="#OUTPUT#"
+	     ModelName="lvqq_nomu"
+	     POINames="mu">
+  <Item Name="zero[0]"/>
+  <Item Name="mu[1,0,50]"/>
+  <Item Name="expr::mu_dummy('@0*@1',zero,mu)"/>
+  <!-- PDF -->
+  <Item Name="EDIT::NEWPDF(OLDPDF,
+	      mu=mu_dummy
+	      )"/>
+</Organization>

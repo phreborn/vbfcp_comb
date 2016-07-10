@@ -16,7 +16,8 @@
 #source /afs/cern.ch/project/wiscatlas/HtoGG/yanght/xdata2/root-v5-34_x86-64/setup.sh
 #export LD_LIBRARY_PATH=${ROOTSYS}/lib:${LD_LIBRARY_PATH}
 
-source /afs/cern.ch/user/y/yanght/bin/setupROOT.sh
+source /cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/Gcc/gcc484_x86_64_slc6/slc6/gcc48/setup.sh 
+source /cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/root/5.34.32-HiggsComb-p1-x86_64-slc6-gcc48-opt/bin/thisroot.sh
 
 which gcc
 which root

@@ -1,0 +1,14 @@
+<!DOCTYPE Organization  SYSTEM 'Organization.dtd'>
+
+<!-- <Organization InFile="workspace/high_mass_diphoton/2015_Graviton_2D_EKHI_v26.root" OutFile="workspace/high_mass_diphoton/2015_Graviton_2D_EKHI_v26_modified.root" -->
+<!-- <Organization InFile="workspace/high_mass_diphoton/2016_Graviton_2D_EKHI_v26.root" OutFile="workspace/high_mass_diphoton/2016_Graviton_2D_EKHI_v26_modified.root" -->
+<Organization InFile="workspace/high_mass_diphoton/1516_Graviton_2D_EKHI_v26.root" OutFile="workspace/high_mass_diphoton/1516_Graviton_2D_EKHI_v26_modified.root"
+	      ModelName="deltamu"
+	      POINames="xs, mG, GkM">
+  <Item Name="unit[1]"/>
+  <!-- PDF -->
+  <Item Name="EDIT::NEWPDF(OLDPDF,
+	      xs_2015=unit,
+	      xs_2016=unit
+	      )"/>
+</Organization>
