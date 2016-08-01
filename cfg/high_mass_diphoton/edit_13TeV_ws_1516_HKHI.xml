@@ -1,5 +1,5 @@
 <!DOCTYPE Organization  SYSTEM 'Organization.dtd'>
-<Organization InFile="workspace/high_mass_diphoton/1516_Scalar_2D_v19.root" OutFile="workspace/high_mass_diphoton/1516_Scalar_2D_v19_dxs.root"
+<Organization InFile="workspace/high_mass_diphoton/1516_Scalar_2D_v23.root" OutFile="workspace/high_mass_diphoton/1516_Scalar_2D_v23_dxs.root"
 	      ModelName="dxs"
 	      POINames="xs_2016, dxs, mX, wX">
   <Item Name="unity[1]"/>

@@ -1,5 +1,5 @@
 <!DOCTYPE Organization  SYSTEM 'Organization.dtd'>
-<Organization InFile="workspace/high_mass_diphoton/1516_Graviton_histfactory_EKHI_v24.root" OutFile="workspace/high_mass_diphoton/1516_Graviton_histfactory_EKHI_v24_dxs.root"
+<Organization InFile="workspace/high_mass_diphoton/1516_Graviton_histfactory_EKHI_v32_ess.root" OutFile="workspace/high_mass_diphoton/1516_Graviton_histfactory_EKHI_v32_ess_dxs.root"
 	      ModelName="dxs"
 	      POINames="xs_2016, dxs, mG, GkM">
   <Item Name="unity[1]"/>

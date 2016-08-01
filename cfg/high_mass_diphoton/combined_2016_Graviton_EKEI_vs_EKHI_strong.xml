@@ -8,7 +8,7 @@
     <ModelPOI Name="xs[0~100],dxs[-100~100],mG[750~750],GkM[0.2~0.2]"/>
   </Channel>
   <Channel Name="high_mass_diphoton_EKEI_minus_EKHI">
-    <File Name="workspace/high_mass_diphoton/2016_Graviton_histfactory_EKEI_minus_EKHI_v26_modified.root"/>
+    <File Name="workspace/high_mass_diphoton/2016_Graviton_histfactory_EKEI_minus_EKHI_v31_modified.root"/>
     <Workspace Name="combWS"/>
     <ModelConfig Name="ModelConfig"/>
     <ModelPOI Name="xs_new,dxs,mG,GkM"/>
@@ -38,7 +38,7 @@
     </RenameMap>
   </Channel>
   <Channel Name="high_mass_diphoton_EKHI">
-    <File Name="workspace/high_mass_diphoton/2016_Graviton_histfactory_EKHI_v26_modified.root"/>
+    <File Name="workspace/high_mass_diphoton/2016_Graviton_histfactory_EKHI_v31_modified.root"/>
     <Workspace Name="combWS"/>
     <ModelConfig Name="ModelConfig"/>
     <ModelPOI Name="xs,dummy,mG,GkM"/>
