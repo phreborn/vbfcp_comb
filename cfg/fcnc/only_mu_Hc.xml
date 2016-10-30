@@ -1,5 +1,5 @@
 <!DOCTYPE Organization  SYSTEM 'Organization.dtd'>
-<Organization InFile="workspace/combined_rename.root" OutFile="workspace/combined_only_Hc.root"
+<Organization InFile="workspace/combined.root" OutFile="workspace/combined_only_Hc.root"
 	     ModelName="FCNC_only_mu_Hc"
 	     POINames="mu_Hc">
   <Item Name="zero[0]"/>
