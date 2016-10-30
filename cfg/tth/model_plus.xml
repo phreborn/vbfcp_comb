@@ -1,5 +1,5 @@
-<!DOCTYPE Orgnization  SYSTEM 'Orgnization.dtd'>
-<Orgnization InFile="#INPUT#" OutFile="#OUTPUT#"
+<!DOCTYPE Organization  SYSTEM 'Organization.dtd'>
+<Organization InFile="#INPUT#" OutFile="#OUTPUT#"
 	     ModelName="CWCZCbCtaCto"
 	     POINames="CT,m_H">
   <Item Name="CW[1]"/>
@@ -106,4 +106,4 @@
 	      mu_WtH_8TeV=C2_8TeV_WtH,
 	      mu_BR_gg=C2_HGaGa,
 	      mu=invC2H)"/>
-</Orgnization>
+</Organization>
