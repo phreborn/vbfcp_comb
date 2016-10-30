@@ -1,7 +1,7 @@
 <!DOCTYPE Combination  SYSTEM 'Combination.dtd'>
 <Combination>
   <Channel Name="combined" IsCombined="true" Mass="125.09">
-    <File Name="./combined.root"/>
+    <File Name="./workspace/combined.root"/>
     <Workspace Name="combWS"/>
     <ModelConfig  Name="ModelConfig"/>
     <ModelData Name="combData"/>
