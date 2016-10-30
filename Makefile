@@ -23,10 +23,8 @@ INCDIR  = interface
 ifeq ($(shell root-config --platform), macosx)
 	BOOSTLIBS = -lboost_system-mt -lboost_filesystem-mt -lboost_program_options-mt -lboost_regex-mt
 else
-	BOOSTLIBS = -L/afs/cern.ch/cms/slc6_amd64_gcc472/external/boost/1.51.0-cms/lib/ -lboost_filesystem -lboost_program_options -lboost_regex -lboost_system
-	BOOST_INC = -I/afs/cern.ch/cms/slc6_amd64_gcc472/external/boost/1.51.0-cms/include/
-	# BOOSTLIBS = -L/afs/cern.ch/cms/slc6_amd64_gcc434/external/boost/1.44.0-cms/lib/ -lboost_filesystem -lboost_program_options -lboost_regex -lboost_system
-	# BOOST_INC = -I/afs/cern.ch/cms/slc6_amd64_gcc434/external/boost/1.44.0-cms/include/
+	BOOSTLIBS = -L/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/boost/boost-1.55.0-python2.7-x86_64-slc6-gcc48/boost-1.55.0-python2.7-x86_64-slc6-gcc48/lib/ -lboost_filesystem -lboost_program_options -lboost_regex -lboost_system
+	BOOST_INC = -I/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/boost/boost-1.55.0-python2.7-x86_64-slc6-gcc48/boost-1.55.0-python2.7-x86_64-slc6-gcc48/include/
 
 	INCLUDES += $(BOOST_INC) 
 endif

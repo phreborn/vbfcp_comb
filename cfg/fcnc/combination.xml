@@ -175,80 +175,80 @@
       <Syst OldName=       "combCat" 		NewName=      "Cat_hbb"/>
     </RenameMap>
   </Channel>
-  <Channel Name="multilepton_binned">
-    <File Name="workspace/hlep_param.root"/>
-    <Workspace Name="combWS"/>
-    <ModelConfig Name="ModelConfig"/>
-    <ModelPOI Name="mu_Hc, mu_Hu"/>
-    <ModelData Name="combData"/>
-    <RenameMap>
-      <Syst OldName =                 "alpha_ElecIsoConstraint(alpha_ElecIso, nom_alpha_ElecIso)"     NewName =           "ATLAS_EL_ISO" />
-      <Syst OldName = "alpha_Eta_ModellingJESConstraint(alpha_Eta_ModellingJES, nom_alpha_Eta_ModellingJES)"  NewName =  "ATLAS_JES_Eta_Modelling" />
-      <Syst OldName =  "alpha_FCNC_XS_systConstraint(alpha_FCNC_XS_syst, nom_alpha_FCNC_XS_syst)"     NewName =      "ttbar_XS" />
-      <Syst OldName =  "alpha_Fakes_2lee4jConstraint(alpha_Fakes_2lee4j, nom_alpha_Fakes_2lee4j)"     NewName =      "ATLAS_Fakes_2lee4j" />
-      <Syst OldName =  "alpha_Fakes_2lee5jConstraint(alpha_Fakes_2lee5j, nom_alpha_Fakes_2lee5j)"     NewName =      "ATLAS_Fakes_2lee5j" />
-      <Syst OldName =  "alpha_Fakes_2lem4jConstraint(alpha_Fakes_2lem4j, nom_alpha_Fakes_2lem4j)"     NewName =      "ATLAS_Fakes_2lem4j" />
-      <Syst OldName =  "alpha_Fakes_2lem5jConstraint(alpha_Fakes_2lem5j, nom_alpha_Fakes_2lem5j)"     NewName =      "ATLAS_Fakes_2lem5j" />
-      <Syst OldName =  "alpha_Fakes_2lmm4jConstraint(alpha_Fakes_2lmm4j, nom_alpha_Fakes_2lmm4j)"     NewName =      "ATLAS_Fakes_2lmm4j" />
-      <Syst OldName =  "alpha_Fakes_2lmm5jConstraint(alpha_Fakes_2lmm5j, nom_alpha_Fakes_2lmm5j)"     NewName =      "ATLAS_Fakes_2lmm5j" />
-      <Syst OldName =     "alpha_Fakes_2ltauConstraint(alpha_Fakes_2ltau, nom_alpha_Fakes_2ltau)"     NewName =       "ATLAS_Fakes_2ltau" />
-      <Syst OldName =              "alpha_Fakes_3lConstraint(alpha_Fakes_3l, nom_alpha_Fakes_3l)"     NewName =          "ATLAS_Fakes_3l" />
-      <Syst OldName =     "alpha_FlavCompJESConstraint(alpha_FlavCompJES, nom_alpha_FlavCompJES)"     NewName =       "ATLAS_JES_FlavComp" />
-      <Syst OldName =     "alpha_FlavRespJESConstraint(alpha_FlavRespJES, nom_alpha_FlavRespJES)"     NewName =       "ATLAS_JES_FlavResp" />
-      <Syst OldName = "alpha_JetTagWeightB5Constraint(alpha_JetTagWeightB5, nom_alpha_JetTagWeightB5)"        NewName =    "ATLAS_BTAGBREAK5" />
-      <Syst OldName =           "alpha_LUMI_2012Constraint(alpha_LUMI_2012, nom_alpha_LUMI_2012)"     NewName =         "ATLAS_lumi_2012" />
-      <Syst OldName = "alpha_Match_Acc_ttWConstraint(alpha_Match_Acc_ttW, nom_alpha_Match_Acc_ttW)"   NewName =     "ATLAS_Match_Acc_ttW" />
-      <Syst OldName = "alpha_Match_Acc_ttZConstraint(alpha_Match_Acc_ttZ, nom_alpha_Match_Acc_ttZ)"   NewName =     "ATLAS_Match_Acc_ttZ" />
-      <Syst OldName = "alpha_Model_Acc_ttWConstraint(alpha_Model_Acc_ttW, nom_alpha_Model_Acc_ttW)"   NewName =     "ATLAS_Model_Acc_ttW" />
-      <Syst OldName = "alpha_Model_Acc_ttZConstraint(alpha_Model_Acc_ttZ, nom_alpha_Model_Acc_ttZ)"   NewName =     "ATLAS_Model_Acc_ttZ" />
-      <Syst OldName =                 "alpha_MuonIsoConstraint(alpha_MuonIso, nom_alpha_MuonIso)"     NewName =           "ATLAS_MU_ISO" />
-      <Syst OldName =                    "alpha_NPVJESConstraint(alpha_NPVJES, nom_alpha_NPVJES)"     NewName =            "ATLAS_JES_NPV" />
-      <Syst OldName = "alpha_NP_Detector1JESConstraint(alpha_NP_Detector1JES, nom_alpha_NP_Detector1JES)"     NewName =   "ATLAS_JES_2012_Detector1" />
-      <Syst OldName = "alpha_NP_Modelling1JESConstraint(alpha_NP_Modelling1JES, nom_alpha_NP_Modelling1JES)"  NewName =  "ATLAS_JES_2012_Modelling1" />
-      <Syst OldName = "alpha_NonClosure_AFIIJESConstraint(alpha_NonClosure_AFIIJES, nom_alpha_NonClosure_AFIIJES)"    NewName = "ATLAS_JES_NonClosure_AFII" />
-      <Syst OldName =     "alpha_PDF_Acc_ttHConstraint(alpha_PDF_Acc_ttH, nom_alpha_PDF_Acc_ttH)"     NewName =       "pdf_Higgs_ttH_ACCEPT" />
-      <Syst OldName =     "alpha_PDF_Acc_ttWConstraint(alpha_PDF_Acc_ttW, nom_alpha_PDF_Acc_ttW)"     NewName =       "pdf_Acc_ttW" />
-      <Syst OldName =     "alpha_PDF_Acc_ttZConstraint(alpha_PDF_Acc_ttZ, nom_alpha_PDF_Acc_ttZ)"     NewName =       "pdf_Acc_ttZ" />
-      <Syst OldName =        "alpha_PDF_XS_ttHConstraint(alpha_PDF_XS_ttH, nom_alpha_PDF_XS_ttH)"     NewName =        "pdf_Higgs_ttH" />
-      <Syst OldName =        "alpha_PDF_XS_ttWConstraint(alpha_PDF_XS_ttW, nom_alpha_PDF_XS_ttW)"     NewName =        "pdf_ttW" />
-      <Syst OldName =        "alpha_PDF_XS_ttZConstraint(alpha_PDF_XS_ttZ, nom_alpha_PDF_XS_ttZ)"     NewName =        "pdf_ttZ" />
-      <Syst OldName =  "alpha_PDF_tHW_kTp1Constraint(alpha_PDF_tHW_kTp1, nom_alpha_PDF_tHW_kTp1)"     NewName =      "ATLAS_PDF_tHW_kTp1" />
-      <Syst OldName = "alpha_PDF_tHjb_kTp1Constraint(alpha_PDF_tHjb_kTp1, nom_alpha_PDF_tHjb_kTp1)"   NewName =     "ATLAS_PDF_tHjb_kTp1" />
-      <Syst OldName =        "alpha_PS_Acc_ttHConstraint(alpha_PS_Acc_ttH, nom_alpha_PS_Acc_ttH)"     NewName =        "ATLAS_PS_Acc_ttH" />
-      <Syst OldName =        "alpha_PS_Acc_ttWConstraint(alpha_PS_Acc_ttW, nom_alpha_PS_Acc_ttW)"     NewName =        "ATLAS_PS_Acc_ttW" />
-      <Syst OldName =        "alpha_PS_Acc_ttZConstraint(alpha_PS_Acc_ttZ, nom_alpha_PS_Acc_ttZ)"     NewName =        "ATLAS_PS_Acc_ttZ" />
-      <Syst OldName =        "alpha_PileRhoJESConstraint(alpha_PileRhoJES, nom_alpha_PileRhoJES)"     NewName =        "ATLAS_JES_2012_PileRho" />
-      <Syst OldName =     "alpha_QCD_Acc_ttHConstraint(alpha_QCD_Acc_ttH, nom_alpha_QCD_Acc_ttH)"     NewName =       "ATLAS_QCD_Acc_ttH" />
-      <Syst OldName =     "alpha_QCD_Acc_ttWConstraint(alpha_QCD_Acc_ttW, nom_alpha_QCD_Acc_ttW)"     NewName =       "ATLAS_QCD_Acc_ttW" />
-      <Syst OldName =     "alpha_QCD_Acc_ttZConstraint(alpha_QCD_Acc_ttZ, nom_alpha_QCD_Acc_ttZ)"     NewName =       "ATLAS_QCD_Acc_ttZ" />
-      <Syst OldName =        "alpha_QCD_XS_ttHConstraint(alpha_QCD_XS_ttH, nom_alpha_QCD_XS_ttH)"     NewName =        "ATLAS_QCD_XS_ttH" />
-      <Syst OldName =        "alpha_QCD_XS_ttWConstraint(alpha_QCD_XS_ttW, nom_alpha_QCD_XS_ttW)"     NewName =        "ATLAS_QCD_XS_ttW" />
-      <Syst OldName =        "alpha_QCD_XS_ttZConstraint(alpha_QCD_XS_ttZ, nom_alpha_QCD_XS_ttZ)"     NewName =        "ATLAS_QCD_XS_ttZ" />
-      <Syst OldName =  "alpha_QCD_tHW_kTp1Constraint(alpha_QCD_tHW_kTp1, nom_alpha_QCD_tHW_kTp1)"     NewName =      "ATLAS_QCD_tHW_kTp1" />
-      <Syst OldName = "alpha_QCD_tHjb_kTp1Constraint(alpha_QCD_tHjb_kTp1, nom_alpha_QCD_tHjb_kTp1)"   NewName =     "ATLAS_QCD_tHjb_kTp1" />
-      <Syst OldName =                    "alpha_QMisIDConstraint(alpha_QMisID, nom_alpha_QMisID)"     NewName =            "ATLAS_QMisID" />
-      <Syst OldName = "alpha_QMisID_2lee4jConstraint(alpha_QMisID_2lee4j, nom_alpha_QMisID_2lee4j)"   NewName =     "ATLAS_QMisID_2lee4j" />
-      <Syst OldName = "alpha_QMisID_2lee5jConstraint(alpha_QMisID_2lee5j, nom_alpha_QMisID_2lee5j)"   NewName =     "ATLAS_QMisID_2lee5j" />
-      <Syst OldName = "alpha_QMisID_2lem4jConstraint(alpha_QMisID_2lem4j, nom_alpha_QMisID_2lem4j)"   NewName =     "ATLAS_QMisID_2lem4j" />
-      <Syst OldName = "alpha_QMisID_2lem5jConstraint(alpha_QMisID_2lem5j, nom_alpha_QMisID_2lem5j)"   NewName =     "ATLAS_QMisID_2lem5j" />
-      <Syst OldName = "alpha_QMisID_2lmm4jConstraint(alpha_QMisID_2lmm4j, nom_alpha_QMisID_2lmm4j)"   NewName =     "ATLAS_QMisID_2lmm4j" />
-      <Syst OldName = "alpha_QMisID_2lmm5jConstraint(alpha_QMisID_2lmm5j, nom_alpha_QMisID_2lmm5j)"   NewName =     "ATLAS_QMisID_2lmm5j" />
-      <Syst OldName =              "alpha_Theta_eeConstraint(alpha_Theta_ee, nom_alpha_Theta_ee)"     NewName =          "ATLAS_Theta_ee" />
-      <Syst OldName =              "alpha_Theta_mmConstraint(alpha_Theta_mm, nom_alpha_Theta_mm)"     NewName =          "ATLAS_Theta_mm" />
-      <Syst OldName =                    "alpha_WWxsecConstraint(alpha_WWxsec, nom_alpha_WWxsec)"     NewName =            "ATLAS_WWxsec" />
-      <Syst OldName =                    "alpha_WZxsecConstraint(alpha_WZxsec, nom_alpha_WZxsec)"     NewName =            "ATLAS_WZxsec" />
-      <Syst OldName =                    "alpha_ZZxsecConstraint(alpha_ZZxsec, nom_alpha_ZZxsec)"     NewName =            "ATLAS_ZZxsec" />
-      <Syst OldName =              "alpha_ggVgxsecConstraint(alpha_ggVgxsec, nom_alpha_ggVgxsec)"     NewName =          "ATLAS_ggVgxsec" />
-      <Syst OldName = "alpha_TopTruthEventWeight_FragmentationConstraint(alpha_TopTruthEventWeight_Fragmentation, nom_alpha_TopTruthEventWeight_Fragmentation)"       NewName = "ATLAS_ttbar-DataRw-Fragmentation" />
-      <Syst OldName = "alpha_TopTruthEventWeight_ISRFSRConstraint(alpha_TopTruthEventWeight_ISRFSR, nom_alpha_TopTruthEventWeight_ISRFSR)"    NewName = "ATLAS_ttbar-DataRw-IFSR" />
-      <Syst OldName = "alpha_TopTruthEventWeight_JERConstraint(alpha_TopTruthEventWeight_JER, nom_alpha_TopTruthEventWeight_JER)"     NewName = "ATLAS_ttbar-DataRw-JER" />
-      <Syst OldName = "alpha_TopTruthEventWeight_MCGeneratorConstraint(alpha_TopTruthEventWeight_MCGenerator, nom_alpha_TopTruthEventWeight_MCGenerator)"     NewName = "ATLAS_ttbar-DataRw-MCgen" />
-      <Syst OldName = "alpha_TopTruthEventWeight_bJESConstraint(alpha_TopTruthEventWeight_bJES, nom_alpha_TopTruthEventWeight_bJES)"  NewName = "ATLAS_ttbar-DataRw-JetFlavB" />
-      <Syst OldName = "alpha_TopTruthEventWeight_btageffConstraint(alpha_TopTruthEventWeight_btageff, nom_alpha_TopTruthEventWeight_btageff)" NewName = "ATLAS_ttbar-DataRw-BTagEff" />
-      <Syst OldName = "alpha_TopTruthEventWeight_closebyJESConstraint(alpha_TopTruthEventWeight_closebyJES, nom_alpha_TopTruthEventWeight_closebyJES)"        NewName = "ATLAS_ttbar-DataRw-JetCloseby" />
-      <Syst OldName = "alpha_TopTruthEventWeight_effdetset1JESConstraint(alpha_TopTruthEventWeight_effdetset1JES, nom_alpha_TopTruthEventWeight_effdetset1JES)"       NewName = "ATLAS_ttbar-DataRw-JetDet1" />
-      <Syst OldName = "alpha_TopTruthEventWeight_etacalibJESConstraint(alpha_TopTruthEventWeight_etacalibJES, nom_alpha_TopTruthEventWeight_etacalibJES)"     NewName = "ATLAS_ttbar-DataRw-JetEtaCalibration" />
-      <Syst OldName=       "combCat" 		NewName=      "Cat_hlep"/>
-    </RenameMap>
-  </Channel>
+  <!-- <Channel Name="multilepton_binned"> -->
+  <!--   <File Name="workspace/hlep_param.root"/> -->
+  <!--   <Workspace Name="combWS"/> -->
+  <!--   <ModelConfig Name="ModelConfig"/> -->
+  <!--   <ModelPOI Name="mu_Hc, mu_Hu"/> -->
+  <!--   <ModelData Name="combData"/> -->
+  <!--   <RenameMap> -->
+  <!--     <Syst OldName =                 "alpha_ElecIsoConstraint(alpha_ElecIso, nom_alpha_ElecIso)"     NewName =           "ATLAS_EL_ISO" /> -->
+  <!--     <Syst OldName = "alpha_Eta_ModellingJESConstraint(alpha_Eta_ModellingJES, nom_alpha_Eta_ModellingJES)"  NewName =  "ATLAS_JES_Eta_Modelling" /> -->
+  <!--     <Syst OldName =  "alpha_FCNC_XS_systConstraint(alpha_FCNC_XS_syst, nom_alpha_FCNC_XS_syst)"     NewName =      "ttbar_XS" /> -->
+  <!--     <Syst OldName =  "alpha_Fakes_2lee4jConstraint(alpha_Fakes_2lee4j, nom_alpha_Fakes_2lee4j)"     NewName =      "ATLAS_Fakes_2lee4j" /> -->
+  <!--     <Syst OldName =  "alpha_Fakes_2lee5jConstraint(alpha_Fakes_2lee5j, nom_alpha_Fakes_2lee5j)"     NewName =      "ATLAS_Fakes_2lee5j" /> -->
+  <!--     <Syst OldName =  "alpha_Fakes_2lem4jConstraint(alpha_Fakes_2lem4j, nom_alpha_Fakes_2lem4j)"     NewName =      "ATLAS_Fakes_2lem4j" /> -->
+  <!--     <Syst OldName =  "alpha_Fakes_2lem5jConstraint(alpha_Fakes_2lem5j, nom_alpha_Fakes_2lem5j)"     NewName =      "ATLAS_Fakes_2lem5j" /> -->
+  <!--     <Syst OldName =  "alpha_Fakes_2lmm4jConstraint(alpha_Fakes_2lmm4j, nom_alpha_Fakes_2lmm4j)"     NewName =      "ATLAS_Fakes_2lmm4j" /> -->
+  <!--     <Syst OldName =  "alpha_Fakes_2lmm5jConstraint(alpha_Fakes_2lmm5j, nom_alpha_Fakes_2lmm5j)"     NewName =      "ATLAS_Fakes_2lmm5j" /> -->
+  <!--     <Syst OldName =     "alpha_Fakes_2ltauConstraint(alpha_Fakes_2ltau, nom_alpha_Fakes_2ltau)"     NewName =       "ATLAS_Fakes_2ltau" /> -->
+  <!--     <Syst OldName =              "alpha_Fakes_3lConstraint(alpha_Fakes_3l, nom_alpha_Fakes_3l)"     NewName =          "ATLAS_Fakes_3l" /> -->
+  <!--     <Syst OldName =     "alpha_FlavCompJESConstraint(alpha_FlavCompJES, nom_alpha_FlavCompJES)"     NewName =       "ATLAS_JES_FlavComp" /> -->
+  <!--     <Syst OldName =     "alpha_FlavRespJESConstraint(alpha_FlavRespJES, nom_alpha_FlavRespJES)"     NewName =       "ATLAS_JES_FlavResp" /> -->
+  <!--     <Syst OldName = "alpha_JetTagWeightB5Constraint(alpha_JetTagWeightB5, nom_alpha_JetTagWeightB5)"        NewName =    "ATLAS_BTAGBREAK5" /> -->
+  <!--     <Syst OldName =           "alpha_LUMI_2012Constraint(alpha_LUMI_2012, nom_alpha_LUMI_2012)"     NewName =         "ATLAS_lumi_2012" /> -->
+  <!--     <Syst OldName = "alpha_Match_Acc_ttWConstraint(alpha_Match_Acc_ttW, nom_alpha_Match_Acc_ttW)"   NewName =     "ATLAS_Match_Acc_ttW" /> -->
+  <!--     <Syst OldName = "alpha_Match_Acc_ttZConstraint(alpha_Match_Acc_ttZ, nom_alpha_Match_Acc_ttZ)"   NewName =     "ATLAS_Match_Acc_ttZ" /> -->
+  <!--     <Syst OldName = "alpha_Model_Acc_ttWConstraint(alpha_Model_Acc_ttW, nom_alpha_Model_Acc_ttW)"   NewName =     "ATLAS_Model_Acc_ttW" /> -->
+  <!--     <Syst OldName = "alpha_Model_Acc_ttZConstraint(alpha_Model_Acc_ttZ, nom_alpha_Model_Acc_ttZ)"   NewName =     "ATLAS_Model_Acc_ttZ" /> -->
+  <!--     <Syst OldName =                 "alpha_MuonIsoConstraint(alpha_MuonIso, nom_alpha_MuonIso)"     NewName =           "ATLAS_MU_ISO" /> -->
+  <!--     <Syst OldName =                    "alpha_NPVJESConstraint(alpha_NPVJES, nom_alpha_NPVJES)"     NewName =            "ATLAS_JES_NPV" /> -->
+  <!--     <Syst OldName = "alpha_NP_Detector1JESConstraint(alpha_NP_Detector1JES, nom_alpha_NP_Detector1JES)"     NewName =   "ATLAS_JES_2012_Detector1" /> -->
+  <!--     <Syst OldName = "alpha_NP_Modelling1JESConstraint(alpha_NP_Modelling1JES, nom_alpha_NP_Modelling1JES)"  NewName =  "ATLAS_JES_2012_Modelling1" /> -->
+  <!--     <Syst OldName = "alpha_NonClosure_AFIIJESConstraint(alpha_NonClosure_AFIIJES, nom_alpha_NonClosure_AFIIJES)"    NewName = "ATLAS_JES_NonClosure_AFII" /> -->
+  <!--     <Syst OldName =     "alpha_PDF_Acc_ttHConstraint(alpha_PDF_Acc_ttH, nom_alpha_PDF_Acc_ttH)"     NewName =       "pdf_Higgs_ttH_ACCEPT" /> -->
+  <!--     <Syst OldName =     "alpha_PDF_Acc_ttWConstraint(alpha_PDF_Acc_ttW, nom_alpha_PDF_Acc_ttW)"     NewName =       "pdf_Acc_ttW" /> -->
+  <!--     <Syst OldName =     "alpha_PDF_Acc_ttZConstraint(alpha_PDF_Acc_ttZ, nom_alpha_PDF_Acc_ttZ)"     NewName =       "pdf_Acc_ttZ" /> -->
+  <!--     <Syst OldName =        "alpha_PDF_XS_ttHConstraint(alpha_PDF_XS_ttH, nom_alpha_PDF_XS_ttH)"     NewName =        "pdf_Higgs_ttH" /> -->
+  <!--     <Syst OldName =        "alpha_PDF_XS_ttWConstraint(alpha_PDF_XS_ttW, nom_alpha_PDF_XS_ttW)"     NewName =        "pdf_ttW" /> -->
+  <!--     <Syst OldName =        "alpha_PDF_XS_ttZConstraint(alpha_PDF_XS_ttZ, nom_alpha_PDF_XS_ttZ)"     NewName =        "pdf_ttZ" /> -->
+  <!--     <Syst OldName =  "alpha_PDF_tHW_kTp1Constraint(alpha_PDF_tHW_kTp1, nom_alpha_PDF_tHW_kTp1)"     NewName =      "ATLAS_PDF_tHW_kTp1" /> -->
+  <!--     <Syst OldName = "alpha_PDF_tHjb_kTp1Constraint(alpha_PDF_tHjb_kTp1, nom_alpha_PDF_tHjb_kTp1)"   NewName =     "ATLAS_PDF_tHjb_kTp1" /> -->
+  <!--     <Syst OldName =        "alpha_PS_Acc_ttHConstraint(alpha_PS_Acc_ttH, nom_alpha_PS_Acc_ttH)"     NewName =        "ATLAS_PS_Acc_ttH" /> -->
+  <!--     <Syst OldName =        "alpha_PS_Acc_ttWConstraint(alpha_PS_Acc_ttW, nom_alpha_PS_Acc_ttW)"     NewName =        "ATLAS_PS_Acc_ttW" /> -->
+  <!--     <Syst OldName =        "alpha_PS_Acc_ttZConstraint(alpha_PS_Acc_ttZ, nom_alpha_PS_Acc_ttZ)"     NewName =        "ATLAS_PS_Acc_ttZ" /> -->
+  <!--     <Syst OldName =        "alpha_PileRhoJESConstraint(alpha_PileRhoJES, nom_alpha_PileRhoJES)"     NewName =        "ATLAS_JES_2012_PileRho" /> -->
+  <!--     <Syst OldName =     "alpha_QCD_Acc_ttHConstraint(alpha_QCD_Acc_ttH, nom_alpha_QCD_Acc_ttH)"     NewName =       "ATLAS_QCD_Acc_ttH" /> -->
+  <!--     <Syst OldName =     "alpha_QCD_Acc_ttWConstraint(alpha_QCD_Acc_ttW, nom_alpha_QCD_Acc_ttW)"     NewName =       "ATLAS_QCD_Acc_ttW" /> -->
+  <!--     <Syst OldName =     "alpha_QCD_Acc_ttZConstraint(alpha_QCD_Acc_ttZ, nom_alpha_QCD_Acc_ttZ)"     NewName =       "ATLAS_QCD_Acc_ttZ" /> -->
+  <!--     <Syst OldName =        "alpha_QCD_XS_ttHConstraint(alpha_QCD_XS_ttH, nom_alpha_QCD_XS_ttH)"     NewName =        "ATLAS_QCD_XS_ttH" /> -->
+  <!--     <Syst OldName =        "alpha_QCD_XS_ttWConstraint(alpha_QCD_XS_ttW, nom_alpha_QCD_XS_ttW)"     NewName =        "ATLAS_QCD_XS_ttW" /> -->
+  <!--     <Syst OldName =        "alpha_QCD_XS_ttZConstraint(alpha_QCD_XS_ttZ, nom_alpha_QCD_XS_ttZ)"     NewName =        "ATLAS_QCD_XS_ttZ" /> -->
+  <!--     <Syst OldName =  "alpha_QCD_tHW_kTp1Constraint(alpha_QCD_tHW_kTp1, nom_alpha_QCD_tHW_kTp1)"     NewName =      "ATLAS_QCD_tHW_kTp1" /> -->
+  <!--     <Syst OldName = "alpha_QCD_tHjb_kTp1Constraint(alpha_QCD_tHjb_kTp1, nom_alpha_QCD_tHjb_kTp1)"   NewName =     "ATLAS_QCD_tHjb_kTp1" /> -->
+  <!--     <Syst OldName =                    "alpha_QMisIDConstraint(alpha_QMisID, nom_alpha_QMisID)"     NewName =            "ATLAS_QMisID" /> -->
+  <!--     <Syst OldName = "alpha_QMisID_2lee4jConstraint(alpha_QMisID_2lee4j, nom_alpha_QMisID_2lee4j)"   NewName =     "ATLAS_QMisID_2lee4j" /> -->
+  <!--     <Syst OldName = "alpha_QMisID_2lee5jConstraint(alpha_QMisID_2lee5j, nom_alpha_QMisID_2lee5j)"   NewName =     "ATLAS_QMisID_2lee5j" /> -->
+  <!--     <Syst OldName = "alpha_QMisID_2lem4jConstraint(alpha_QMisID_2lem4j, nom_alpha_QMisID_2lem4j)"   NewName =     "ATLAS_QMisID_2lem4j" /> -->
+  <!--     <Syst OldName = "alpha_QMisID_2lem5jConstraint(alpha_QMisID_2lem5j, nom_alpha_QMisID_2lem5j)"   NewName =     "ATLAS_QMisID_2lem5j" /> -->
+  <!--     <Syst OldName = "alpha_QMisID_2lmm4jConstraint(alpha_QMisID_2lmm4j, nom_alpha_QMisID_2lmm4j)"   NewName =     "ATLAS_QMisID_2lmm4j" /> -->
+  <!--     <Syst OldName = "alpha_QMisID_2lmm5jConstraint(alpha_QMisID_2lmm5j, nom_alpha_QMisID_2lmm5j)"   NewName =     "ATLAS_QMisID_2lmm5j" /> -->
+  <!--     <Syst OldName =              "alpha_Theta_eeConstraint(alpha_Theta_ee, nom_alpha_Theta_ee)"     NewName =          "ATLAS_Theta_ee" /> -->
+  <!--     <Syst OldName =              "alpha_Theta_mmConstraint(alpha_Theta_mm, nom_alpha_Theta_mm)"     NewName =          "ATLAS_Theta_mm" /> -->
+  <!--     <Syst OldName =                    "alpha_WWxsecConstraint(alpha_WWxsec, nom_alpha_WWxsec)"     NewName =            "ATLAS_WWxsec" /> -->
+  <!--     <Syst OldName =                    "alpha_WZxsecConstraint(alpha_WZxsec, nom_alpha_WZxsec)"     NewName =            "ATLAS_WZxsec" /> -->
+  <!--     <Syst OldName =                    "alpha_ZZxsecConstraint(alpha_ZZxsec, nom_alpha_ZZxsec)"     NewName =            "ATLAS_ZZxsec" /> -->
+  <!--     <Syst OldName =              "alpha_ggVgxsecConstraint(alpha_ggVgxsec, nom_alpha_ggVgxsec)"     NewName =          "ATLAS_ggVgxsec" /> -->
+  <!--     <Syst OldName = "alpha_TopTruthEventWeight_FragmentationConstraint(alpha_TopTruthEventWeight_Fragmentation, nom_alpha_TopTruthEventWeight_Fragmentation)"       NewName = "ATLAS_ttbar-DataRw-Fragmentation" /> -->
+  <!--     <Syst OldName = "alpha_TopTruthEventWeight_ISRFSRConstraint(alpha_TopTruthEventWeight_ISRFSR, nom_alpha_TopTruthEventWeight_ISRFSR)"    NewName = "ATLAS_ttbar-DataRw-IFSR" /> -->
+  <!--     <Syst OldName = "alpha_TopTruthEventWeight_JERConstraint(alpha_TopTruthEventWeight_JER, nom_alpha_TopTruthEventWeight_JER)"     NewName = "ATLAS_ttbar-DataRw-JER" /> -->
+  <!--     <Syst OldName = "alpha_TopTruthEventWeight_MCGeneratorConstraint(alpha_TopTruthEventWeight_MCGenerator, nom_alpha_TopTruthEventWeight_MCGenerator)"     NewName = "ATLAS_ttbar-DataRw-MCgen" /> -->
+  <!--     <Syst OldName = "alpha_TopTruthEventWeight_bJESConstraint(alpha_TopTruthEventWeight_bJES, nom_alpha_TopTruthEventWeight_bJES)"  NewName = "ATLAS_ttbar-DataRw-JetFlavB" /> -->
+  <!--     <Syst OldName = "alpha_TopTruthEventWeight_btageffConstraint(alpha_TopTruthEventWeight_btageff, nom_alpha_TopTruthEventWeight_btageff)" NewName = "ATLAS_ttbar-DataRw-BTagEff" /> -->
+  <!--     <Syst OldName = "alpha_TopTruthEventWeight_closebyJESConstraint(alpha_TopTruthEventWeight_closebyJES, nom_alpha_TopTruthEventWeight_closebyJES)"        NewName = "ATLAS_ttbar-DataRw-JetCloseby" /> -->
+  <!--     <Syst OldName = "alpha_TopTruthEventWeight_effdetset1JESConstraint(alpha_TopTruthEventWeight_effdetset1JES, nom_alpha_TopTruthEventWeight_effdetset1JES)"       NewName = "ATLAS_ttbar-DataRw-JetDet1" /> -->
+  <!--     <Syst OldName = "alpha_TopTruthEventWeight_etacalibJESConstraint(alpha_TopTruthEventWeight_etacalibJES, nom_alpha_TopTruthEventWeight_etacalibJES)"     NewName = "ATLAS_ttbar-DataRw-JetEtaCalibration" /> -->
+  <!--     <Syst OldName=       "combCat" 		NewName=      "Cat_hlep"/> -->
+  <!--   </RenameMap> -->
+  <!-- </Channel> -->
 </Combination>
