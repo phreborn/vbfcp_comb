@@ -1,3 +1,5 @@
+/* Add your custom classes in this file */
+/* Remember also to modify interface/rooCommon.h */
 #include "RooFormulaVarExt.h"
 #include "FlexibleInterpVarExt.h"
 #include "FlexibleInterpVarMkII.h"

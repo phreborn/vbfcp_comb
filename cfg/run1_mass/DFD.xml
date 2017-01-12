@@ -1,0 +1,41 @@
+<!DOCTYPE Organization  SYSTEM 'Organization.dtd'>
+<Organization InFile="workspace/combination/0130/mass/HSG12_2D_v04.root" OutFile="workspace/combination/0130/mass/HSG12_2D_v04_DFD.root"
+             ModelName="DFD"
+             POINames="mHiggs,DeltaM,mu_4l,mu_gamgam">
+  <Item Name="DFD_e[1]"/>
+  <Item Name="DFD_w[500]"/>
+  <!-- EM_LatLeak -->
+  <Item Name="ATLAS_EM_LatLeak_DFD_nuis[0,-5,5]"/>
+  <Item Name="ATLAS_EM_LatLeak_DFD_gobs[0]"/>
+  <Item Name="EXPR::ATLAS_EM_LatLeak_DFD_ConstraintPdf('1/((1+exp(@2*(@0-@3-@1)))*(1+exp(-1*@2*(@0-@3+@1))))',ATLAS_EM_LatLeak_DFD_nuis,DFD_e,DFD_w,ATLAS_EM_LatLeak_DFD_gobs)"/>
+  <!-- EM_MatID_1 -->
+  <Item Name="ATLAS_EM_MatID_1_DFD_nuis[0,-5,5]"/>
+  <Item Name="ATLAS_EM_MatID_1_DFD_gobs[0]"/>
+  <Item Name="EXPR::ATLAS_EM_MatID_1_DFD_ConstraintPdf('1/((1+exp(@2*(@0-@3-@1)))*(1+exp(-1*@2*(@0-@3+@1))))',ATLAS_EM_MatID_1_DFD_nuis,DFD_e,DFD_w,ATLAS_EM_MatID_1_DFD_gobs)"/>
+  <!-- EM_MatID_2 -->
+  <Item Name="ATLAS_EM_MatID_2_DFD_nuis[0,-5,5]"/>
+  <Item Name="ATLAS_EM_MatID_2_DFD_gobs[0]"/>
+  <Item Name="EXPR::ATLAS_EM_MatID_2_DFD_ConstraintPdf('1/((1+exp(@2*(@0-@3-@1)))*(1+exp(-1*@2*(@0-@3+@1))))',ATLAS_EM_MatID_2_DFD_nuis,DFD_e,DFD_w,ATLAS_EM_MatID_2_DFD_gobs)"/>
+  <!-- EM_MatID_3 -->
+  <Item Name="ATLAS_EM_MatID_3_DFD_nuis[0,-5,5]"/>
+  <Item Name="ATLAS_EM_MatID_3_DFD_gobs[0]"/>
+  <Item Name="EXPR::ATLAS_EM_MatID_3_DFD_ConstraintPdf('1/((1+exp(@2*(@0-@3-@1)))*(1+exp(-1*@2*(@0-@3+@1))))',ATLAS_EM_MatID_3_DFD_nuis,DFD_e,DFD_w,ATLAS_EM_MatID_3_DFD_gobs)"/>
+  <!-- EM_MatID_4 -->
+  <Item Name="ATLAS_EM_MatID_4_DFD_nuis[0,-5,5]"/>
+  <Item Name="ATLAS_EM_MatID_4_DFD_gobs[0]"/>
+  <Item Name="EXPR::ATLAS_EM_MatID_4_DFD_ConstraintPdf('1/((1+exp(@2*(@0-@3-@1)))*(1+exp(-1*@2*(@0-@3+@1))))',ATLAS_EM_MatID_4_DFD_nuis,DFD_e,DFD_w,ATLAS_EM_MatID_4_DFD_gobs)"/>
+  <Item Name="const_unit[1]" />
+  <Item Name="EDIT::NEWPDF(OLDPDF,
+              ATLAS_EM_LatLeak=ATLAS_EM_LatLeak_DFD_nuis,
+              ATLAS_EM_LatLeakConstraint=const_unit,
+              ATLAS_EM_MatID_1=ATLAS_EM_MatID_1_DFD_nuis,
+              ATLAS_EM_MatID_1Constraint=const_unit,
+              ATLAS_EM_MatID_2=ATLAS_EM_MatID_2_DFD_nuis,
+              ATLAS_EM_MatID_2Constraint=const_unit,
+              ATLAS_EM_MatID_3=ATLAS_EM_MatID_3_DFD_nuis,
+              ATLAS_EM_MatID_3Constraint=const_unit,
+              ATLAS_EM_MatID_4=ATLAS_EM_MatID_4_DFD_nuis,
+              ATLAS_EM_MatID_4Constraint=const_unit,
+              )"/>
+</Organization>
+

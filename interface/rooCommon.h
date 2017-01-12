@@ -51,6 +51,7 @@
 #include "RooBinning.h"
 #include "RooDataHist.h"
 
+/* Put the custom class headers here */
 #include "RooFormulaVarExt.h"
 #include "FlexibleInterpVarExt.h"
 #include "FlexibleInterpVarMkII.h"
