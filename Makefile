@@ -12,6 +12,7 @@
  #                                                                         #
  ###########################################################################
 
+# Makefile updated by Hongtao Yang on Jan 23, 2017
 # Package information
 APP = manager
 LIBRARY = manager
@@ -23,9 +24,12 @@ INCDIR  = interface
 ifeq ($(shell root-config --platform), macosx)
 	BOOSTLIBS = -lboost_system-mt -lboost_filesystem-mt -lboost_program_options-mt -lboost_regex-mt
 else
-	BOOSTLIBS = -L/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/boost/boost-1.55.0-python2.7-x86_64-slc6-gcc48/boost-1.55.0-python2.7-x86_64-slc6-gcc48/lib/ -lboost_filesystem -lboost_program_options -lboost_regex -lboost_system
-	BOOST_INC = -I/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/boost/boost-1.55.0-python2.7-x86_64-slc6-gcc48/boost-1.55.0-python2.7-x86_64-slc6-gcc48/include/
+# Obsolete (HSG7 ROOT 5)
+	# BOOSTLIBS = -L/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/boost/boost-1.55.0-python2.7-x86_64-slc6-gcc48/boost-1.55.0-python2.7-x86_64-slc6-gcc48/lib/ -lboost_filesystem -lboost_program_options -lboost_regex -lboost_system
+	# BOOST_INC = -I/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/boost/boost-1.55.0-python2.7-x86_64-slc6-gcc48/boost-1.55.0-python2.7-x86_64-slc6-gcc48/include/
 
+	BOOSTLIBS = -L/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/boost/boost-1.60.0-python2.7-x86_64-slc6-gcc49/boost-1.60.0-python2.7-x86_64-slc6-gcc49/lib/ -lboost_filesystem -lboost_program_options -lboost_regex -lboost_system
+	BOOST_INC = -I/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/boost/boost-1.60.0-python2.7-x86_64-slc6-gcc49/boost-1.60.0-python2.7-x86_64-slc6-gcc49/include/
 	INCLUDES += $(BOOST_INC) 
 endif
 

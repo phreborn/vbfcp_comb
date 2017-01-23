@@ -30,7 +30,7 @@ double Background::dndx(double mass, double p2, double p3, double xi) const
     
     if(m_btype == 4) return TMath::Exp( -(mass/13000) * p2 + (mass/13000)*(mass/13000) * p3);
     
-    cout<<"ERROR: WRONG BACKGROUND"<<endl;
+    std::cout<<"ERROR: WRONG BACKGROUND"<<std::endl;
     
     exit(EXIT_FAILURE);
 }

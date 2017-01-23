@@ -270,7 +270,7 @@ Bool_t RooFormulaVarExt::redirectServersHook(const RooAbsCollection& newServerLi
 
 
 //_____________________________________________________________________________
-void RooFormulaVarExt::printMultiline(ostream& os, Int_t contents, Bool_t verbose, TString indent) const
+void RooFormulaVarExt::printMultiline(std::ostream& os, Int_t contents, Bool_t verbose, TString indent) const
 {
     // Print info about this object to the specified stream.
 
@@ -285,7 +285,7 @@ void RooFormulaVarExt::printMultiline(ostream& os, Int_t contents, Bool_t verbos
 
 
 //_____________________________________________________________________________
-void RooFormulaVarExt::printMetaArgs(ostream& os) const
+void RooFormulaVarExt::printMetaArgs(std::ostream& os) const
 {
     // Add formula expression as meta argument in printing interface
     // os << "formula=\"" << _formExpr << "\" " ;
@@ -295,7 +295,7 @@ void RooFormulaVarExt::printMetaArgs(ostream& os) const
 
 
 //_____________________________________________________________________________
-Bool_t RooFormulaVarExt::readFromStream(istream& /*is*/, Bool_t /*compact*/, Bool_t /*verbose*/)
+Bool_t RooFormulaVarExt::readFromStream(std::istream& /*is*/, Bool_t /*compact*/, Bool_t /*verbose*/)
 {
     return kTRUE ;
 }
@@ -303,7 +303,7 @@ Bool_t RooFormulaVarExt::readFromStream(istream& /*is*/, Bool_t /*compact*/, Boo
 
 
 //_____________________________________________________________________________
-void RooFormulaVarExt::writeToStream(ostream& os, Bool_t compact) const
+void RooFormulaVarExt::writeToStream(std::ostream& os, Bool_t compact) const
 {
     // Write object contents to given stream
 }
