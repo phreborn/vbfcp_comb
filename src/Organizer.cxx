@@ -350,7 +350,7 @@ bool Organizer::run(bool makeSnapshot)
 
 
   nW->import(*nMc);
-  nW->importClassCode(); // Jared 
+  nW->importClassCode(); 
 
   std::cout << "Writing to file: " << m_outFile << std::endl;
   nW->writeToFile(m_outFile.c_str(), true);
