@@ -18,12 +18,11 @@
 #include "Organizer.h"
 #include "combiner.h"
 
-Organizer::Organizer() :
-    AlgoBase("Organizer specific options") {
-      options_.add_options()
-          // ("toysH,T", boost::program_options::value<unsigned int>(&nToys_)->default_value(nToys_),         "Number of Toy MC extractions to compute CLs+b, CLb and CLs")
-          ;
-    }
+Organizer::Organizer( std::string combinedFile, std::string outFile ): AlgoBase("Organizer specific options") {
+    options_.add_options();
+    m_inFile = combinedFile;
+    m_outFile = outFile;
+}
 
 void Organizer::applyOptions(const boost::program_options::variables_map &vm) {
 }
@@ -385,11 +384,11 @@ void Organizer::readConfigXml( std::string filen )
   {
     if ( curAttr->GetName() == TString( "InFile" ) )
     {
-      m_inFile = curAttr->GetValue();
+      if (m_inFile == "") m_inFile = curAttr->GetValue();
     }
     else if ( curAttr->GetName() == TString( "OutFile" ) )
     {
-      m_outFile = curAttr->GetValue();
+      if (m_outFile == "") m_outFile = curAttr->GetValue();
     }
     else if ( curAttr->GetName() == TString( "ModelName" ) )
     {

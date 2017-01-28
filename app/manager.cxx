@@ -16,8 +16,8 @@
 
 std::string what_ = "";
 std::string configFile_ = "";
-std::string combinedFile_ = "combined.root";
-std::string splittedFile_ = "splitted.root";
+std::string combinedFile_ = "";
+std::string splittedFile_ = "";
 bool snapShot_ = false;
 std::string snapshotHintFile_ = "";
 std::string minimizerType_ = "Minuit2";
@@ -163,6 +163,8 @@ int main( int argc, char** argv )
       writemuhatWS_=false;
     }
 
+    if (combinedFile_ == "") combinedFile_="combined.root";
+
     if(doStep0) {
       combiner* comb = new combiner();
       comb->readConfigXml(configFile_);
@@ -217,6 +219,8 @@ int main( int argc, char** argv )
   {
     writemuhatWS_=false;
     std::string dataName = dataName_;
+    if (splittedFile_ == "") splittedFile_="splitted.root";
+    if (combinedFile_ == "") std::cerr << "Please specify what file to split" << std::endl; EXIT_FAILURE;
     splitter* split = new splitter(combinedFile_, splittedFile_, usePseudoData_== "" ? dataName : usePseudoData_);
     split->printSummary(verbose_);
     split->fillIndice(indice_);
@@ -253,7 +257,7 @@ int main( int argc, char** argv )
   }
   else if ( what_=="organize" )
   {
-    Organizer* org = new Organizer();
+    Organizer* org = new Organizer(combinedFile_,splittedFile_);
     org->readConfigXml(configFile_);
     // org->printSummary();
     org->run(snapShot_);
@@ -261,6 +265,8 @@ int main( int argc, char** argv )
   else if ( what_=="decorate" )
   {
 
+    if (splittedFile_ == "") splittedFile_="decorated.root";
+    if (combinedFile_ == "") std::cerr << "Please specify what file to split" << std::endl; EXIT_FAILURE;
     decorator* decorate=new decorator(combinedFile_,splittedFile_,dataName_,wsName_,mcName_);
     decorate->setVar(setVar_);
     decorate->setHistToData(histToData_);
