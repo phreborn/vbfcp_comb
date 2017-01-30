@@ -34,7 +34,7 @@
 
 class Organizer : public AlgoBase {
     public:
-        Organizer() ;
+        Organizer( std::string combinedFile, std::string outFile ) ;
         virtual void applyOptions(const boost::program_options::variables_map &vm) ;
         virtual void applyDefaultOptions() ;
         virtual void validateOptions() ;
