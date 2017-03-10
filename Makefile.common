@@ -118,6 +118,7 @@ print:
 $(DICTFILE): $(HLIST) $(DICTLDEF)
 	@echo "Generating dictionary $@" 
 	@$(shell root-config --exec-prefix)/bin/rootcint -f $(DICTFILE) -c -p $(INCLUDES) $^
+	@mv src/$(LIBRARY)_Dict_rdict.pcm $(LIBRARY)_Dict_rdict.pcm
 
 # Rule to comile the dictionary
 $(DICTOBJ): $(DICTFILE)
@@ -168,7 +169,7 @@ endif
 shlib: $(SHLIBFILE)
 
 clean:
-	rm -f $(DICTFILE) $(DICTHEAD)
+	rm -f $(DICTFILE) $(DICTHEAD) $(LIBRARY)_Dict_rdict.pcm
 	rm -f $(OBJDIR)/*.o
 	rm -f $(SHLIBFILE)
 	rm -f $(_LIB_PATH)/lib$(LIBRARY).so

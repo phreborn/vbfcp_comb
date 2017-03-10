@@ -890,7 +890,8 @@ void combiner::initWorkspace(std::string tmpFileName, keepTmp what)
 			    *data,
 			    RooFit::RenameVariable( oldStr.c_str(), newStr.c_str() )
 			    );
-
+    
+    m_tmpComb->importClassCode(); // Jared
 
 	  // f->Close();
 
@@ -962,6 +963,7 @@ void combiner::regularizeWorkspace()
   m_mc->SetObservables( m_obs );
 
   m_comb->import( *m_mc );
+  m_comb->importClassCode(); // Jared
 
 
   if ( m_mkBonly ) {
@@ -979,6 +981,7 @@ void combiner::regularizeWorkspace()
 	mc_bonly->SetPdf(*model_b);
 	mc_bonly->SetName("ModelConfig_bonly");
 	m_comb->import(*mc_bonly);
+  m_comb->importClassCode(); // Jared
 	delete mc_bonly;
 	delete model_b;
       }
@@ -1141,6 +1144,7 @@ void combiner::makeSimCategory()
     }
 
   m_comb->import( *m_cat );
+  m_comb->importClassCode(); // Jared
   // m_cat = (RooCategory*) m_comb->obj(m_cat->GetName());
 
 
@@ -1176,6 +1180,7 @@ void combiner::makeSimCategory()
 		  RooFit::RenameVariable( oldStr.c_str(), newStr.c_str() ),
 		  RooFit::RecycleConflictNodes(),
 		  RooFit::Silence() );
+  m_comb->importClassCode(); // Jared
 
   // // use the version imported
   // m_pdf = ( RooSimultaneous* )m_comb->obj( m_pdf->GetName() );
@@ -1294,6 +1299,7 @@ void combiner::makeSimCategory()
     }
 
   m_comb->import( *m_data );
+  m_comb->importClassCode(); // Jared
   tmpName= m_data->GetName();
   delete m_data;
   m_data = ( RooDataSet* )m_comb->data( tmpName );
@@ -1307,13 +1313,12 @@ void combiner::makeSimCategory()
   findArgSetIn( m_comb, m_gObs );
   findArgSetIn( m_comb, m_nuis );
 
-
-
   m_comb->defineSet( m_obsName.c_str(), m_obs );
   m_comb->defineSet( m_gObsName.c_str(), *m_gObs );
   RooStats::RemoveConstantParameters( m_nuis );
   RooStats::SetAllConstant( *m_gObs );
   m_comb->defineSet( m_nuisName.c_str(), *m_nuis );
+  m_comb->importClassCode(); // Jared
   std::cout << "Leaving makeSimCategory()" << std::endl;
 }
 void combiner::findArgSetIn( RooWorkspace* w, RooArgSet* set )
@@ -1615,6 +1620,7 @@ void combiner::makeSnapshots(
     std::cout << "\tOutput plot: " << outputPlotName << std::endl;
     asimovUtils::makeSnapshots(w, mc, data, pdf, outputPlotName.Data(), minimizerType, tolerance, simple, snapshotHintFile, fitFlag);
   }
+  w->importClassCode(); // Jared
   w->writeToFile(combinedFile.c_str());
   delete w;
   delete f;

@@ -832,6 +832,7 @@ void splitter::makeWorkspace(double rMax_, int reBin, double mass, bool editRFV)
 
 
   m_subComb->import( *m_subData );
+  m_subComb->importClassCode();
 
   /* should use those already in combined workspace */
   findArgSetIn( m_subComb, &m_subObs );
