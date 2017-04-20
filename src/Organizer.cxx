@@ -1,7 +1,6 @@
 /*
  * =====================================================================================
- *
- *       Filename:  Organizer.cxx
+ * *       Filename:  Organizer.cxx
  *
  *    Description:  Orgnize the workspace
  *
@@ -207,6 +206,14 @@ bool Organizer::run(bool makeSnapshot)
   combiner::linkMap( renameMap, oldStr, newStr, "," );
   std::cout << "\told: " << oldStr << std::endl;
   std::cout << "\tnew: " << newStr << std::endl;
+
+  // check the naming
+  for( TString oldVar : SplitString(oldStr, ',') ) {
+    if (not w->var(oldVar))  {
+      cout << "\033[91m FATAL: Variable " << oldVar << " not in workspace. \033[0m" << endl;
+      //return false;
+    }
+  }
 
   /* import pdf */
   nW->import(*(mc->GetPdf()),
