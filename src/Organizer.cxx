@@ -210,7 +210,7 @@ bool Organizer::run(bool makeSnapshot)
   // check the naming
   for( TString oldVar : SplitString(oldStr, ',') ) {
     if (not w->var(oldVar))  {
-      cout << "\033[91m FATAL: Variable " << oldVar << " not in workspace. \033[0m" << endl;
+      cout << "\033[91m WARNING: Variable " << oldVar << " not in workspace. \033[0m" << endl;
       //return false;
     }
   }
