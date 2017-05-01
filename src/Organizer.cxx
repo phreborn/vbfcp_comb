@@ -37,7 +37,7 @@ bool Organizer::run(bool makeSnapshot)
   std::string mcName = "ModelConfig";
   std::string dataName = "combData";
 
-  TFile* f = new TFile(m_inFile.c_str());
+  TFile* f = TFile::Open(m_inFile.c_str());
   RooWorkspace* w = (RooWorkspace*)(f->Get(wsName.c_str()));
   RooStats::ModelConfig* mc = (RooStats::ModelConfig*)(w->obj(mcName.c_str()));
   RooSimultaneous* pdf = dynamic_cast<RooSimultaneous*>(mc->GetPdf());
@@ -209,8 +209,15 @@ bool Organizer::run(bool makeSnapshot)
 
   // check the naming
   for( TString oldVar : SplitString(oldStr, ',') ) {
-    if (not w->var(oldVar))  {
-      cout << "\033[91m WARNING: Variable " << oldVar << " not in workspace. \033[0m" << endl;
+    if (not w->arg(oldVar))  {
+      cout << "\033[91m WARNING: Object " << oldVar << " not in workspace. \033[0m" << endl;
+      //return false;
+    }
+  }
+
+  for( TString newVar : SplitString(newStr, ',') ) {
+    if (not nW->arg(newVar))  {
+      cout << "\033[91m WARNING: Object " << newVar << " not in workspace. \033[0m" << endl;
       //return false;
     }
   }
@@ -265,9 +272,14 @@ bool Organizer::run(bool makeSnapshot)
 
   /* poi */
   RooArgSet newPOI;
+  std::cout<<"List of POIs in the new parameterization:"<<std::endl;
   for ( int i= 0; i < (int)m_poiNames.size(); i++ ) {
     RooRealVar* var = nW->var(m_poiNames[i].c_str());
-    std::cout<<m_poiNames[i].c_str()<<" "<<var<<std::endl;
+    if(!var){
+      cout << "\033[91m ERROR: POI " << m_poiNames[i] << " is missing. Please intervene...\033[0m" << endl;
+      abort();
+    }
+    std::cout<<m_poiNames[i].c_str()<<std::endl;
     /* float by default */
     var->setConstant(false);
     newPOI.add(*var);
@@ -300,7 +312,7 @@ bool Organizer::run(bool makeSnapshot)
 
   std::unique_ptr<TIterator> iterG(mc->GetGlobalObservables()->createIterator());
   for ( RooRealVar* v = (RooRealVar*)iterG->Next(); v!=0; v = (RooRealVar*)iterG->Next() ) {
-    std::cout << "name: " << v->GetName() << std::endl;
+    // std::cout << "name: " << v->GetName() << std::endl;
     std::string vName = v->GetName();
     // if ( vName=="ATLAS_EM_ES_Z_In" || vName=="ATLAS_EM_MAT1_In" || vName=="ATLAS_EM_PS1_In" ) {
     //   continue;
@@ -315,7 +327,7 @@ bool Organizer::run(bool makeSnapshot)
 
   std::unique_ptr<TIterator> iterM(mc->GetObservables()->createIterator());
   for ( RooAbsArg* v = (RooAbsArg*)iterM->Next(); v!=0; v = (RooAbsArg*)iterM->Next() ) {
-    std::cout << "name: " << v->GetName() << std::endl;
+    // std::cout << "name: " << v->GetName() << std::endl;
     RooAbsArg* var = dynamic_cast<RooAbsArg*>(nW->obj(v->GetName()));
 //     assert ( var );
     if(!var){
