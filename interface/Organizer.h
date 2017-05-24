@@ -44,7 +44,7 @@ class Organizer : public AlgoBase {
           return name;
         }
 
-        virtual bool run(bool makeSnapshot);
+        virtual bool run(bool makeSnapshot, std::string dataName, std::string wsName, std::string mcName);
 
         virtual void readConfigXml( std::string configFileName );
         virtual void printSummary()

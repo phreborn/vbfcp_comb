@@ -31,12 +31,8 @@ void Organizer::applyDefaultOptions() { validateOptions(); }
 void Organizer::validateOptions() {
 }
 
-bool Organizer::run(bool makeSnapshot)
+bool Organizer::run(bool makeSnapshot, std::string dataName, std::string wsName, std::string mcName)
 {
-  std::string wsName = "combWS";
-  std::string mcName = "ModelConfig";
-  std::string dataName = "combData";
-
   TFile* f = TFile::Open(m_inFile.c_str());
   RooWorkspace* w = (RooWorkspace*)(f->Get(wsName.c_str()));
   RooStats::ModelConfig* mc = (RooStats::ModelConfig*)(w->obj(mcName.c_str()));

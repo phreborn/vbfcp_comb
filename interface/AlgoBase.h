@@ -36,7 +36,7 @@ class AlgoBase
 		virtual void validateOptions()
 		{ }
 
-		virtual bool run(bool makeSnapshot) = 0;
+		virtual bool run(bool makeSnapshot, std::string dataName, std::string wsName, std::string mcName) = 0;
 		virtual const std::string& name() const = 0;
 		const boost::program_options::options_description& options() const
 		{

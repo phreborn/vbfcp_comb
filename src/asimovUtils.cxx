@@ -391,7 +391,10 @@ RooAbsData* asimovUtils::asimovDatasetWithFit(
 	  minim.setPrintLevel(1);
 	  minim.setProfile(); /* print out time */
 	  minim.setEps(tolerance/0.001);
-	  //minim.optimizeConst(2);
+	  if(constOpt_){
+	    cout<<"REGTEST: using level 2 constant optimization"<<endl;
+	    minim.optimizeConst(2);
+	  }
 	  minim.minimize("Minuit2");
 	  if(improveFit_) minim.improve(); 	// Improve the fit
 

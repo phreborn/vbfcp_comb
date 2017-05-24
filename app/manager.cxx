@@ -32,8 +32,8 @@ std::string injectDataSet_ = "asimovData_1";
 std::string replaceStr_ = "";
 std::string usePseudoData_ = "";
 std::string dataName_ = "obsData";
-std::string wsName_ = "";
-std::string mcName_ = "";
+std::string wsName_ = "combWS";
+std::string mcName_ = "ModelConfig";
 
 float minimizerTolerance_ = 0.001;
 
@@ -97,6 +97,7 @@ int main( int argc, char** argv )
     ("minimizerTolerance", po::value<float>(&minimizerTolerance_)->default_value(minimizerTolerance_),  "Tolerance for minimizer used for profiling")
     ("minimizerStrategy", po::value<int>(&minimizerStrategy_)->default_value(minimizerStrategy_),  "Strategy for minimizer used for profiling")
     ("nllOffset", po::value<bool>(&nllOffset_)->default_value(nllOffset_),  "Enable NLL offsetting")
+    ("constOpt", po::value<bool>(&constOpt_)->default_value(constOpt_),  "Enable constant optimization")
     ("improveFit", po::value<bool>(&improveFit_)->default_value(improveFit_), "Whether to call improve() after fit converges")
     ("robustFit", po::value<bool>(&robustFit_)->default_value(robustFit_), "Whether to fit again after fit converges")
     ("setVar", po::value<std::string>(&setVar_)->default_value(setVar_), "Manipulating variables in the workspace")
@@ -260,7 +261,7 @@ int main( int argc, char** argv )
     Organizer* org = new Organizer(combinedFile_,splittedFile_);
     org->readConfigXml(configFile_);
     // org->printSummary();
-    org->run(snapShot_);
+    org->run(snapShot_,dataName_,wsName_,mcName_);
   }
   else if ( what_=="decorate" )
   {
