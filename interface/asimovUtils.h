@@ -65,7 +65,7 @@ namespace asimovUtils {
                         RooAbsCollection& snapshot,
                         double& nll,
                         double poiValue = 0.0,
-                        double tolerance = 0.001,
+                        double tolerance = 0.000001,
                         double forcePoiAfterFit = -100.,
                         int verbose = 0
                         ) ;

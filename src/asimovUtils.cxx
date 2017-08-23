@@ -425,7 +425,7 @@ RooAbsData* asimovUtils::asimovDatasetWithFit(
 	  // double init_val=-1;
 
 	  RooWorkspace *m_comb=mc->GetWS();
-	  m_comb->writeToFile("test.root");
+	  // m_comb->writeToFile("test.root");
 	  // m_comb->var("CMS_hzz_bkgMELA")->Print("v");
 	  // mc->GetGlobalObservables()->Print("v");
 	  // m_comb->function("CMS_hzz_bkgMELA_Pdf")->Print("v");
@@ -511,6 +511,8 @@ RooAbsData* asimovUtils::asimovDatasetWithFit(
     RooAbsData* asimov=NULL;
     if(generateAsimov_){
       if(preFit_){
+	mc->GetWS()->saveSnapshot("conditionalNuis_muhat", *mc->GetNuisanceParameters());
+	((RooRealVar*)mc->GetParametersOfInterest()->first())->setVal(1);
 	mc->GetWS()->loadSnapshot("nominalNuis");
 	mc->GetWS()->loadSnapshot("nominalGlobs");
       }
@@ -1031,38 +1033,39 @@ void asimovUtils::makePlots( const RooAbsPdf& pdf, const RooAbsData& data, std::
     RooAbsData* asimovData_muhat = asimovUtils::asimovDatasetWithFit( mc, *data, snapshot, nll_float, -999);
     ucmles.add(*mc->GetNuisanceParameters());
     ucmles.add(*mc->GetParametersOfInterest());
-    w->saveSnapshot( "ucmles_mpoi", ucmles, true );
-    w->saveSnapshot( "conditionalGlobs_muhat_mpoi", *mc->GetGlobalObservables() );
-    asimovData_muhat->SetName("asimovData_muhat_mpoi");
-    w->import(*asimovData_muhat);
-
-
-    /* all set at 1 */
-    for ( int i= 0; i < (int)poiNames.size(); i++ ) {
-      RooRealVar* var = w->var(poiNames[i].c_str());
-      var->setConstant(true);
-      var->setVal(1.);
-      /* We don't expect to see BRinv */
-      if ( std::string(var->GetName())=="BRinv" ) {
-        var->setVal(0.);
-      }
+    w->saveSnapshot( "ucmles", ucmles, true );
+    if(generateAsimov_){
+      w->saveSnapshot( "conditionalGlobs_muhat_mpoi", *mc->GetGlobalObservables() );
+      asimovData_muhat->SetName("asimovData_muhat_mpoi");
+      w->import(*asimovData_muhat);
     }
-    RooArgSet cond1;
-    RooAbsData* asimovData_1 = asimovUtils::asimovDatasetWithFit( mc, *data, snapshot, nll_1, 1.);
-    cond1.add(*mc->GetNuisanceParameters());
-    // cond1.add(*mc->GetParametersOfInterest());
-    w->saveSnapshot( "conditionalNuis_1_mpoi", cond1, true );
-    w->saveSnapshot( "conditionalGlobs_1_mpoi", *mc->GetGlobalObservables() );
-    asimovData_1->SetName("asimovData_1_mpoi");
-    w->import(*asimovData_1);
+
+    // /* all set at 1 */
+    // for ( int i= 0; i < (int)poiNames.size(); i++ ) {
+    //   RooRealVar* var = w->var(poiNames[i].c_str());
+    //   var->setConstant(true);
+    //   var->setVal(1.);
+    //   /* We don't expect to see BRinv */
+    //   if ( std::string(var->GetName())=="BRinv" ) {
+    //     var->setVal(0.);
+    //   }
+    // }
+    // RooArgSet cond1;
+    // RooAbsData* asimovData_1 = asimovUtils::asimovDatasetWithFit( mc, *data, snapshot, nll_1, 1.);
+    // cond1.add(*mc->GetNuisanceParameters());
+    // // cond1.add(*mc->GetParametersOfInterest());
+    // w->saveSnapshot( "conditionalNuis_1", cond1, true );
+    // w->saveSnapshot( "conditionalGlobs_1", *mc->GetGlobalObservables() );
+    // asimovData_1->SetName("asimovData_1");
+    // w->import(*asimovData_1);
 
 
-    RooRealVar* var1 = new RooRealVar("nll_1_mpoi", "nll_1_mpoi", nll_1);
-    RooRealVar* var = new RooRealVar("nll_muhat_mpoi", "nll_muhat_mpoi", nll_float);
-    w->import(*var);
-    w->import(*var1);
+    // RooRealVar* var1 = new RooRealVar("nll_1_mpoi", "nll_1_mpoi", nll_1);
+    // RooRealVar* var = new RooRealVar("nll_muhat_mpoi", "nll_muhat_mpoi", nll_float);
+    // w->import(*var);
+    // w->import(*var1);
 
-    w->loadSnapshot("ucmles_c");
+    // w->loadSnapshot("ucmles_c");
   }
 
   /* makeSnapshots */
@@ -1199,15 +1202,16 @@ void asimovUtils::makePlots( const RooAbsPdf& pdf, const RooAbsData& data, std::
           );
 
       nuisSnapshot.add( *m_mc->GetNuisanceParameters() );
-      m_comb->saveSnapshot( "conditionalNuis_muhat", nuisSnapshot, true );
+      if(preFit_) m_comb->loadSnapshot("conditionalNuis_muhat");
+      else m_comb->saveSnapshot( "conditionalNuis_muhat", nuisSnapshot, true );
       nuisSnapshot.add( *m_mc->GetParametersOfInterest() );
       m_comb->saveSnapshot( "ucmles", nuisSnapshot, true );
-      m_comb->saveSnapshot( "conditionalGlobs_muhat", snapshot, true );
+      if(!preFit_) m_comb->saveSnapshot( "conditionalGlobs_muhat", snapshot, true );
 
       if(generateAsimov_){
 	assert( asimovData );
-
-	asimovData->SetName( "asimovData_muhat" );
+	if(preFit_) asimovData->SetName( "asimovData_1_prefit" );
+	else asimovData->SetName( "asimovData_muhat" );
 	m_comb->import( *asimovData );
 
       }
@@ -1238,7 +1242,8 @@ void asimovUtils::makePlots( const RooAbsPdf& pdf, const RooAbsData& data, std::
       m_comb->saveSnapshot( "conditionalGlobs_1", snapshot, true );
       if(generateAsimov_){
 	assert( asimovData );
-	asimovData->SetName( "asimovData_1" );
+	if(preFit_) asimovData->SetName( "asimovData_1_prefit" );
+	else asimovData->SetName( "asimovData_1" );
 	m_comb->import( *asimovData );
       }
 

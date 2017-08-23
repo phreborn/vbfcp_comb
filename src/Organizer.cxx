@@ -337,18 +337,22 @@ bool Organizer::run(bool makeSnapshot, std::string dataName, std::string wsName,
   for (std::vector<std::string>::iterator it  =
        additionalVarNames.begin(); it !=  additionalVarNames.end(); ++it)
   {
-    RooAbsArg* arg = dynamic_cast<RooAbsArg*>(nW->obj((*it).c_str()));
-    std::cout << "\tadding " << *it << " to Nuisance Parameters... " << std::endl;
-    nuis.add(*arg);
+    RooAbsArg* arg = dynamic_cast<RooRealVar*>(nW->obj((*it).c_str()));
+    if(arg){
+      std::cout << "\tadding " << *it << " to Nuisance Parameters... " << std::endl;
+      nuis.add(*arg);
+    }
   }
 
   for (std::vector<std::string>::iterator it  =
        additionalGlobs.begin(); it !=  additionalGlobs.end(); ++it)
   {
     RooRealVar* arg = dynamic_cast<RooRealVar*>(nW->obj((*it).c_str()));
-    std::cout << "\tadding " << *it << " to Global Observables... " << std::endl;
-    arg->setConstant(true);
-    gobs.add(*arg);
+    if(arg){
+      std::cout << "\tadding " << *it << " to Global Observables... " << std::endl;
+      arg->setConstant(true);
+      gobs.add(*arg);
+    }
   }
 
   nMc->SetNuisanceParameters( nuis );

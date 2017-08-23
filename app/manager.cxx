@@ -103,6 +103,7 @@ int main( int argc, char** argv )
     ("setVar", po::value<std::string>(&setVar_)->default_value(setVar_), "Manipulating variables in the workspace")
     ("generateAsimov", po::value<bool>(&generateAsimov_)->default_value(generateAsimov_), "Generate Asimov data or not")
     ("preFit", po::value<bool>(&preFit_)->default_value(preFit_), "Generate prefit Asimov (default post-fit)")
+    ("makePlots", po::value<bool>(&preFit_)->default_value(makePlots_), "Generate summary plots")
     ("histToData", po::value<bool>(&histToData_)->default_value(histToData_), "Convert RooDataHist to RooDataSet")
     ;
   po::variables_map vm0;
