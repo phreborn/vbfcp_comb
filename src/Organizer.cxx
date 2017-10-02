@@ -120,6 +120,11 @@ bool Organizer::run(bool makeSnapshot, std::string dataName, std::string wsName,
       additionalGlobs.push_back(varName_glob.Data());
       additionalTerm  =  true;
     }
+    if (actionStr.Contains("ExternalPdf")) {
+      TString pdfName  =  actionStr;
+      pdfName  =  pdfName(pdfName.First("::")+2,  pdfName.First("(")-pdfName.First("::")-2);
+      std::cout << "Adding external pdf: " << pdfName << std::endl;
+    }
   }
 
   /* add additionalTerm */
