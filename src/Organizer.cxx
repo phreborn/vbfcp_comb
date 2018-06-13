@@ -250,7 +250,6 @@ bool Organizer::run(bool makeSnapshot, std::string dataName, std::string wsName,
       nW->saveSnapshot("conditionalGlobs_0", *gobs1, true);
     }
     else if ( dataName=="asimovData_1" ) {
-      continue;
       assert ( w->loadSnapshot("nominalNuis") );
       assert ( w->loadSnapshot("nominalGlobs") );
 
