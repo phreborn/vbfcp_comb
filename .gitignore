@@ -1,0 +1,5 @@
+RooFitExtensions
+build
+manager
+*~
+cmake_setup.sh
