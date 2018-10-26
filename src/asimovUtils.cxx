@@ -395,6 +395,7 @@ RooAbsData* asimovUtils::asimovDatasetWithFit(
 	    cout<<"REGTEST: using level 2 constant optimization"<<endl;
 	    minim.optimizeConst(2);
 	  }
+	  minim.setMaxFunctionCalls(5000*mc->GetPdf()->getVariables()->getSize());//suggest by Stefan
 	  minim.minimize("Minuit2");
 	  if(improveFit_) minim.improve(); 	// Improve the fit
 
