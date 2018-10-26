@@ -250,8 +250,8 @@ bool Organizer::run(bool makeSnapshot, std::string dataName, std::string wsName,
       nW->saveSnapshot("conditionalGlobs_0", *gobs1, true);
     }
     else if ( dataName=="asimovData_1" ) {
-      assert ( w->loadSnapshot("nominalNuis") );
-      assert ( w->loadSnapshot("nominalGlobs") );
+      // assert ( w->loadSnapshot("nominalNuis") );
+      // assert ( w->loadSnapshot("nominalGlobs") );
 
       nW->saveSnapshot("nominalGlobs", *gobs1, true);
       nW->saveSnapshot("nominalNuis", *nuis1, true);
@@ -494,11 +494,11 @@ void Organizer::implementFlexibleInterpVar(RooWorkspace *w, TString actionStr){
 
   TString NPName=((TObjString*)iArray->At(0))->GetString();
   if(!w->var(NPName)){
-    std::cerr<<"ERROR: nuisance parameter "<<NPName<<" is missing."<<std::endl;
-    abort();
+    // std::cerr<<"ERROR: nuisance parameter "<<NPName<<" is missing."<<std::endl;
+    // abort();
   }
   
-  RooArgList nuiList(*w->var(NPName));
+  RooArgList nuiList(*w->arg(NPName));
 
   double nominal=atof(((TObjString*)iArray->At(1))->GetString());
   double errHi=atof(((TObjString*)iArray->At(2))->GetString());
@@ -514,7 +514,7 @@ void Organizer::implementFlexibleInterpVar(RooWorkspace *w, TString actionStr){
   
   RooStats::HistFactory::FlexibleInterpVar expected_var(responseName,responseName,nuiList,nominal,sigma_var_low,sigma_var_high,code);
 
-  expected_var.Print();
+  // expected_var.Print();
   w->import(expected_var);
 }
 
