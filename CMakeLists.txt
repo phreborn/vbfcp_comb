@@ -60,6 +60,6 @@ target_link_libraries (manager workspaceCombiner ${ROOT_LIBRARIES} ${Boost_LIBRA
 set(SETUP cmake_setup.sh)
 file(WRITE ${SETUP} "#!/bin/bash\n")
 file(APPEND ${SETUP} "# this is an auto-generated setup script\n" )
-file(APPEND ${SETUP} "export PATH=$PATH:${CMAKE_BINARY_DIR}\n" )
+file(APPEND ${SETUP} "export PATH=$PATH:${CMAKE_CURRENT_BINARY_DIR}\n" )
 
 message("before running, 'source ${PROJECT_SOURCE_DIR}/cmake_setup.sh'") 
