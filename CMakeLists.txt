@@ -1,3 +1,15 @@
+# CMakeLists.txt
+#
+# In order to build with cmake, setup your favourite root
+# version. Then do
+#
+#  mkdir build
+#  cd build
+#  cmake ..
+#  make -j4
+#
+# After this, you can use the workspace combiner like normal.
+
 cmake_minimum_required (VERSION 3.0)
 project (workspaceCombiner)
 
