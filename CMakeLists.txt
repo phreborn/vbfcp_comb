@@ -63,9 +63,17 @@ if(EXISTS ${PROJECT_SOURCE_DIR}/RooFitExtensions)
   set (RooFitExtensions_LIBRARIES "RooFitExtensions")
 endif()
 
+# execute_process(COMMAND ln -s ${CMAKE_BINARY_DIR}/manager ${PROJECT_SOURCE_DIR})
+set(SETUP cmake_setup.sh)
+file(WRITE ${SETUP} "#!/bin/bash\n")
+file(APPEND ${SETUP} "# this is an auto-generated setup script\n" )
+
 if(${AnalysisBase_FOUND})
   # this section reflects the standard ASG way of configuring CMake
   # it is executed when compiling within an ASG environment
+
+  atlas_platform_id( BINARY_TAG )
+  
   find_package( GTest )
   set(CMAKE_INSTALL_PREFIX /InstallArea/x86_64-slc6-gcc62-opt)
   atlas_add_root_dictionary( workspaceCombiner workspaceCombinerCintDict
@@ -77,12 +85,11 @@ if(${AnalysisBase_FOUND})
     PRIVATE_INCLUDE_DIRS ${ROOT_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} 
     PRIVATE_LINK_LIBRARIES ${ROOT_LIBRARIES} ${Boost_LIBRARIES} 
     )
-
-  set(BINARY_TAG ${ATLAS_PLATFORM})
-
+  
   atlas_add_executable (manager app/manager.cxx)
   target_link_libraries (manager workspaceCombiner ${ROOT_LIBRARIES} ${Boost_LIBRARIES} ${RooFitExtensions_LIBRARIES})
-  
+  file(APPEND ${SETUP} "export PATH=$PATH:${CMAKE_BINARY_DIR}/${BINARY_TAG}/bin\n" )
+  file(APPEND ${SETUP} "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${CMAKE_BINARY_DIR}/${BINARY_TAG}/lib\n" )  
 ELSE()
   
   # generate the dictionary source code
@@ -97,13 +104,9 @@ ELSE()
   # compile the manager
   add_executable (manager app/manager.cxx)
   target_link_libraries (manager workspaceCombiner ${ROOT_LIBRARIES} ${Boost_LIBRARIES} ${RooFitExtensions_LIBRARIES})
-
+  file(APPEND ${SETUP} "export PATH=$PATH:${CMAKE_CURRENT_BINARY_DIR}\n" )
 ENDIF()
 
-# execute_process(COMMAND ln -s ${CMAKE_BINARY_DIR}/manager ${PROJECT_SOURCE_DIR})
-set(SETUP cmake_setup.sh)
-file(WRITE ${SETUP} "#!/bin/bash\n")
-file(APPEND ${SETUP} "# this is an auto-generated setup script\n" )
-file(APPEND ${SETUP} "export PATH=$PATH:${CMAKE_CURRENT_BINARY_DIR}\n" )
+
 
 message("before running, 'source ${PROJECT_SOURCE_DIR}/cmake_setup.sh'") 
