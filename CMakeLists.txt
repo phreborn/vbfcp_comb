@@ -13,6 +13,12 @@
 cmake_minimum_required (VERSION 3.0)
 project (workspaceCombiner)
 
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+  set(HAS_PARENT 0)
+else()
+  set(HAS_PARENT 1)
+endif()
+
 find_package( Boost QUIET 1.60 HINTS ${ALRB_BOOST_ROOT} COMPONENTS program_options regex)
 if (NOT ${Boost_FOUND})
   message("did not find Boost via cmake, setting by hand from ALRB_BOOST_ROOT=$ENV{ALRB_BOOST_ROOT}")
@@ -34,7 +40,6 @@ IF(${AnalysisBase_FOUND})
     install( FILES ${CMAKE_BINARY_DIR}/${ATLAS_PLATFORM}/env_setup.sh DESTINATION . ) 
     
     # Set up the usage of CPack: 
-    set(CMAKE_INSTALL_PREFIX /InstallArea/x86_64-slc6-gcc49-opt)
     atlas_cpack_setup()
   ENDIF()
 
