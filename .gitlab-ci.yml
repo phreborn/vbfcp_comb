@@ -11,33 +11,78 @@ variables:
 stages:
   - build
 
+.build_base: &build_base
+  stage: build
+  artifacts:
+    expire_in: 1d
+    paths:
+    - build
+    - cmake_setup.sh
+  
 ##########################################################################
 # job defaults
 
-.cmake_base: &cmake_base
-  image: atlas/analysisbase:21.2.49
+variables:
+  ATLAS_LOCAL_ROOT_BASE: /cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase
+
+##################################################################################
+# setups
+##################################################################################
+
+.latestroot_base: &latestroot_base
   before_script:
     - set +e && source ${ATLAS_LOCAL_ROOT_BASE}/user/atlasLocalSetup.sh; set -e
+    - set +e && lsetup "root recommended"; lsetup cmake; set -e
+    - set +e && lsetup "boost boost-1.66.0-python2.7-x86_64-slc6-gcc62"; set -e    
   tags:
     - cvmfs
 
-##########################################################################
-# stage: build
-    
-cmake_compile: 
-  <<: *cmake_base
-  stage: build
+.hcombroot_base: &hcombroot_base
+  before_script:
+    - set +e && source ${ATLAS_LOCAL_ROOT_BASE}/user/atlasLocalSetup.sh; set -e
+    - set +e && lsetup "root 6.04.16-HiggsComb-x86_64-slc6-gcc49-opt"; set -e
+    - set +e && lsetup "boost boost-1.66.0-python2.7-x86_64-slc6-gcc62"; set -e    
+  tags:
+    - cvmfs
 
-  artifacts:
-    expire_in: 3d
-    untracked: true
-    paths:
-    - build
-  
-  script:
+.asg_base: &asg_base
+  before_script:
     - source /home/atlas/release_setup.sh
     - set +e && lsetup "boost boost-1.66.0-python2.7-x86_64-slc6-gcc62"; set -e
+    
+  image: atlas/analysisbase:21.2.49
+
+##########################################################################
+# stage: build
+
+latestroot_compile:
+  <<: *latestroot_base
+  <<: *build_base
+  
+  script:
+    - export CXX=$(which g++)
+    - mkdir build
+    - cd build
+    - cmake -DCMAKE_MODULE_PATH=$ROOTSYS/etc/cmake ..
+    - make
+
+hcombroot_compile:
+  <<: *hcombroot_base
+  <<: *build_base
+
+  script:
+    - export CXX=$(which g++)
+    - mkdir build
+    - cd build
+    - cmake -DCMAKE_MODULE_PATH=$ROOTSYS/etc/cmake .. 
+    - make
+  
+asg_compile:
+  <<: *asg_base
+  <<: *build_base
+
+  script:
     - mkdir build
     - cd build
     - cmake ..
-    - make -j4    
+    - make

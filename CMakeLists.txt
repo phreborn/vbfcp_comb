@@ -42,6 +42,7 @@ IF(${AnalysisBase_FOUND})
   atlas_subdir( workspaceCombiner )
 ENDIF()
 
+include_directories ("${PROJECT_SOURCE_DIR}")
 find_package( ROOT REQUIRED COMPONENTS Core RIO MathCore XMLIO XMLParser HistPainter Graf Gpad HistFactory RooFitCore RooFit Hist RooStats )
 FOREACH(incfile ${ROOT_USE_FILE})
   include(${incfile})
@@ -49,8 +50,8 @@ ENDFOREACH()
 
 # set some variables for easier handling
 set(workspaceCombinerLinkDef ${CMAKE_CURRENT_SOURCE_DIR}/interface/manager_LinkDef.h)
-file(GLOB workspaceCombinerSources src/[A-Za-z]*.cxx)
-file(GLOB workspaceCombinerHeaders workspaceCombiner/[A-Za-z]*.h)
+file(GLOB workspaceCombinerSources RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/[A-Za-z]*.cxx)
+file(GLOB workspaceCombinerHeaders RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} workspaceCombiner/[A-Za-z]*.h)
 
 # register all the files and directories
 include_directories ("${ROOT_INCLUDE_DIRS}")
