@@ -49,6 +49,7 @@ variables:
 
 .asg_base: &asg_base
   before_script:
+    - set +e && source ${ATLAS_LOCAL_ROOT_BASE}/user/atlasLocalSetup.sh; set -e    
     - source /home/atlas/release_setup.sh
     - set +e && lsetup cmake; set -e
     - set +e && lsetup "boost boost-1.66.0-python2.7-x86_64-slc6-gcc62"; set -e
