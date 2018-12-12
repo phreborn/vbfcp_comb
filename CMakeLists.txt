@@ -13,7 +13,7 @@
 cmake_minimum_required (VERSION 3.0)
 project (workspaceCombiner)
 
-find_package( Boost QUIET 1.60 HINTS ${ALRB_BOOST_ROOT})
+find_package( Boost QUIET 1.60 HINTS ${ALRB_BOOST_ROOT} COMPONENTS program_options regex)
 if (NOT ${Boost_FOUND})
   message("did not find Boost via cmake, setting by hand from ALRB_BOOST_ROOT=$ENV{ALRB_BOOST_ROOT}")
   set(Boost_INCLUDE_DIRS "$ENV{ALRB_BOOST_ROOT}/include")
@@ -49,9 +49,11 @@ FOREACH(incfile ${ROOT_USE_FILE})
 ENDFOREACH()
 
 # set some variables for easier handling
-set(workspaceCombinerLinkDef ${CMAKE_CURRENT_SOURCE_DIR}/interface/manager_LinkDef.h)
-file(GLOB workspaceCombinerSources RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/[A-Za-z]*.cxx)
-file(GLOB workspaceCombinerHeaders RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} workspaceCombiner/[A-Za-z]*.h)
+set(workspaceCombinerLinkDef interface/manager_LinkDef.h)
+file(GLOB workspaceCombinerSources RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/src/[A-Za-z]*.cxx)
+file(GLOB workspaceCombinerHeaders RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/interface/[A-Za-z]*.h)
+file(GLOB workspaceCombinerHeaders_Options RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/interface/[A-Za-z]*Options.h)
+list(REMOVE_ITEM workspaceCombinerHeaders ${workspaceCombinerLinkDef} ${workspaceCombinerHeaders_Options})
 
 # register all the files and directories
 include_directories ("${ROOT_INCLUDE_DIRS}")
