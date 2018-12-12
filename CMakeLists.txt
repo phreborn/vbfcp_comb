@@ -1,7 +1,8 @@
 # CMakeLists.txt
 #
-# In order to build with cmake, setup your favourite root
-# version. Then do
+# In order to build with cmake, setup your favourite
+# ROOT version. Make sure to also setup a matching version of boost. On
+# lxplus, you can get either using `lsetup`. Then do
 #
 #  mkdir build
 #  cd build
@@ -9,6 +10,12 @@
 #  make -j4
 #
 # After this, you can use the workspace combiner like normal.
+#
+# Depending on your ROOT version, you might need to additionally pass
+# the ROOTSYS path to the CMAKE_MODULE_PATH argument like this:
+#
+#  cmake -DCMAKE_MODULE_PATH=$ROOTSYS/etc/cmake ..
+#
 
 cmake_minimum_required (VERSION 3.0)
 project (workspaceCombiner)
