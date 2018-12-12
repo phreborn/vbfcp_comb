@@ -25,7 +25,6 @@ find_package( AnalysisBase QUIET)
 IF(${AnalysisBase_FOUND})
   # Set up the usage of CTest:
   IF(NOT ${HAS_PARENT})
-    atlas_ctest_setup() # Set up the project: 
     atlas_project( workspaceCombiner 1.0.0 
       USE AnalysisBase ${AnalysisBase_VERSION} ) 
     
