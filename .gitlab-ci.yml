@@ -1,0 +1,41 @@
+##########################################################################
+# preamble
+##########################################################################
+
+variables:
+  # example base path for an Experiment environment
+  ATLAS_LOCAL_ROOT_BASE: /cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase
+  PYTHON: /cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/python/2.7.4-x86_64-slc6-gcc48/sw/lcg/external/Python/2.7.4/x86_64-slc6-gcc48-opt/bin/python 
+  FROM: atlas/analysisbase:21.2.49
+
+stages:
+  - build
+
+##########################################################################
+# job defaults
+
+.cmake_base: &cmake_base
+  image: atlas/analysisbase:21.2.49
+  tags:
+    - cvmfs
+
+##########################################################################
+# stage: build
+    
+cmake_compile: 
+  <<: *cmake_base
+  stage: build
+
+  artifacts:
+    expire_in: 3d
+    untracked: true
+    paths:
+    - build
+  
+  script:
+    - source /home/atlas/release_setup.sh
+    - set +e && lsetup "boost boost-1.66.0-python2.7-x86_64-slc6-gcc62"; set -e
+    - mkdir build
+    - cd build
+    - cmake ..
+    - make -j4    
