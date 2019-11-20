@@ -10,8 +10,15 @@
 #include "decorator.h"
 #include <boost/program_options.hpp>
 
-// ATLAS-CMS combination
-#include "asimovUtilsOptions.h"
+int asimovUtils::minimizerStrategy_ = 1;
+bool asimovUtils::improveFit_ = false;
+bool asimovUtils::robustFit_ = false;
+bool asimovUtils::generateAsimov_ = false;
+bool asimovUtils::writemuhatWS_ = false;
+bool asimovUtils::makePlots_ = false;
+bool asimovUtils::nllOffset_ = true;
+bool asimovUtils::preFit_ = false;
+bool asimovUtils::constOpt_ = false;  
 // bool combine_ = true;
 
 std::string what_ = "";
@@ -95,15 +102,15 @@ int main( int argc, char** argv )
     ( "wsName",               po::value<std::string>( &wsName_ )->default_value( wsName_ ), "Name of the workspace" )
     ( "mcName",               po::value<std::string>( &mcName_ )->default_value( mcName_ ), "Name of the ModelConfig" )
     ("minimizerTolerance", po::value<float>(&minimizerTolerance_)->default_value(minimizerTolerance_),  "Tolerance for minimizer used for profiling")
-    ("minimizerStrategy", po::value<int>(&minimizerStrategy_)->default_value(minimizerStrategy_),  "Strategy for minimizer used for profiling")
-    ("nllOffset", po::value<bool>(&nllOffset_)->default_value(nllOffset_),  "Enable NLL offsetting")
-    ("constOpt", po::value<bool>(&constOpt_)->default_value(constOpt_),  "Enable constant optimization")
-    ("improveFit", po::value<bool>(&improveFit_)->default_value(improveFit_), "Whether to call improve() after fit converges")
-    ("robustFit", po::value<bool>(&robustFit_)->default_value(robustFit_), "Whether to fit again after fit converges")
+    ("minimizerStrategy", po::value<int>(&asimovUtils::minimizerStrategy_)->default_value(asimovUtils::minimizerStrategy_),  "Strategy for minimizer used for profiling")
+    ("nllOffset", po::value<bool>(&asimovUtils::nllOffset_)->default_value(asimovUtils::nllOffset_),  "Enable NLL offsetting")
+    ("constOpt", po::value<bool>(&asimovUtils::constOpt_)->default_value(asimovUtils::constOpt_),  "Enable constant optimization")
+    ("improveFit", po::value<bool>(&asimovUtils::improveFit_)->default_value(asimovUtils::improveFit_), "Whether to call improve() after fit converges")
+    ("robustFit", po::value<bool>(&asimovUtils::robustFit_)->default_value(asimovUtils::robustFit_), "Whether to fit again after fit converges")
     ("setVar", po::value<std::string>(&setVar_)->default_value(setVar_), "Manipulating variables in the workspace")
-    ("generateAsimov", po::value<bool>(&generateAsimov_)->default_value(generateAsimov_), "Generate Asimov data or not")
-    ("preFit", po::value<bool>(&preFit_)->default_value(preFit_), "Generate prefit Asimov (default post-fit)")
-    ("makePlots", po::value<bool>(&preFit_)->default_value(makePlots_), "Generate summary plots")
+    ("generateAsimov", po::value<bool>(&asimovUtils::generateAsimov_)->default_value(asimovUtils::generateAsimov_), "Generate Asimov data or not")
+    ("preFit", po::value<bool>(&asimovUtils::preFit_)->default_value(asimovUtils::preFit_), "Generate prefit Asimov (default post-fit)")
+    ("makePlots", po::value<bool>(&asimovUtils::makePlots_)->default_value(asimovUtils::makePlots_), "Generate summary plots")
     ("histToData", po::value<bool>(&histToData_)->default_value(histToData_), "Convert RooDataHist to RooDataSet")
     ;
   po::variables_map vm0;
@@ -162,7 +169,7 @@ int main( int argc, char** argv )
       doStep3 = true;
     } else if ( procedure_==4 ) {
       doStep0 = true;
-      writemuhatWS_=false;
+      asimovUtils::writemuhatWS_=false;
     }
 
     if (combinedFile_ == "") combinedFile_="combined.root";
@@ -219,7 +226,7 @@ int main( int argc, char** argv )
   }
   else if ( what_=="split" )
   {
-    writemuhatWS_=false;
+    asimovUtils::writemuhatWS_=false;
     std::string dataName = dataName_;
     if (splittedFile_ == "") splittedFile_="splitted.root";
     if (combinedFile_ == "") std::cerr << "Please specify what file to split" << std::endl; EXIT_FAILURE;

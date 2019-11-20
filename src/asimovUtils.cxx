@@ -1,7 +1,6 @@
 #include <stdlib.h>
 
 #include "asimovUtils.h"
-#include "asimovUtilsOptions.h"
 
 using namespace RooStats;
 using namespace RooFit;
