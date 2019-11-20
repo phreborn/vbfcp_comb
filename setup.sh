@@ -3,21 +3,20 @@
 # Updated by Hongtao Yang on Jan 23, 2017
 #
 
-# Obsolete (HSG7 ROOT 5)
-#source /cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/Gcc/gcc484_x86_64_slc6/slc6/gcc48/setup.sh 
-#source /cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/root/5.34.32-HiggsComb-p1-x86_64-slc6-gcc48-opt/bin/thisroot.sh
-#export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`pwd`/lib:/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/boost/boost-1.55.0-python2.7-x86_64-slc6-gcc48/boost-1.55.0-python2.7-x86_64-slc6-gcc48/lib/
+export ATLAS_LOCAL_ROOT_BASE=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase # use your path
+source ${ATLAS_LOCAL_ROOT_BASE}/user/atlasLocalSetup.sh
+lsetup "root 6.14.04-x86_64-slc6-gcc62-opt" 
+lsetup cmake
+lsetup "boost boost-1.66.0-python2.7-x86_64-slc6-gcc62"
 
-source /cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/python/2.7.4-x86_64-slc6-gcc48/setup.sh
-source /cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/Gcc/gcc493_x86_64_slc6/slc6/gcc49/setup.sh
-source /cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/root/6.04.16-HiggsComb-x86_64-slc6-gcc49-opt/bin/thisroot.sh
+ulimit -S -s unlimited
 
 which gcc
 which root
 
 # dynamic libraries
 
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`pwd`/lib:/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/boost/boost-1.60.0-python2.7-x86_64-slc6-gcc49/boost-1.60.0-python2.7-x86_64-slc6-gcc49/lib/
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`pwd`/lib:/cvmfs/sft.cern.ch/lcg/releases/LCG_94/Boost/1.66.0/x86_64-slc6-gcc62-opt/lib/
 
 # Greet the user
 echo "Setting up environment for compiling/running SFrame"
