@@ -28,8 +28,8 @@ else
 	# BOOSTLIBS = -L/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/boost/boost-1.55.0-python2.7-x86_64-slc6-gcc48/boost-1.55.0-python2.7-x86_64-slc6-gcc48/lib/ -lboost_filesystem -lboost_program_options -lboost_regex -lboost_system
 	# BOOST_INC = -I/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/boost/boost-1.55.0-python2.7-x86_64-slc6-gcc48/boost-1.55.0-python2.7-x86_64-slc6-gcc48/include/
 
-	BOOSTLIBS = -L/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/boost/boost-1.60.0-python2.7-x86_64-slc6-gcc49/boost-1.60.0-python2.7-x86_64-slc6-gcc49/lib/ -lboost_filesystem -lboost_program_options -lboost_regex -lboost_system
-	BOOST_INC = -I/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/boost/boost-1.60.0-python2.7-x86_64-slc6-gcc49/boost-1.60.0-python2.7-x86_64-slc6-gcc49/include/
+	BOOSTLIBS = -L/cvmfs/sft.cern.ch/lcg/releases/LCG_94/Boost/1.66.0/x86_64-slc6-gcc62-opt/lib/ -lboost_filesystem -lboost_program_options -lboost_regex -lboost_system
+	BOOST_INC = -I/cvmfs/sft.cern.ch/lcg/releases/LCG_94/Boost/1.66.0/x86_64-slc6-gcc62-opt/include/
 	INCLUDES += $(BOOST_INC) 
 endif
 
