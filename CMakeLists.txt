@@ -1,127 +1,69 @@
-# CMakeLists.txt
-#
-# In order to build with cmake, setup your favourite
-# ROOT version. Make sure to also setup a matching version of boost. On
-# lxplus, you can get either using `lsetup`. Then do
-#
-#  mkdir build
-#  cd build
-#  cmake ..
-#  make -j4
-#
-# After this, you can use the workspace combiner like normal.
-#
-# Depending on your ROOT version, you might need to additionally pass
-# the ROOTSYS path to the CMAKE_MODULE_PATH argument like this:
-#
-#  cmake -DCMAKE_MODULE_PATH=$ROOTSYS/etc/cmake ..
-#
+##################################################################################################
+# Package: workspaceCombiner #####################################################################
+cmake_minimum_required( VERSION 2.8 )
 
-cmake_minimum_required (VERSION 3.0)
-project (workspaceCombiner)
+# Declare the package name:
+project( workspaceCombiner )
 
-if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-  set(HAS_PARENT 0)
-else()
-  set(HAS_PARENT 1)
-endif()
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
+set(CMAKE_INSTALL_LIBDIR ${PROJECT_SOURCE_DIR}/lib)
+set(TARGET_INSTALL_AREA ${PROJECT_SOURCE_DIR})
+set(SHARED_INSTALL_AREA ${PROJECT_SOURCE_DIR}/lib)
+add_compile_options(-std=c++17)
 
-find_package( Boost QUIET 1.60 HINTS ${ALRB_BOOST_ROOT} COMPONENTS program_options regex)
-if (NOT ${Boost_FOUND})
-  message("did not find Boost via cmake, setting by hand from ALRB_BOOST_ROOT=$ENV{ALRB_BOOST_ROOT}")
-  set(Boost_INCLUDE_DIRS "$ENV{ALRB_BOOST_ROOT}/include")
-  set(Boost_LIBRARIES "-lboost_regex -lboost_program_options -L$ENV{ALRB_BOOST_ROOT}/lib")
-endif()
+file(MAKE_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
+file(MAKE_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
-find_package( AnalysisBase QUIET) 
+# You need to tell CMake where to find the ROOT installation. This can be done in a number of ways:
+#   - ROOT built with classic configure/make use the provided $ROOTSYS/etc/cmake/FindROOT.cmake
+#   - ROOT built with CMake. Add in CMAKE_PREFIX_PATH the installation prefix for ROOT
+list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 
-IF(${AnalysisBase_FOUND})
-  # Set up the usage of CTest:
-  IF(NOT ${HAS_PARENT})
-    atlas_ctest_setup() # Set up the project: 
-    atlas_project( workspaceCombiner 1.0.0 
-      USE AnalysisBase ${AnalysisBase_VERSION} ) 
-    
-    # Generate an environment setup script: 
-    lcg_generate_env( SH_FILE ${CMAKE_BINARY_DIR}/${ATLAS_PLATFORM}/env_setup.sh )
-    install( FILES ${CMAKE_BINARY_DIR}/${ATLAS_PLATFORM}/env_setup.sh DESTINATION . ) 
-    
-    # Set up the usage of CPack: 
-    atlas_cpack_setup()
-  ENDIF()
+# require ROOT
+find_package( ROOT REQUIRED COMPONENTS RIO RooFitCore RooFit HistFactory RooStats MathCore MathMore Physics Minuit Foam XMLParser )
+include(${ROOT_USE_FILE})
 
-  # register this as a package to ASG
-  atlas_subdir( workspaceCombiner )
-ENDIF()
+# require Boost
+set(Boost_INCLUDE_DIR /cvmfs/sft.cern.ch/lcg/releases/LCG_94/Boost/1.66.0/x86_64-slc6-gcc62-opt/include)
+set(Boost_LIBRARY_DIR /cvmfs/sft.cern.ch/lcg/releases/LCG_94/Boost/1.66.0/x86_64-slc6-gcc62-opt/lib)
+find_package(Boost REQUIRED COMPONENTS program_options regex )
+include_directories(${Boost_INCLUDE_DIRS})
 
-include_directories ("${PROJECT_SOURCE_DIR}")
-find_package( ROOT REQUIRED COMPONENTS Core RIO MathCore XMLIO XMLParser HistPainter Graf Gpad HistFactory RooFitCore RooFit Hist RooStats )
-FOREACH(incfile ${ROOT_USE_FILE})
-  include(${incfile})
-ENDFOREACH()
+set(workspaceCombinerHeaders "")
+set(workspaceCombinerSources "")
 
-# set some variables for easier handling
-set(workspaceCombinerLinkDef interface/manager_LinkDef.h)
-file(GLOB workspaceCombinerSources RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/src/[A-Za-z]*.cxx)
-file(GLOB workspaceCombinerHeaders RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/interface/[A-Za-z]*.h)
-file(GLOB workspaceCombinerHeaders_Options RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/interface/[A-Za-z]*Options.h)
-list(REMOVE_ITEM workspaceCombinerHeaders ${workspaceCombinerLinkDef} ${workspaceCombinerHeaders_Options})
+file(GLOB incPaths interface/*)
+file(GLOB srcPaths src/*)
 
-# register all the files and directories
-include_directories ("${ROOT_INCLUDE_DIRS}")
-include_directories ("${Boost_INCLUDE_DIRS}")
-include_directories ("${CMAKE_CURRENT_SOURCE_DIR}" interface)
+foreach (_incPath ${incPaths})
+	get_filename_component(_incName ${_incPath} NAME)
+    	if(NOT ${_incName} MATCHES "manager_LinkDef.h")
+    	       list(APPEND workspaceCombinerHeaders ${_incName})
+	endif()
+endforeach()
 
-if(EXISTS ${PROJECT_SOURCE_DIR}/RooFitExtensions)
-  message("adding RooFitExtensions")
-  add_subdirectory(RooFitExtensions)
-  set (RooFitExtensions_LIBRARIES "RooFitExtensions")
-endif()
+foreach (_srcPath ${srcPaths})
+	get_filename_component(_srcName ${_srcPath} NAME)
+	list(APPEND workspaceCombinerSources "src/${_srcName}")
+endforeach()
 
-# execute_process(COMMAND ln -s ${CMAKE_BINARY_DIR}/manager ${PROJECT_SOURCE_DIR})
-set(SETUP cmake_setup.sh)
-file(WRITE ${SETUP} "#!/bin/bash\n")
-file(APPEND ${SETUP} "# this is an auto-generated setup script\n" )
+include_directories(${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/interface)
 
-if(${AnalysisBase_FOUND})
-  # this section reflects the standard ASG way of configuring CMake
-  # it is executed when compiling within an ASG environment
+# generate the dictionary source code
+ROOT_GENERATE_DICTIONARY(G__workspaceCombiner ${workspaceCombinerHeaders} LINKDEF interface/manager_LinkDef.h)
 
-  atlas_platform_id( BINARY_TAG )
-  
-  find_package( GTest )
-  set(CMAKE_INSTALL_PREFIX /InstallArea/x86_64-slc6-gcc62-opt)
-  atlas_add_root_dictionary( workspaceCombiner workspaceCombinerCintDict
-    ROOT_HEADERS ${workspaceCombinerHeaders} ${workspaceCombinerLinkDef}
-    EXTERNAL_PACKAGES ROOT )
-  atlas_add_library( workspaceCombiner
-    ${workspaceCombinerHeaders} ${workspaceCombinerSources} ${workspaceCombinerCintDict}
-    PUBLIC_HEADERS workspaceCombiner
-    PRIVATE_INCLUDE_DIRS ${ROOT_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} 
-    PRIVATE_LINK_LIBRARIES ${ROOT_LIBRARIES} ${Boost_LIBRARIES} 
-    )
-  
-  atlas_add_executable (manager app/manager.cxx)
-  target_link_libraries (manager workspaceCombiner ${ROOT_LIBRARIES} ${Boost_LIBRARIES} ${RooFitExtensions_LIBRARIES})
-  file(APPEND ${SETUP} "export PATH=$PATH:${CMAKE_BINARY_DIR}/${BINARY_TAG}/bin\n" )
-  file(APPEND ${SETUP} "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${CMAKE_BINARY_DIR}/${BINARY_TAG}/lib\n" )  
-ELSE()
-  
-  # generate the dictionary source code
-  ROOT_GENERATE_DICTIONARY(G__workspaceCombiner ${workspaceCombinerHeaders} LINKDEF ${workspaceCombinerLinkDef})
-  
-  # register the shared object to include both sources and dictionaries
-  add_library( workspaceCombiner SHARED ${workspaceCombinerSources} G__workspaceCombiner.cxx)
-  
-  # link everything together at the end
-  target_link_libraries( workspaceCombiner ${ROOT_LIBRARIES} )
-  
-  # compile the manager
-  add_executable (manager app/manager.cxx)
-  target_link_libraries (manager workspaceCombiner ${ROOT_LIBRARIES} ${Boost_LIBRARIES} ${RooFitExtensions_LIBRARIES})
-  file(APPEND ${SETUP} "export PATH=$PATH:${CMAKE_CURRENT_BINARY_DIR}\n" )
-ENDIF()
+add_library( workspaceCombiner SHARED ${workspaceCombinerSources} G__workspaceCombiner.cxx)
+target_link_libraries( workspaceCombiner ${ROOT_LIBRARIES} )
 
+#add executables
 
+file(GLOB exePaths app/*)
 
-message("before running, 'source ${PROJECT_SOURCE_DIR}/cmake_setup.sh'") 
+foreach (_exePath ${exePaths})
+	get_filename_component(_exeName ${_exePath} NAME_WE)
+	get_filename_component(_exeFile ${_exePath} NAME)
+	add_executable( ${_exeName} app/${_exeFile} )
+	target_link_libraries( ${_exeName} workspaceCombiner ${ROOT_LIBRARIES} ${Boost_LIBRARIES} )
+endforeach()
