@@ -245,7 +245,7 @@ bool Organizer::run(){
   // Copy snapshots
   RooArgSet everything_new, everything_old;
   auxUtil::collectEverything(nMc, &everything_new);
-  RooArgSet *everything_new_snapshot = everything_new.snapshot();
+  RooArgSet *everything_new_snapshot = dynamic_cast<RooArgSet*>(everything_new.snapshot());
   auxUtil::collectEverything(mc, &everything_old);
   
   // Nuisance parameter snapshot
