@@ -266,10 +266,9 @@ int main( int argc, char** argv )
   }
   else if ( what_=="organize" )
   {
-    Organizer* org = new Organizer(combinedFile_,splittedFile_);
-    org->readConfigXml(configFile_);
+    Organizer* org = new Organizer(configFile_);
     // org->printSummary();
-    org->run(snapShot_,dataName_,wsName_,mcName_);
+    org->run();
   }
   else if ( what_=="decorate" )
   {

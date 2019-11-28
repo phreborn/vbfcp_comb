@@ -5,13 +5,11 @@
 #include <iostream>
 #include <string.h>
 #include <fstream>
-#include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
 #include <vector>
 #include <utility>
 #include <cassert>
-#include <stdlib.h>
 #include <string>
 #include <sstream>
 #include <algorithm>
@@ -21,6 +19,10 @@
 #include <cmath>
 #include <iomanip>
 #include <iosfwd>
+#include <functional>
+#include <memory>
+#include <getopt.h>
+
 /// ROOT headers
 #include <TROOT.h>
 #include <TObject.h>
@@ -31,6 +33,7 @@
 #include <TClonesArray.h>
 #include <TChain.h>
 #include <TMath.h>
+#include <TMathText.h>
 #include <TStopwatch.h>
 #include <TCanvas.h>
 #include <TFile.h>
@@ -72,6 +75,8 @@
 #include <Math/Minimizer.h>
 #include <Math/Functor.h>
 #include <Math/Factory.h>
+#include <Math/WrappedTF1.h>
+#include <Math/GSLIntegrator.h>
 /// TMVA headers
 #include <TMVA/Tools.h>
 #include <TMVA/Factory.h>

@@ -10,8 +10,10 @@
  *       Revision:  none
  *       Compiler:  gcc
  *
- *         Author:  haoshuang.ji (), haoshuang.ji@cern.ch
- *   Organization:
+ *         Author:  Haoshuang Ji (那你是真的牛逼), haoshuang.ji@cern.ch
+ *   Organization:  University of Wisconsin
+ *
+ * Rewritten by Hongtao Yang (Hongtao.Yang@cern.ch) in 2019.
  *
  * =====================================================================================
  */
@@ -21,29 +23,30 @@
 #define Manager_AlgoBase_h
 
 #include <boost/program_options.hpp>
-#include "RooWorkspace.h"
+#include "CommonHead.h"
 
 class AlgoBase
 {
-	public:
-		AlgoBase() { }
-		AlgoBase( const char* desc ) : options_( desc ) { }
+public:
+  AlgoBase() { }
+  AlgoBase( const char* desc ) : options_( desc ) { }
 
-		virtual void applyOptions( const boost::program_options::variables_map& vm )
-		{ }
-		virtual void applyDefaultOptions()
-		{ }
-		virtual void validateOptions()
-		{ }
+  virtual void applyOptions( const boost::program_options::variables_map& vm )
+  { }
+  virtual void applyDefaultOptions()
+  { }
+  virtual void validateOptions()
+  { }
 
-		virtual bool run(bool makeSnapshot, std::string dataName, std::string wsName, std::string mcName) = 0;
-		virtual const std::string& name() const = 0;
-		const boost::program_options::options_description& options() const
-		{
-			return options_;
-		}
-	protected:
-		boost::program_options::options_description options_;
+  virtual bool run() = 0;
+  virtual const TString& name() const = 0;
+  const boost::program_options::options_description& options() const
+  {
+    return options_;
+  }
+
+protected:
+  boost::program_options::options_description options_;
 };
 
 #endif
