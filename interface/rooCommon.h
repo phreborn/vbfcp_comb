@@ -50,11 +50,12 @@
 #include "RooFitResult.h"
 #include "RooBinning.h"
 #include "RooDataHist.h"
+#include "RooMultiVarGaussian.h"
 
 /* Put the custom class headers here */
 #include "RooFormulaVarExt.h"
 #include "FlexibleInterpVarExt.h"
 #include "FlexibleInterpVarMkII.h"
-#include "HggTwoSidedCBPdf.h"
+#include "RooTwoSidedCBShape.h"
 #include "HggMG5aMCNLOLineShapePdf.h"
 #include "Background.h"

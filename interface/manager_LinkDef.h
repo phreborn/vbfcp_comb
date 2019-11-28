@@ -1,12 +1,5 @@
 /* Add your custom classes in this file */
 /* Remember also to modify interface/rooCommon.h */
-#include "RooFormulaVarExt.h"
-#include "FlexibleInterpVarExt.h"
-#include "FlexibleInterpVarMkII.h"
-#include "HggTwoSidedCBPdf.h"
-#include "HggMG5aMCNLOLineShapePdf.h"
-#include "Background.h"
-
 #ifdef __CINT__
 
 
@@ -19,7 +12,7 @@
 #pragma link C++ class RooFormulaVarExt+;
 #pragma link C++ class FlexibleInterpVarExt+;
 #pragma link C++ class FlexibleInterpVarMkII+;
-#pragma link C++ class HggTwoSidedCBPdf+;
+#pragma link C++ class RooTwoSidedCBShape+;
 #pragma link C++ class HggMG5aMCNLOLineShapePdf+;
 #pragma link C++ class Background+;
 
