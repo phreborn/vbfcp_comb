@@ -134,7 +134,7 @@ bool Organizer::run(){
 	continue;
       }
     }
-    if( not nW->arg(newObjName) ) auxUtil::alertAndAbort("Object "+newObjName+" (<- "+oldObjName+" does not exist in the new workspace"); // If it is missing in the new workspace, it is not acceptable
+    if( not nW->arg(newObjName) ) auxUtil::alertAndAbort("Object "+newObjName+" (<- "+oldObjName+") does not exist in the new workspace"); // If it is missing in the new workspace, it is not acceptable
     renameMap[oldObjName.Data()] = newObjName.Data();
   }
 
@@ -226,13 +226,19 @@ bool Organizer::run(){
   // Adding additional nuisance parameters and global observables
   for (map<TString, pair<TString, TString> >::iterator it = m_constraintPdf.begin(); it != m_constraintPdf.end(); ++it){
     pair<TString, TString> NPGO = it->second;
-    RooRealVar *np = nW->var(NPGO.first);
-    if( not np )  auxUtil::alertAndAbort("nuisance parameter "+NPGO.first+" does not exist in the new workspace");
-    nuis.add(*np);
-    
-    RooRealVar *go = nW->var(NPGO.second);
-    if( not go )  auxUtil::alertAndAbort("global observable "+NPGO.second+" does not exist in the new workspace");
-    gobs.add(*go);
+    vector<TString> NPList = auxUtil::splitString(NPGO.first, ',');
+    for(auto NPName : NPList){
+      RooRealVar *np = nW->var(NPName);
+      if( not np )  auxUtil::alertAndAbort("nuisance parameter " + NPName + " does not exist in the new workspace");
+      nuis.add(*np);
+    }
+
+    vector<TString> GOList = auxUtil::splitString(NPGO.second, ',');
+    for(auto GOName : GOList){
+      RooRealVar *go = nW->var(GOName);
+      if( not go )  auxUtil::alertAndAbort("global observable " + GOName + " does not exist in the new workspace");
+      gobs.add(*go);
+    }
   }
 
   nMc->SetNuisanceParameters( nuis );
