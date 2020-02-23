@@ -404,22 +404,18 @@ void Organizer::implementMultiVarGaussian(RooWorkspace *w, TString actionStr){
   // Get inputs
   TString obsListStr=((TObjString*)iArray->At(0))->GetString();
   obsListStr=obsListStr(obsListStr.First('{')+1,obsListStr.First('}')-1);
-  cout<<obsListStr<<endl;
   vector<TString> obsListVec=auxUtil::splitString(obsListStr,',');
   
   TString meanListStr=((TObjString*)iArray->At(1))->GetString();
   meanListStr=meanListStr(meanListStr.First('{')+1,meanListStr.First('}')-1);
-  cout<<meanListStr<<endl;
   vector<TString> meanListVec=auxUtil::splitString(meanListStr,',');
 
   TString uncertListStr=((TObjString*)iArray->At(2))->GetString();
   uncertListStr=uncertListStr(uncertListStr.First('{')+1,uncertListStr.First('}')-1);
-  cout<<uncertListStr<<endl;
   vector<TString> uncertListVec=auxUtil::splitString(uncertListStr,',');
 
   TString correlationListStr=((TObjString*)iArray->At(3))->GetString();
   correlationListStr=correlationListStr(correlationListStr.First('{')+1,correlationListStr.First('}')-1);
-  cout<<correlationListStr<<endl;
   vector<TString> correlationListVec=auxUtil::splitString(correlationListStr,',');
 
   const int nPOI=obsListVec.size();
@@ -436,19 +432,26 @@ void Organizer::implementMultiVarGaussian(RooWorkspace *w, TString actionStr){
   }
 
   TMatrixDSym V(nPOI);
+  int corIdx=0;
   for (int i=0 ; i<nPOI ; i++) {
     for (int j=0 ; j<nPOI ; j++) {
       if(i==j){
 	V(i,j) = uncertListVec[i].Atof()*uncertListVec[j].Atof();
       }
-      else{
+      else if (i<j){
 	// Problematic: ad-hoc implementaiton for the time-being
-	V(i,j) = correlationListVec[0].Atof()*uncertListVec[i].Atof()*uncertListVec[j].Atof();
+	if(corIdx>=nPOI){
+	  cerr<<"Number of index larger than array size!"<<endl;
+	  abort();
+	}
+	V(i,j) = correlationListVec[corIdx].Atof()*uncertListVec[i].Atof()*uncertListVec[j].Atof();
+	V(j,i) = V(i,j);
+	corIdx++;
       }
     }
   }
 
-
+  V.Print();
   RooMultiVarGaussian *model=new RooMultiVarGaussian(functionName,functionName, obsList, meanList, V) ;  
   w->import(*model);
 }
