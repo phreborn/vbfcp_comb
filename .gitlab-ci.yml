@@ -73,23 +73,23 @@ latestroot_compile:
     - cmake -DCMAKE_MODULE_PATH=$ROOTSYS/etc/cmake ..
     - make
 
-hcombroot_compile:
-  <<: *hcombroot_base
-  <<: *build_base
-
-  script:
-    - export CXX=$(which g++)
-    - mkdir build
-    - cd build
-    - cmake -DCMAKE_MODULE_PATH=$ROOTSYS/etc/cmake .. 
-    - make
-  
-asg_compile:
-  <<: *asg_base
-  <<: *build_base
-
-  script:
-    - mkdir build
-    - cd build
-    - cmake ..
-    - make
+#hcombroot_compile:
+#  <<: *hcombroot_base
+#  <<: *build_base
+#
+#  script:
+#    - export CXX=$(which g++)
+#    - mkdir build
+#    - cd build
+#    - cmake -DCMAKE_MODULE_PATH=$ROOTSYS/etc/cmake .. 
+#    - make
+#  
+#asg_compile:
+#  <<: *asg_base
+#  <<: *build_base
+#
+#  script:
+#    - mkdir build
+#    - cd build
+#    - cmake ..
+#    - make
