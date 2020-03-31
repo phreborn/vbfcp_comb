@@ -1,0 +1,3 @@
+[submodule "RooFitExtensions"]
+	path = RooFitExtensions
+	url = ssh://git@gitlab.cern.ch:7999/atlas_higgs_combination/software/RooFitExtensions.git
