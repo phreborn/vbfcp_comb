@@ -5,8 +5,10 @@
 variables:
   # example base path for an Experiment environment
   ATLAS_LOCAL_ROOT_BASE: /cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase
-  PYTHON: /cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/python/2.7.4-x86_64-slc6-gcc48/sw/lcg/external/Python/2.7.4/x86_64-slc6-gcc48-opt/bin/python 
+  PYTHON: /cvmfs/sft.cern.ch/lcg/releases/LCG_97_ATLAS_1/Python/2.7.16/x86_64-centos7-gcc8-opt/bin/python 
+  #PYTHON: /cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/python/2.7.4-x86_64-slc6-gcc48/sw/lcg/external/Python/2.7.4/x86_64-slc6-gcc48-opt/bin/python 
   FROM: atlas/analysisbase:21.2.49
+  GIT_SUBMODULE_STRATEGY: recursive
 
 stages:
   - build
@@ -32,7 +34,8 @@ variables:
 .latestroot_base: &latestroot_base
   before_script:
     - set +e && source ${ATLAS_LOCAL_ROOT_BASE}/user/atlasLocalSetup.sh; set -e
-    - set +e && lsetup "root recommended"; lsetup cmake; set -e
+    - set +e && lsetup "root 6.20.02-x86_64-centos7-gcc8-opt"; lsetup cmake; set -e
+      #- set +e && lsetup "root recommended"; lsetup cmake; set -e
     - set +e && lsetup cmake; set -e
     - set +e && lsetup "boost boost-1.66.0-python2.7-x86_64-slc6-gcc62"; set -e    
   tags:
