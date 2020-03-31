@@ -1,5 +1,9 @@
 The tool is created by Haoshuang Ji.
 
+Checkout the WorkspaceCombiner
+
+`git clone --recursive ssh://git@gitlab.cern.ch:7999/kran/workspaceCombiner.git`
+
 To compile on lxplus, run
 
 > source setup.sh
