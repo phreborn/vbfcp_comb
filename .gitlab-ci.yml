@@ -26,6 +26,7 @@ stages:
 
 variables:
   ATLAS_LOCAL_ROOT_BASE: /cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase
+  GIT_SUBMODULE_STRATEGY: recursive
 
 ##################################################################################
 # setups
