@@ -78,10 +78,10 @@ class RooFormulaVarExt : public RooFormulaVar {
 
         virtual Bool_t isValidReal(Double_t value, Bool_t printError) const ;
 
-        // RooListProxy _actualVars ;     // Actual parameters used by formula engine
+        RooListProxy _actualVars ;     // Actual parameters used by formula engine
         mutable RooFormula* _formula ; //! Formula engine
         mutable RooArgSet* _nset ;     //! Normalization set to be passed along to contents
-        // TString _formExpr ;            // Formula expression string
+        TString _formExpr ;            // Formula expression string
 
         ClassDef(RooFormulaVarExt,1) // Real-valued function of other RooAbsArgs calculated by a TFormula expression
 };

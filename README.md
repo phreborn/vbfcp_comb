@@ -4,7 +4,7 @@ To compile on lxplus, run
 
 > source setup.sh
 
-> make
+> mkdir build && cmake .. && make && cd ..
 
 Then each time before using the tool, just do 
 
