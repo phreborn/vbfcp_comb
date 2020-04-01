@@ -31,6 +31,8 @@ set(Boost_LIBRARY_DIR /cvmfs/sft.cern.ch/lcg/releases/LCG_94/Boost/1.66.0/x86_64
 find_package(Boost REQUIRED COMPONENTS program_options regex )
 include_directories(${Boost_INCLUDE_DIRS})
 
+add_subdirectory(RooFitExtensions)
+
 set(workspaceCombinerHeaders "")
 set(workspaceCombinerSources "")
 
@@ -49,13 +51,15 @@ foreach (_srcPath ${srcPaths})
 	list(APPEND workspaceCombinerSources "src/${_srcName}")
 endforeach()
 
-include_directories(${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/interface)
+include_directories(${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/interface ${PROJECT_SOURCE_DIR}/RooFitExtensions)
+#include_directories(${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/interface)
 
 # generate the dictionary source code
 ROOT_GENERATE_DICTIONARY(G__workspaceCombiner ${workspaceCombinerHeaders} LINKDEF interface/manager_LinkDef.h)
 
 add_library( workspaceCombiner SHARED ${workspaceCombinerSources} G__workspaceCombiner.cxx)
-target_link_libraries( workspaceCombiner ${ROOT_LIBRARIES} )
+target_link_libraries( workspaceCombiner ${ROOT_LIBRARIES} RooFitExtensions)
+#target_link_libraries( workspaceCombiner ${ROOT_LIBRARIES} )
 
 #add executables
 
@@ -65,5 +69,6 @@ foreach (_exePath ${exePaths})
 	get_filename_component(_exeName ${_exePath} NAME_WE)
 	get_filename_component(_exeFile ${_exePath} NAME)
 	add_executable( ${_exeName} app/${_exeFile} )
-	target_link_libraries( ${_exeName} workspaceCombiner ${ROOT_LIBRARIES} ${Boost_LIBRARIES} )
+    target_link_libraries( ${_exeName} workspaceCombiner ${ROOT_LIBRARIES} ${Boost_LIBRARIES} RooFitExtensions)
+    #target_link_libraries( ${_exeName} workspaceCombiner ${ROOT_LIBRARIES} ${Boost_LIBRARIES} )
 endforeach()

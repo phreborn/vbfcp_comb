@@ -56,6 +56,7 @@
 #include "RooFormulaVarExt.h"
 #include "FlexibleInterpVarExt.h"
 #include "FlexibleInterpVarMkII.h"
-#include "RooTwoSidedCBShape.h"
+#include "RooFitExtensions/RooTwoSidedCBShape.h"
+//#include "RooTwoSidedCBShape.h"
 #include "HggMG5aMCNLOLineShapePdf.h"
 #include "Background.h"

@@ -1,0 +1,3 @@
+[submodule "RooFitExtensions"]
+	path = RooFitExtensions
+    url = ../RooFitExtensions.git
