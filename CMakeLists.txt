@@ -26,8 +26,8 @@ find_package( ROOT REQUIRED COMPONENTS RIO RooFitCore RooFit HistFactory RooStat
 include(${ROOT_USE_FILE})
 
 # require Boost
-set(Boost_INCLUDE_DIR /cvmfs/sft.cern.ch/lcg/releases/LCG_94/Boost/1.66.0/x86_64-slc6-gcc62-opt/include)
-set(Boost_LIBRARY_DIR /cvmfs/sft.cern.ch/lcg/releases/LCG_94/Boost/1.66.0/x86_64-slc6-gcc62-opt/lib)
+set(Boost_INCLUDE_DIR /cvmfs/sft.cern.ch/lcg/releases/LCG_95/Boost/1.69.0/x86_64-centos7-gcc8-opt/include)
+set(Boost_LIBRARY_DIR /cvmfs/sft.cern.ch/lcg/releases/LCG_95/Boost/1.69.0/x86_64-centos7-gcc8-opt/lib)
 find_package(Boost REQUIRED COMPONENTS program_options regex )
 include_directories(${Boost_INCLUDE_DIRS})
 
@@ -52,14 +52,12 @@ foreach (_srcPath ${srcPaths})
 endforeach()
 
 include_directories(${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/interface ${PROJECT_SOURCE_DIR}/RooFitExtensions)
-#include_directories(${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/interface)
 
 # generate the dictionary source code
 ROOT_GENERATE_DICTIONARY(G__workspaceCombiner ${workspaceCombinerHeaders} LINKDEF interface/manager_LinkDef.h)
 
 add_library( workspaceCombiner SHARED ${workspaceCombinerSources} G__workspaceCombiner.cxx)
-target_link_libraries( workspaceCombiner ${ROOT_LIBRARIES} RooFitExtensions)
-#target_link_libraries( workspaceCombiner ${ROOT_LIBRARIES} )
+target_link_libraries( workspaceCombiner )
 
 #add executables
 
@@ -70,5 +68,4 @@ foreach (_exePath ${exePaths})
 	get_filename_component(_exeFile ${_exePath} NAME)
 	add_executable( ${_exeName} app/${_exeFile} )
     target_link_libraries( ${_exeName} workspaceCombiner ${ROOT_LIBRARIES} ${Boost_LIBRARIES} RooFitExtensions)
-    #target_link_libraries( ${_exeName} workspaceCombiner ${ROOT_LIBRARIES} ${Boost_LIBRARIES} )
 endforeach()

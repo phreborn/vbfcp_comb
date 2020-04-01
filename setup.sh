@@ -6,18 +6,13 @@
 export ATLAS_LOCAL_ROOT_BASE=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase # use your path
 source ${ATLAS_LOCAL_ROOT_BASE}/user/atlasLocalSetup.sh
 lsetup "root 6.20.02-x86_64-centos7-gcc8-opt" 
-#lsetup "root 6.14.04-x86_64-slc6-gcc62-opt" 
 lsetup cmake
-lsetup "boost boost-1.66.0-python2.7-x86_64-slc6-gcc62"
 
 ulimit -S -s unlimited
 
-which gcc
-which root
-
 # dynamic libraries
 
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`pwd`/lib:/cvmfs/sft.cern.ch/lcg/releases/LCG_94/Boost/1.66.0/x86_64-slc6-gcc62-opt/lib/
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`pwd`/lib
 
 # Greet the user
 echo "Setting up environment for compiling/running SFrame"
