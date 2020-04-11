@@ -135,6 +135,7 @@ bool Organizer::run(){
       }
     }
     if( not nW->arg(newObjName) ) auxUtil::alertAndAbort("Object "+newObjName+" (<- "+oldObjName+") does not exist in the new workspace"); // If it is missing in the new workspace, it is not acceptable
+    if(renameMap.find(oldObjName.Data()) != renameMap.end()) auxUtil::alertAndAbort("Object "+oldObjName+" is renamed more than once"); // Same variable renamed multiple times
     renameMap[oldObjName.Data()] = newObjName.Data();
   }
 
