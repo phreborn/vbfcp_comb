@@ -1,10 +1,14 @@
-The tool is created by Haoshuang Ji.
+The tool was created by Haoshuang Ji.
+
+Do not forget to clone the RooFitExtensions submodule as well.
+
+> git clone --recursive ssh://git@gitlab.cern.ch:7999/atlas_higgs_combination/software/workspaceCombiner.git
 
 To compile on lxplus, run
 
 > source setup.sh
 
-> mkdir build && cmake .. && make && cd ..
+> mkdir build && cd build && cmake .. && make -j7 && cd ..
 
 Then each time before using the tool, just do 
 
