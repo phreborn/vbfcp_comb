@@ -26,12 +26,17 @@ find_package( ROOT REQUIRED COMPONENTS RIO RooFitCore RooFit HistFactory RooStat
 include(${ROOT_USE_FILE})
 
 # require Boost
-set(Boost_INCLUDE_DIR /cvmfs/sft.cern.ch/lcg/releases/LCG_95/Boost/1.69.0/x86_64-centos7-gcc8-opt/include)
-set(Boost_LIBRARY_DIR /cvmfs/sft.cern.ch/lcg/releases/LCG_95/Boost/1.69.0/x86_64-centos7-gcc8-opt/lib)
-find_package(Boost REQUIRED COMPONENTS program_options regex )
+list(APPEND CMAKE_PREFIX_PATH $ENV{BOOST_HOME})
+find_package(Boost REQUIRED COMPONENTS program_options system )
 include_directories(${Boost_INCLUDE_DIRS})
 
-add_subdirectory(RooFitExtensions)
+# require RooFitExtensions
+list(APPEND CMAKE_PREFIX_PATH $ENV{RooFitExtensions_DIR})
+find_package(RooFitExtensions REQUIRED CONFIG)
+include_directories(${RooFitExtensions_INCLUDE_DIRS})
+link_directories(${RooFitExtensions_LIBRARY_DIRS})
+
+include_directories(${PROJECT_SOURCE_DIR}/interface)
 
 set(workspaceCombinerHeaders "")
 set(workspaceCombinerSources "")
@@ -51,21 +56,25 @@ foreach (_srcPath ${srcPaths})
 	list(APPEND workspaceCombinerSources "src/${_srcName}")
 endforeach()
 
-include_directories(${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/interface ${PROJECT_SOURCE_DIR}/RooFitExtensions)
-
 # generate the dictionary source code
 ROOT_GENERATE_DICTIONARY(G__workspaceCombiner ${workspaceCombinerHeaders} LINKDEF interface/manager_LinkDef.h)
 
 add_library( workspaceCombiner SHARED ${workspaceCombinerSources} G__workspaceCombiner.cxx)
-target_link_libraries( workspaceCombiner )
+target_link_libraries( workspaceCombiner ${ROOT_LIBRARIES} ${RooFitExtensions_LIBRARIES} )
 
 #add executables
 
 file(GLOB exePaths app/*)
 
+set(workspaceCombinerApp "")
+
 foreach (_exePath ${exePaths})
 	get_filename_component(_exeName ${_exePath} NAME_WE)
 	get_filename_component(_exeFile ${_exePath} NAME)
 	add_executable( ${_exeName} app/${_exeFile} )
-    target_link_libraries( ${_exeName} workspaceCombiner ${ROOT_LIBRARIES} ${Boost_LIBRARIES} RooFitExtensions)
+    target_link_libraries( ${_exeName} workspaceCombiner Boost::program_options Boost::system )
 endforeach()
+
+install(TARGETS ${workspaceCombinerApp} DESTINATION bin)
+install(TARGETS workspaceCombiner LIBRARY DESTINATION lib)
+install(FILES ${PROJECT_SOURCE_DIR}/lib/libworkspaceCombiner_rdict.pcm ${PROJECT_SOURCE_DIR}/lib/libworkspaceCombiner.rootmap DESTINATION lib)
