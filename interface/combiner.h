@@ -24,6 +24,7 @@
 #include "TXMLNode.h"
 #include "TXMLAttr.h"
 #include "TCanvas.h"
+#include "TObjString.h"
 
 #include "rooCommon.h"
 

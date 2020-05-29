@@ -19,6 +19,7 @@
 #include <list>
 #include "splitter.h"
 #include "RooStats/HistFactory/ParamHistFunc.h"
+#include "TObjString.h"
 
 splitter::splitter(
                 std::string combinedFile,
