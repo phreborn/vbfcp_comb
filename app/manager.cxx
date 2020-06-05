@@ -10,15 +10,7 @@
 #include "decorator.h"
 #include <boost/program_options.hpp>
 
-int asimovUtils::minimizerStrategy_ = 1;
-bool asimovUtils::improveFit_ = false;
-bool asimovUtils::robustFit_ = false;
-bool asimovUtils::generateAsimov_ = false;
-bool asimovUtils::writemuhatWS_ = false;
-bool asimovUtils::makePlots_ = false;
-bool asimovUtils::nllOffset_ = true;
-bool asimovUtils::preFit_ = false;
-bool asimovUtils::constOpt_ = true;  
+
 // bool combine_ = true;
 
 std::string what_ = "";
@@ -27,7 +19,6 @@ std::string combinedFile_ = "";
 std::string splittedFile_ = "";
 bool snapShot_ = false;
 std::string snapshotHintFile_ = "";
-std::string minimizerType_ = "Minuit2";
 std::string indice_ = "";
 std::string toBeFixed_ = "";
 bool mkInjectedWS_ = false;
@@ -41,8 +32,6 @@ std::string usePseudoData_ = "";
 std::string dataName_ = "obsData";
 std::string wsName_ = "combWS";
 std::string mcName_ = "ModelConfig";
-
-float minimizerTolerance_ = 0.001;
 
 double rMax_ = -999;
 double tolerance_ = 0.001; /* root default is 0.001 */
@@ -76,7 +65,7 @@ int main( int argc, char** argv )
     ( "SplittedFile,p",               po::value<std::string>( &splittedFile_ )->default_value( splittedFile_ ), "force the output splitted file name" )
     ( "Snapshot,s",               po::value<bool>( &snapShot_ )->default_value( snapShot_ ), "" )
     ( "SnapshotHintFile",               po::value<std::string>( &snapshotHintFile_ )->default_value( snapshotHintFile_ ), "" )
-    ( "MinimizerType,m",               po::value<std::string>( &minimizerType_ )->default_value( minimizerType_ ), "" )
+    ( "minimizerAlgo,m",               po::value<std::string>( &fitUtil::_minimizerAlgo)->default_value(fitUtil::_minimizerAlgo), "" )
     ( "Indice,i",               po::value<std::string>( &indice_ )->default_value( indice_ ), "Select the sub-categories indice" )
     ( "Fix,F",               po::value<std::string>( &toBeFixed_ )->default_value( toBeFixed_ ), "Fix some nuisance parameters" )
     ( "UsePseudoData",               po::value<std::string>( &usePseudoData_ )->default_value( usePseudoData_ ), "Use Pseudo data as observed data" )
@@ -101,12 +90,11 @@ int main( int argc, char** argv )
     ( "dataName,d",               po::value<std::string>( &dataName_ )->default_value( dataName_ ), "Name of the dataset" )
     ( "wsName",               po::value<std::string>( &wsName_ )->default_value( wsName_ ), "Name of the workspace" )
     ( "mcName",               po::value<std::string>( &mcName_ )->default_value( mcName_ ), "Name of the ModelConfig" )
-    ("minimizerTolerance", po::value<float>(&minimizerTolerance_)->default_value(minimizerTolerance_),  "Tolerance for minimizer used for profiling")
-    ("minimizerStrategy", po::value<int>(&asimovUtils::minimizerStrategy_)->default_value(asimovUtils::minimizerStrategy_),  "Strategy for minimizer used for profiling")
-    ("nllOffset", po::value<bool>(&asimovUtils::nllOffset_)->default_value(asimovUtils::nllOffset_),  "Enable NLL offsetting")
-    ("constOpt", po::value<bool>(&asimovUtils::constOpt_)->default_value(asimovUtils::constOpt_),  "Enable constant optimization")
-    ("improveFit", po::value<bool>(&asimovUtils::improveFit_)->default_value(asimovUtils::improveFit_), "Whether to call improve() after fit converges")
-    ("robustFit", po::value<bool>(&asimovUtils::robustFit_)->default_value(asimovUtils::robustFit_), "Whether to fit again after fit converges")
+    ("minimizerTolerance", po::value<double>(&fitUtil::_minimizerTolerance)->default_value(fitUtil::_minimizerTolerance),  "Tolerance for minimizer used for profiling")
+    ("minimizerStrategy", po::value<int>(&fitUtil::_minimizerStrategy)->default_value(fitUtil::_minimizerStrategy),  "Strategy for minimizer used for profiling")
+    ("nllOffset", po::value<bool>(&fitUtil::_nllOffset)->default_value(fitUtil::_nllOffset),  "Enable NLL offsetting")
+    ("constOpt", po::value<bool>(&fitUtil::_constOpt)->default_value(fitUtil::_constOpt),  "Enable constant optimization")
+    ("improveFit", po::value<bool>(&fitUtil::_improveFit)->default_value(fitUtil::_improveFit), "Whether to call improve() after fit converges")
     ("setVar", po::value<std::string>(&setVar_)->default_value(setVar_), "Manipulating variables in the workspace")
     ("generateAsimov", po::value<bool>(&asimovUtils::generateAsimov_)->default_value(asimovUtils::generateAsimov_), "Generate Asimov data or not")
     ("preFit", po::value<bool>(&asimovUtils::preFit_)->default_value(asimovUtils::preFit_), "Generate prefit Asimov (default post-fit)")
@@ -185,7 +173,7 @@ int main( int argc, char** argv )
       comb->makeBOnly(makeBOnly_);
       comb->makeSimCategory();
       comb->regularizeWorkspace();
-      comb->makeSnapshots0( minimizerType_, combinedFile_, snapshotHintFile_, minimizerTolerance_, false, fitFlag_);
+      comb->makeSnapshots0( fitUtil::_minimizerAlgo, combinedFile_, snapshotHintFile_, fitUtil::_minimizerTolerance, false, fitFlag_);
       comb->write(combinedFile_);
     }
 
@@ -220,7 +208,7 @@ int main( int argc, char** argv )
     }
 
     if(doStep3) {
-      combiner::makeSnapshots( minimizerType_, combinedFile_, snapshotHintFile_, minimizerTolerance_, true, fitFlag_);
+      combiner::makeSnapshots( fitUtil::_minimizerAlgo, combinedFile_, snapshotHintFile_, fitUtil::_minimizerTolerance, true, fitFlag_);
       std::cout << "\tMade final workspace ~~~~ " << std::endl;
     }
   }
@@ -256,7 +244,7 @@ int main( int argc, char** argv )
 
     if ( snapShot_ )
     {
-      split->makeSnapshots(minimizerType_, tolerance_, singlePoi_, fitFlag_);
+      split->makeSnapshots(fitUtil::_minimizerAlgo, tolerance_, singlePoi_, fitFlag_);
     } else if ( indice_ == "all" ) {
       /* take the asimov */
       split->grabAsimov(combinedFile_);
@@ -281,7 +269,7 @@ int main( int argc, char** argv )
     decorate->decorate();
     
     if ( snapShot_ ){
-      decorate->makeSnapshots(minimizerType_, tolerance_, fitFlag_);
+      decorate->makeSnapshots(fitUtil::_minimizerAlgo, tolerance_, fitFlag_);
     }
     decorate->printSummary(verbose_);
     decorate->write();

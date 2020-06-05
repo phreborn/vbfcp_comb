@@ -145,15 +145,11 @@ namespace asimovUtils {
         //         hf->Close();
         //         return success;
         //     }
-  extern int minimizerStrategy_;
-  extern bool improveFit_;
-  extern bool robustFit_;
-  extern bool generateAsimov_;
-  extern bool writemuhatWS_;
-  extern bool makePlots_;
-  extern bool nllOffset_;
-  extern bool preFit_;
-  extern bool constOpt_;  
+
+  static bool generateAsimov_ = false;
+  static bool writemuhatWS_ = false;
+  static bool makePlots_ = false;
+  static bool preFit_ = false;
 }
 
 

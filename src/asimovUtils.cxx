@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include "asimovUtils.h"
+#include "fitUtil.hh"
 
 using namespace RooStats;
 using namespace RooFit;
@@ -346,117 +347,7 @@ RooAbsData* asimovUtils::asimovDatasetWithFit(
 
         if ( mc->GetNuisanceParameters() )
         {
-	  // Speed-up fit to binned PDFs
-          RooWorkspace* w = mc->GetWS();
-          RooArgSet funcs = w->allPdfs();
-          {
-            std::unique_ptr<TIterator> iter(funcs.createIterator());
-            for ( RooAbsPdf* v = (RooAbsPdf*)iter->Next(); v!=0; v = (RooAbsPdf*)iter->Next() ) {
-              std::string name = v->GetName();
-              if (v->IsA() == RooRealSumPdf::Class() && name.find("binned")!=std::string::npos) {
-                std::cout << "\tset binned likelihood for: " << v->GetName() << std::endl;
-                v->setAttribute("BinnedLikelihood", true);
-              }
-            }
-          }
-
-	  // // Deactivate level 2 constant term optimization for CMS H->gamgam workspace
-	  // {
-	  //   RooFIter iter=w->components().fwdIterator();
-	  //   RooAbsArg *arg;
-	  //   while ((arg=iter.next())){
-	  //     if(arg->IsA()==RooMultiPdf::Class()){
-	  // 	arg->setAttribute("NoCacheAndTrack");
-	  // 	std::cout<<"De-activating level 2 constant term optimization for "<<arg->GetName()<<std::endl;
-	  //     }
-	  //   }
-	  // }
-
-          RooAbsReal* nll_ = mc->GetPdf()->createNLL(realdata,
-                                                     RooFit::Constrain( *mc->GetNuisanceParameters() ),
-                                                     RooFit::GlobalObservables(*mc->GetGlobalObservables())
-                                                    );
-
-          /* from wouter */
-          // minim.setOffsetting(kTRUE);
-          nll_->enableOffsetting(nllOffset_);
-
-	  if(robustFit_){
-	    RooWorkspace *w_temp=mc->GetWS();
-	    w_temp->saveSnapshot("nominalPOIs", *mc->GetParametersOfInterest());
-	  }
-	  RooMinimizer minim(*nll_);
-	  minim.setStrategy(minimizerStrategy_);
-	  minim.setPrintLevel(1);
-	  minim.setProfile(); /* print out time */
-	  minim.setEps(tolerance/0.001);
-	  if(constOpt_){
-	    cout<<"REGTEST: using level 2 constant optimization"<<endl;
-	    minim.optimizeConst(2);
-	  }
-	  minim.setMaxFunctionCalls(5000*mc->GetPdf()->getVariables()->getSize());//suggest by Stefan
-	  minim.minimize("Minuit2");
-	  if(improveFit_) minim.improve(); 	// Improve the fit
-
-	  if(robustFit_){
-	    RooWorkspace *w_temp=mc->GetWS();
-	    // Saving results from last iteration
-	    RooArgSet *NuisAndPoi=new RooArgSet();
-	    NuisAndPoi->add(*mc->GetNuisanceParameters());
-	    NuisAndPoi->add(*mc->GetParametersOfInterest());
-
-	    w_temp->saveSnapshot("fitResults_step1",*NuisAndPoi);
-	    double nll_step1=nll_->getVal();
-	    // Now kick the POI back to the nominal values and refit.
-	    w_temp->loadSnapshot("nominalPOIs");
-
-	    int status = minim.minimize(ROOT::Math::MinimizerOptions::DefaultMinimizerType().c_str(), ROOT::Math::MinimizerOptions::DefaultMinimizerAlgo().c_str());
-	    std::cout<<"Refit done with status "<<status<<std::endl;
-	    double nll_step2=nll_->getVal();
-	    if(nll_step2>nll_step1){
-	      std::cout<<"Warning: NLL from refit "<<nll_step2<<" is larger than the one from the first fit "<<nll_step1<<". Reverting to the results from first fit..."<<std::endl;
-	      w_temp->loadSnapshot("fitResults_step1");
-	    }
-	  }
-
-          nll = nll_->getVal();
-	  std::cout<<"REGTEST: NLL value: "<<nll<<std::endl;
-	  
-	  // double init_val=-1;
-
-	  RooWorkspace *m_comb=mc->GetWS();
-	  // m_comb->writeToFile("test.root");
-	  // m_comb->var("CMS_hzz_bkgMELA")->Print("v");
-	  // mc->GetGlobalObservables()->Print("v");
-	  // m_comb->function("CMS_hzz_bkgMELA_Pdf")->Print("v");
-	  // //std::cout<<glob_temp<<std::endl;
-	  // for(int step=0;step<10;step++){
-	  //   m_comb->var("CMS_hzz_bkgMELA_In")->setVal(init_val+0.2*step);
-	  //   std::cout<<m_comb->var("CMS_hzz_bkgMELA_In")->getVal()<<" "<<nll_->getVal()<<" "<<m_comb->function("CMS_hzz_bkgMELA_Pdf")->getVal()<<std::endl;
-	  // }
-          delete nll_; nll_ = NULL;
-
-	  // RooArgSet nuisSnapshot;
-	  // nuisSnapshot.add( *mc->GetNuisanceParameters() );
-	  // m_comb->saveSnapshot( "conditionalNuis_muhat", nuisSnapshot, true );
-	  // nuisSnapshot.add( *mc->GetParametersOfInterest() );
-	  // m_comb->saveSnapshot( "ucmles", nuisSnapshot, true );
-	  // m_comb->saveSnapshot( "conditionalGlobs_muhat", *mc->GetGlobalObservables(), true );
-
-          // Important: binned likelihood attribute to speed up bb and other fits
-          {
-            // RooWorkspace* w = mc->GetWS();
-            // RooArgSet funcs = w->allPdfs();
-            std::unique_ptr<TIterator> iter(funcs.createIterator());
-            for ( RooAbsPdf* v = (RooAbsPdf*)iter->Next(); v!=0; v = (RooAbsPdf*)iter->Next() ) {
-              std::string name = v->GetName();
-              if (v->IsA() == RooRealSumPdf::Class() && name.find("binned")!=std::string::npos) {
-                std::cout << "\t\tremove binned likelihood for: " << v->GetName() << std::endl;
-                v->setAttribute("BinnedLikelihood", false);
-              }
-            }
-          }
-
+	  fitUtil::profileToData(mc, &realdata);
 	  std::cout << "REGTEST: Fit finished" << std::endl;
 
         }
@@ -478,12 +369,7 @@ RooAbsData* asimovUtils::asimovDatasetWithFit(
             }
           }
 
-          if ( hasFloatParams )
-            mc->GetPdf()->fitTo( realdata,
-                                RooFit::Minimizer( "Minuit2", "minimize" ),
-                                RooFit::Strategy( minimizerStrategy_ ),
-                                RooFit::GlobalObservables(*mc->GetGlobalObservables())
-                               );
+          if ( hasFloatParams ) fitUtil::profileToData(mc, &realdata);
         }
     }
 
@@ -1023,8 +909,7 @@ void asimovUtils::makePlots( const RooAbsPdf& pdf, const RooAbsData& data, std::
   void asimovUtils::makeAsimovDataForMultiPoi(RooWorkspace* w, RooStats::ModelConfig* mc, RooDataSet* data, std::vector<std::string> poiNames )
   {
     std::cout << "\tGoing to make snapshot for multi-poi: " << std::endl;
-    std::string minimizerType = "Minuit2";
-    ROOT::Math::MinimizerOptions::SetDefaultMinimizer(minimizerType.c_str());
+
     RooArgSet snapshot;
     double nll_float, nll_1;
 
@@ -1082,10 +967,6 @@ void asimovUtils::makePlots( const RooAbsPdf& pdf, const RooAbsData& data, std::
       int runFlag
       )
   {
-    ROOT::Math::MinimizerOptions::SetDefaultMinimizer(minimizerType.c_str());
-
-    std::cout << "default minimizerType: " << minimizerType << std::endl;
-
     RooArgSet hintNuisSet, hintPoiSet;
     RooArgSet nuisSet = *m_mc->GetNuisanceParameters();
     RooArgSet poiSet  = *m_mc->GetParametersOfInterest();
