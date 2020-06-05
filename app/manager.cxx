@@ -18,7 +18,7 @@ bool asimovUtils::writemuhatWS_ = false;
 bool asimovUtils::makePlots_ = false;
 bool asimovUtils::nllOffset_ = true;
 bool asimovUtils::preFit_ = false;
-bool asimovUtils::constOpt_ = false;  
+bool asimovUtils::constOpt_ = true;  
 // bool combine_ = true;
 
 std::string what_ = "";
