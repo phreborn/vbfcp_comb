@@ -34,7 +34,6 @@ std::string wsName_ = "combWS";
 std::string mcName_ = "ModelConfig";
 
 double rMax_ = -999;
-double tolerance_ = 0.001; /* root default is 0.001 */
 double mHiggs_ = -1;
 bool singlePoi_ = true;
 int fitFlag_ = 0;
@@ -77,7 +76,6 @@ int main( int argc, char** argv )
     ( "injectData",               po::value<std::string>( &injectDataSet_ )->default_value( injectDataSet_ ), "" )
     ( "replaceString",               po::value<std::string>( &replaceStr_ )->default_value( replaceStr_ ), "" )
     ( "rMax,r",               po::value<double>( &rMax_ )->default_value( rMax_ ), "Set the max value for the global poi" )
-    ( "tolerance",               po::value<double>( &tolerance_ )->default_value( tolerance_ ), "" )
     ( "mHiggs",               po::value<double>( &mHiggs_ )->default_value( mHiggs_ ), "Set the mass of the higgs" )
     ( "ReBin",               po::value<int>( &reBin_ )->default_value( reBin_ ), "Rebin the gammagamma dataset" )
     ( "fitFlag,t",               po::value<int>( &fitFlag_ )->default_value( fitFlag_ ), "Choose which one to fit" )
@@ -244,7 +242,7 @@ int main( int argc, char** argv )
 
     if ( snapShot_ )
     {
-      split->makeSnapshots(fitUtil::_minimizerAlgo, tolerance_, singlePoi_, fitFlag_);
+      split->makeSnapshots(fitUtil::_minimizerAlgo, fitUtil::_minimizerTolerance, singlePoi_, fitFlag_);
     } else if ( indice_ == "all" ) {
       /* take the asimov */
       split->grabAsimov(combinedFile_);
@@ -269,7 +267,7 @@ int main( int argc, char** argv )
     decorate->decorate();
     
     if ( snapShot_ ){
-      decorate->makeSnapshots(fitUtil::_minimizerAlgo, tolerance_, fitFlag_);
+      decorate->makeSnapshots(fitUtil::_minimizerAlgo, fitUtil::_minimizerTolerance, fitFlag_);
     }
     decorate->printSummary(verbose_);
     decorate->write();
