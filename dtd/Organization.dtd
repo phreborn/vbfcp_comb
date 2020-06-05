@@ -11,6 +11,7 @@
         SnapshotGO          CDATA            #IMPLIED
         SnapshotPOI         CDATA            #IMPLIED
         SnapshotAll         CDATA            #IMPLIED
+	Strict              CDATA            #IMPLIED
 	>
 
 <!ELEMENT Item (Name)*>

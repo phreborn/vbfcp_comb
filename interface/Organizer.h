@@ -21,21 +21,12 @@
 #ifndef Manager_Organizer
 #define Manager_Organizer
 
-#include "AlgoBase.h"
 #include "auxUtil.hh"
 #include "asimovUtil.hh"
 
-class Organizer : public AlgoBase {
+class Organizer {
 public:
   Organizer(TString configFileName) ;
-  void applyOptions(const boost::program_options::variables_map &vm) ;
-  void applyDefaultOptions() ;
-  void validateOptions() ;
-
-  const TString & name() const {
-    static const TString name("Organizer");
-    return name;
-  }
 
   bool run();
 

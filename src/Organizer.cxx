@@ -23,25 +23,10 @@ const TString Organizer::CONSTRAINT = "constraint";
 const TString Organizer::NORMAL = "normal";
 const TString Organizer::EXTERNAL = "external";
 
-Organizer::Organizer(TString configFileName): AlgoBase("Organizer specific options") {
+Organizer::Organizer(TString configFileName){
   // cout<<__PRETTY_FUNCTION__<<endl;
   _asimovHandler.reset(new asimovUtil());
   readConfigXml(configFileName);
-  options_.add_options()
-    ("input,i", boost::program_options::value<TString>(&m_inFile)->default_value(m_inFile), "Input file name")
-    ("output,o", boost::program_options::value<TString>(&m_outFile)->default_value(m_outFile), "Output file name")
-    ("wsName", boost::program_options::value<TString>(&m_wsName)->default_value(m_wsName), "Workspace name")
-    ("mcName", boost::program_options::value<TString>(&m_mcName)->default_value(m_mcName), "ModelConfig name")
-    ("dsName", boost::program_options::value<TString>(&m_dsName)->default_value(m_dsName), "Dataset name")
-    ;
-}
-
-void Organizer::applyOptions(const boost::program_options::variables_map &vm) {
-}
-
-void Organizer::applyDefaultOptions() { validateOptions(); }
-
-void Organizer::validateOptions() {
 }
 
 bool Organizer::run(){
