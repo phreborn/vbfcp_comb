@@ -11,7 +11,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 set(CMAKE_INSTALL_LIBDIR ${PROJECT_SOURCE_DIR}/lib)
 set(TARGET_INSTALL_AREA ${PROJECT_SOURCE_DIR})
 set(SHARED_INSTALL_AREA ${PROJECT_SOURCE_DIR}/lib)
-add_compile_options(-std=c++17)
 
 file(MAKE_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
 file(MAKE_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
@@ -27,7 +26,7 @@ include(${ROOT_USE_FILE})
 
 # require Boost
 list(APPEND CMAKE_PREFIX_PATH $ENV{BOOST_HOME})
-find_package(Boost REQUIRED COMPONENTS program_options system )
+find_package(Boost REQUIRED COMPONENTS program_options regex )
 include_directories(${Boost_INCLUDE_DIRS})
 
 # require RooFitExtensions
@@ -60,7 +59,7 @@ endforeach()
 ROOT_GENERATE_DICTIONARY(G__workspaceCombiner ${workspaceCombinerHeaders} LINKDEF interface/manager_LinkDef.h)
 
 add_library( workspaceCombiner SHARED ${workspaceCombinerSources} G__workspaceCombiner.cxx)
-target_link_libraries( workspaceCombiner ${ROOT_LIBRARIES} ${RooFitExtensions_LIBRARIES} )
+target_link_libraries( workspaceCombiner ${ROOT_LIBRARIES} ${RooFitExtensions_LIBRARIES} Boost::regex )
 
 #add executables
 
@@ -72,7 +71,7 @@ foreach (_exePath ${exePaths})
 	get_filename_component(_exeName ${_exePath} NAME_WE)
 	get_filename_component(_exeFile ${_exePath} NAME)
 	add_executable( ${_exeName} app/${_exeFile} )
-    target_link_libraries( ${_exeName} workspaceCombiner Boost::program_options Boost::system )
+    target_link_libraries( ${_exeName} workspaceCombiner Boost::program_options )
 endforeach()
 
 install(TARGETS ${workspaceCombinerApp} DESTINATION bin)
