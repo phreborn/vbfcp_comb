@@ -19,7 +19,9 @@ public:
   static double _minimizerTolerance;
   static bool _nllOffset;
   static int _printLevel;
-
+  static bool _constOpt;
+  static bool _improveFit;
+  
   static int profileToData(ModelConfig *mc, RooAbsData *data, TString rangeName="");
 };
 
