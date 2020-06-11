@@ -140,7 +140,7 @@ bool Organizer::run(){
 
   /* import data */
   list<RooAbsData*> dataList = w->allData();
-  for (list<RooAbsData*>::iterator it = dataList.begin(); it !=  dataList.end(); ++it) nW->import(**it, RooFit::RenameVariable( oldStr.c_str(), newStr.c_str() ));
+  for (list<RooAbsData*>::iterator it = dataList.begin(); it !=  dataList.end(); ++it) nW->import(**it);
 
   /* poi */
   RooArgSet newPOI;
