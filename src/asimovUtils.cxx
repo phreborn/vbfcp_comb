@@ -7,6 +7,13 @@ using namespace RooStats;
 using namespace RooFit;
 using namespace HistFactory;
 
+namespace asimovUtils {
+  bool generateAsimov_ = false;
+  bool writemuhatWS_ = false;
+  bool makePlots_ = false;
+  bool preFit_ = false;
+}
+
 asimovUtils::SinglePdfGenInfo::SinglePdfGenInfo( RooAbsPdf& pdf, const RooArgSet& observables, bool preferBinned, const RooDataSet* protoData, int forceEvents ) :
     mode_( pdf.canBeExtended() ? ( preferBinned ? Binned : Unbinned ) : Counting ),
     pdf_( &pdf ),

@@ -126,8 +126,7 @@ namespace asimovUtils {
                        );
         //
         //     {
-        //         bool success = false;
-        //         TFile* hf = new TFile(snapshotHintFile.c_str());
+        //         bool success = false; //         TFile* hf = new TFile(snapshotHintFile.c_str());
         //         RooWorkspace* hw = (RooWorkspace*)(hf->Get("combWS"));
         //         if(hw)
         //         {
@@ -145,11 +144,11 @@ namespace asimovUtils {
         //         hf->Close();
         //         return success;
         //     }
+  extern bool generateAsimov_;
+  extern bool writemuhatWS_;
+  extern bool makePlots_;
+  extern bool preFit_;
 
-  static bool generateAsimov_ = false;
-  static bool writemuhatWS_ = false;
-  static bool makePlots_ = false;
-  static bool preFit_ = false;
 }
 
 
