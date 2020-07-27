@@ -260,9 +260,6 @@ void tokenizeV(const std::string &s,
   }
 }
 
-void makeBOnly(bool flag) { m_mkBonly = flag; }
-
-
 TString editRFVString( TString& oldString )
 {
   TString newFormExprBegin = "";
@@ -324,7 +321,6 @@ std::string m_outputFileName;
 
 double m_mass;
 bool m_editRFV;
-bool m_mkBonly;
 
 RooArgSet m_obs;
 RooArgSet m_obsAndWgt;

@@ -22,11 +22,10 @@
 #include "TObjString.h"
 
 splitter::splitter(
-                std::string combinedFile,
-                std::string splittedFile,
-                std::string dataName
-        ):
-    m_mkBonly( true )
+		   std::string combinedFile,
+		   std::string splittedFile,
+		   std::string dataName
+		   )
 {
     // m_subComb = NULL;
 
@@ -880,28 +879,6 @@ void splitter::makeWorkspace(double rMax_, int reBin, double mass, bool editRFV)
 
   {
     m_subComb->saveSnapshot( "nominalGlobs", *m_subMc->GetGlobalObservables() );
-  }
-
-  if(m_mkBonly)
-  {
-    RooCustomizer make_model_s(*m_subMc->GetPdf(),"_model_bonly_");
-    const RooArgSet* poi = m_subMc->GetParametersOfInterest();
-    std::unique_ptr<TIterator> iter1(poi->createIterator());
-    TString zeroName = "";
-    for ( RooRealVar* v = (RooRealVar*)iter1->Next(); v!=0; v = (RooRealVar*)iter1->Next() ) {
-      zeroName = TString::Format("_zero_%s", v->GetName());
-      // RooRealVar* zero = m_subComb->var("_zero_");
-      m_subComb->factory((zeroName + "[0]").Data());
-      make_model_s.replaceArg(*v, *m_subComb->var(zeroName.Data()));
-    }
-
-    RooAbsPdf *model_b = dynamic_cast<RooAbsPdf *>(make_model_s.build());
-    model_b->SetName("_model_bonly_");
-    m_subComb->import(*model_b, RooFit::Silence());
-    RooStats::ModelConfig* mc_bonly = new RooStats::ModelConfig(*m_subMc);
-    mc_bonly->SetPdf(*model_b);
-    mc_bonly->SetName("ModelConfig_bonly");
-    m_subComb->import(*mc_bonly);
   }
 }
 

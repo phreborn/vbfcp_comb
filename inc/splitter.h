@@ -79,8 +79,6 @@ class splitter {
             }
         }
 
-        void makeBOnly(bool flag) { m_mkBonly = flag; }
-
     private:
         RooStats::ModelConfig* m_mc;
         RooWorkspace* m_comb;
@@ -100,7 +98,6 @@ class splitter {
         /* take these from the combined workspace */
         std::vector<int> m_useIndice;
         int useNumChannels;
-        bool m_mkBonly;
 
         std::string splittedFile_;
         std::string replaceStr_;

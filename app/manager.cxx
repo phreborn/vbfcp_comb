@@ -41,8 +41,6 @@ bool editRFV_ = false;
 int procedure_ = 0;
 bool verbose_ = false;
 
-bool makeBOnly_ = false;
-// int reBin_ = -1;
 int reBin_ = 500;
 
 bool histToData_=true;
@@ -79,7 +77,6 @@ int main( int argc, char** argv )
     ( "fitFlag,t",               po::value<int>( &fitFlag_ )->default_value( fitFlag_ ), "Choose which one to fit" )
     ( "editRFV",               po::value<bool>( &editRFV_ )->default_value( editRFV_ ), "Edit RooFormulaVar" )
     ( "procedure",               po::value<int>( &procedure_ )->default_value( procedure_ ), "" )
-    ( "makeBOnly",               po::value<bool>( &makeBOnly_ )->default_value( makeBOnly_ ), "do we make b-only" )
     ( "verbose",               po::value<bool>( &verbose_ )->default_value( verbose_ ), "verbose..." )
     ( "dataName,d",               po::value<std::string>( &dataName_ )->default_value( dataName_ ), "Name of the dataset" )
     ( "wsName",               po::value<std::string>( &wsName_ )->default_value( wsName_ ), "Name of the workspace" )
@@ -162,7 +159,6 @@ int main( int argc, char** argv )
       comb->printSummary();
       comb->editRFV(editRFV_);
       comb->initWorkspace(combinedFile_+"_tmp.root", combiner::nRnWTmp); /* make the temporary ws */
-      comb->makeBOnly(makeBOnly_);
       comb->makeSimCategory();
       comb->regularizeWorkspace();
       comb->makeSnapshots0( fitUtil::_minimizerAlgo, combinedFile_, snapshotHintFile_, fitUtil::_minimizerTolerance, false, fitFlag_);
@@ -186,7 +182,6 @@ int main( int argc, char** argv )
       comb1->readConfigXml(configFile_);
       // comb1->initWorkspace(combinedFile_+"_tmp.root", false); /* read the temporary ws */
       comb1->initWorkspace(combinedFile_+"_tmp.root", combiner::ReadTmp); /* read the temporary ws */
-      comb1->makeBOnly(makeBOnly_);
       comb1->makeSimCategory();
       comb1->regularizeWorkspace();
       // comb1->write(combinedFile_+"_raw0.root");
@@ -209,8 +204,6 @@ int main( int argc, char** argv )
     splitter* split = new splitter(combinedFile_, splittedFile_, usePseudoData_== "" ? dataName : usePseudoData_);
     split->printSummary(verbose_);
     split->fillIndice(indice_);
-
-    split->makeBOnly(makeBOnly_);
 
     split->setReplaceStr(replaceStr_);
     /* may have to fix some nuisance parameters */

@@ -51,7 +51,6 @@ combiner::combiner():
   m_catName( "combCat" ),
   m_outputFileName( "combination.root" ),
   m_editRFV( false ),
-  m_mkBonly( true ),
   m_comb( new RooWorkspace( m_wsName.c_str(), m_wsName.c_str() ) ),
   m_nuis( new RooArgSet( "nuis" ) ),
   m_gObs( new RooArgSet( "gObs" ) ),
@@ -650,38 +649,6 @@ void combiner::regularizeWorkspace()
 
   m_comb->import( *m_mc );
   m_comb->importClassCode(); // Jared
-
-
-  if ( m_mkBonly ) {
-    if ( m_pdf->dependsOn(*m_mc->GetParametersOfInterest()->first()) )
-      {
-	m_comb->factory("_zero_[0]");
-	RooCustomizer make_model_s(*m_mc->GetPdf(),"_model_bonly_");
-	make_model_s.replaceArg(*m_mc->GetParametersOfInterest()->first(), *m_comb->var("_zero_"));
-
-
-	RooAbsPdf *model_b = dynamic_cast<RooAbsPdf *>(make_model_s.build(true));
-	model_b->SetName("_model_bonly_");
-	m_comb->import(*model_b, RooFit::Silence());
-	RooStats::ModelConfig* mc_bonly = new RooStats::ModelConfig(*m_mc);
-	mc_bonly->SetPdf(*model_b);
-	mc_bonly->SetName("ModelConfig_bonly");
-	m_comb->import(*mc_bonly);
-  m_comb->importClassCode(); // Jared
-	delete mc_bonly;
-	delete model_b;
-      }
-    else{
-      assert ( false );
-      // /* I don't understand how this can happen!!! */
-      // RooSimultaneous *model_b = new RooSimultaneous(*m_pdf, "_model_bonly_");
-      // m_comb->import(*model_b, RooFit::Silence());
-      // RooStats::ModelConfig* mc_bonly = new RooStats::ModelConfig(*m_mc);
-      // mc_bonly->SetPdf(*model_b);
-      // mc_bonly->SetName("ModelConfig_bonly");
-      // m_comb->import(*mc_bonly);
-    }
-  }
 
   /* H->ZZ */
   RooRealVar* mHiggs = m_comb->var("mHiggs");
