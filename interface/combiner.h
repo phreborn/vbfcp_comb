@@ -116,8 +116,6 @@ class combiner {
 
 
   void doFit(double mu=-1);
-  void editPDF(RooAbsPdf* pdf, RooWorkspace* w, std::map<std::string, std::string>& renameMap);
-
 
   void readConfigXml( std::string configFileName );
   void readChannel( TXMLNode* rootNode );
@@ -238,12 +236,6 @@ class combiner {
 
   void write(std::string outputFile="");
 
-  void editPDF(bool edit)
-  {
-    m_editPDF = edit;
-  }
-
-
   void editRFV(bool edit)
   {
     m_editRFV = edit;
@@ -331,7 +323,6 @@ std::string m_catName;
 std::string m_outputFileName;
 
 double m_mass;
-bool m_editPDF;
 bool m_editRFV;
 bool m_mkBonly;
 

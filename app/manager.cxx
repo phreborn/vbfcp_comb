@@ -37,7 +37,6 @@ double rMax_ = -999;
 double mHiggs_ = -1;
 bool singlePoi_ = true;
 int fitFlag_ = 0;
-bool editPDF_ = false;
 bool editRFV_ = false;
 int procedure_ = 0;
 bool verbose_ = false;
@@ -78,7 +77,6 @@ int main( int argc, char** argv )
     ( "mHiggs",               po::value<double>( &mHiggs_ )->default_value( mHiggs_ ), "Set the mass of the higgs" )
     ( "ReBin",               po::value<int>( &reBin_ )->default_value( reBin_ ), "Rebin the gammagamma dataset" )
     ( "fitFlag,t",               po::value<int>( &fitFlag_ )->default_value( fitFlag_ ), "Choose which one to fit" )
-    ( "editPDF",               po::value<bool>( &editPDF_ )->default_value( editPDF_ ), "Edit PDF uncertainties" )
     ( "editRFV",               po::value<bool>( &editRFV_ )->default_value( editRFV_ ), "Edit RooFormulaVar" )
     ( "procedure",               po::value<int>( &procedure_ )->default_value( procedure_ ), "" )
     ( "makeBOnly",               po::value<bool>( &makeBOnly_ )->default_value( makeBOnly_ ), "do we make b-only" )
@@ -162,7 +160,6 @@ int main( int argc, char** argv )
       combiner* comb = new combiner();
       comb->readConfigXml(configFile_);
       comb->printSummary();
-      comb->editPDF(editPDF_); /* set the flag */
       comb->editRFV(editRFV_);
       comb->initWorkspace(combinedFile_+"_tmp.root", combiner::nRnWTmp); /* make the temporary ws */
       comb->makeBOnly(makeBOnly_);
@@ -177,7 +174,6 @@ int main( int argc, char** argv )
       combiner* comb = new combiner();
       comb->readConfigXml(configFile_);
       comb->printSummary();
-      comb->editPDF(editPDF_); /* set the flag */
       comb->editRFV(editRFV_);
       // comb->initWorkspace(combinedFile_+"_tmp.root", true); /* make the temporary ws */
       comb->initWorkspace(combinedFile_+"_tmp.root", combiner::WriteTmp); /* make the temporary ws */
@@ -188,7 +184,6 @@ int main( int argc, char** argv )
     if(doStep2) {
       combiner* comb1 = new combiner();
       comb1->readConfigXml(configFile_);
-      comb1->editPDF(editPDF_); /* set the flag */
       // comb1->initWorkspace(combinedFile_+"_tmp.root", false); /* read the temporary ws */
       comb1->initWorkspace(combinedFile_+"_tmp.root", combiner::ReadTmp); /* read the temporary ws */
       comb1->makeBOnly(makeBOnly_);

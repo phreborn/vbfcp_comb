@@ -50,7 +50,6 @@ combiner::combiner():
   m_gObsName( "combGobs" ),
   m_catName( "combCat" ),
   m_outputFileName( "combination.root" ),
-  m_editPDF( false ),
   m_editRFV( false ),
   m_mkBonly( true ),
   m_comb( new RooWorkspace( m_wsName.c_str(), m_wsName.c_str() ) ),
@@ -83,119 +82,6 @@ void combiner::write(std::string outputFile)
   plotName = plotName.replace(plotName.find(".root"), 5, "")+"_obsData.pdf";
   asimovUtils::makePlots( *m_pdf, *m_data,  plotName);
 }
-
-void combiner::editPDF(RooAbsPdf* pdf, RooWorkspace* w, std::map<std::string, std::string>& renameMap)
-{
-
-  TString sumStr  =  "";
-
-  /* all vars used in RooFormulaVar */
-  std::vector<std::string> vars;
-  RooArgSet* allVars = pdf->getVariables();
-
-  RooArgSet newNuis;
-  RooArgSet newGObs;
-
-  std::string prodModes[]  =  {
-    "7_ggF", "7_VBF", "7_WH", "7_ZH", "7_ttH",
-    "8_ggF", "8_VBF", "8_WH", "8_ZH", "8_ttH"
-  };
-  double prodModesPdfUncert[]  =  {
-    (0.076+0.071)/2.,  (0.025+0.021)/2., (0.035+0.035)/2., (0.035+0.035)/2., (0.085+0.085)/2.,
-    (0.075+0.069)/2.,  (0.026+0.028)/2., (0.035+0.035)/2., (0.035+0.035)/2., (0.078+0.078)/2.
-  };
-  std::string prodModesPdfUncertStr[]  =  {
-    "0.34*pdf_Higgs_3 - 0.74*pdf_Higgs_2 - 0.55*pdf_Higgs_1 - 0.15*pdf_Higgs_4 + 0.057*pdf_Higgs_5",
-    "0.92*pdf_Higgs_1 - 0.011*pdf_Higgs_2 - 0.32*pdf_Higgs_3 - 0.22*pdf_Higgs_4 + 0.062*pdf_Higgs_5",
-    "0.9*pdf_Higgs_1 - 0.33*pdf_Higgs_2 + 0.17*pdf_Higgs_3 + 0.24*pdf_Higgs_4 + 0.068*pdf_Higgs_5",
-    "0.89*pdf_Higgs_1 - 0.35*pdf_Higgs_2 + 0.24*pdf_Higgs_3 - 0.083*pdf_Higgs_4 - 0.11*pdf_Higgs_5",
-    "0.24*pdf_Higgs_1 + 0.85*pdf_Higgs_2 + 0.46*pdf_Higgs_3 - 0.081*pdf_Higgs_4 + 0.033*pdf_Higgs_5",
-
-    "0.34*pdf_Higgs_3 - 0.74*pdf_Higgs_2 - 0.55*pdf_Higgs_1 - 0.15*pdf_Higgs_4 + 0.057*pdf_Higgs_5",
-    "0.92*pdf_Higgs_1 - 0.011*pdf_Higgs_2 - 0.32*pdf_Higgs_3 - 0.22*pdf_Higgs_4 + 0.062*pdf_Higgs_5",
-    "0.9*pdf_Higgs_1 - 0.33*pdf_Higgs_2 + 0.17*pdf_Higgs_3 + 0.24*pdf_Higgs_4 + 0.068*pdf_Higgs_5",
-    "0.89*pdf_Higgs_1 - 0.35*pdf_Higgs_2 + 0.24*pdf_Higgs_3 - 0.083*pdf_Higgs_4 - 0.11*pdf_Higgs_5",
-    "0.24*pdf_Higgs_1 + 0.85*pdf_Higgs_2 + 0.46*pdf_Higgs_3 - 0.081*pdf_Higgs_4 + 0.033*pdf_Higgs_5"
-  };
-
-  std::string pwProduct  = "";
-
-  /* create the new vars */
-  for ( int j= 0; j < 5; j++ ) {
-    std::string tuVar  = TString::Format("pdf_Higgs_%d", j+1).Data();
-    w->factory((std::string("RooGaussian::")+tuVar+"_Pdf("+tuVar+"[-5, 5], "+tuVar+"_In[-5, 5], 1)").c_str());
-    pwProduct  =  (pwProduct == "") ? tuVar+"_Pdf" : pwProduct+","+tuVar+"_Pdf";
-    newGObs.add(*w->var((tuVar+"_In").c_str()));
-    newNuis.add(*w->var(tuVar.c_str()));
-  }
-  m_gObs->add(newGObs);
-  m_nuis->add(newNuis);
-
-  std::cout << "product: " << pwProduct << std::endl;
-  w->factory(TString::Format("PROD::pdfProduct(%s)", pwProduct.c_str()).Data());
-
-
-  /* loop over all decay modes */
-  for ( int  i =  0; i < (int)(sizeof(prodModes)/sizeof(std::string)); i++ ) {
-    std::string muVar = "mu_XS";
-    std::string prod = prodModes[i];
-    muVar += prod;
-    RooRealVar* var = dynamic_cast<RooRealVar*>(allVars->find(muVar.c_str()));
-    TString editStr = "";
-
-    /* this production mode is not in */
-    if (!var) {
-      std::cout << "\t\tNot found: " << muVar << std::endl;
-      muVar  =  "1";
-    }
-    else{
-      std::cout << "\tFound: " << muVar << std::endl;
-    }
-
-    prod = (prod=="7_ggF" || prod=="8_ggF") ? "ggH" : prod;
-    prod = (prod=="7_VBF" || prod=="8_VBF") ? "qqH" : prod;
-    prod = (prod=="7_WH" || prod=="8_WH") ? "VH" : prod;
-    prod = (prod=="7_ZH" || prod=="8_ZH") ? "VH" : prod;
-    prod = (prod=="7_ttH" || prod=="8_ttH") ? "ttH" : prod;
-    std::string npName  =  std::string("pdf_Higgs_")+prod;
-    RooRealVar* np = dynamic_cast<RooRealVar*>(allVars->find((npName).c_str()));
-
-    /* so replace NP ATLAS_BR_ZZ with ATLAS_BR_ZZ[1] later if there is np */
-    if ( np ) {
-      renameMap[std::string("pdf_Higgs_")+prod+"_Pdf"]  =  "pdfProduct"; /* pwProduct will be defined later */
-      // renameMap[npName]  =  "0"; /* can't do so, since RooProduct is np*something, if replace np with 0, the RooProduct will get crazy values */
-      // renameMap[std::string("pdf_Higgs_")+prod+"_In"]  =  "0";
-      np->setVal(0);
-      np->setConstant(true);
-      RooRealVar* go = dynamic_cast<RooRealVar*>(allVars->find((npName+"_In").c_str()));
-      m_gObs->remove(*go, false, true);
-      m_nuis->remove(*np, false, true);
-    }
-
-    /* has mu but no pdf uncertainty */
-    if ( var && !np ) {
-      std::cout << "\tWARNING: pdf_Higgs_" << prod << " not implemented!!!" << std::endl;
-    }
-
-    /* replace mu_BR_ZZ with mu_BR_ZZ * PU * TU */
-    for ( int  j =  0; j < (int)(sizeof(prodModes)/sizeof(std::string)); j++ ){
-      RooRealVar* var = dynamic_cast<RooRealVar*>(allVars->find((std::string("mu_XS")+prodModes[j]).c_str()));
-
-      double uncert = prodModesPdfUncert[j];
-      std::string uncertStr = prodModesPdfUncertStr[j];
-
-      if ( var ) {
-        w->import(*var);
-        TString reducedMu  = TString::Format("expr::%s_modified('%s*(1+%.4f)^(%s)', %s, pdf_Higgs_1, pdf_Higgs_2, pdf_Higgs_3, pdf_Higgs_4, pdf_Higgs_5)",
-                                             var->GetName(), var->GetName(), uncert, uncertStr.c_str(), var->GetName() );
-        w->factory(reducedMu.Data());
-        renameMap[var->GetName()]  =  std::string(var->GetName())+"_modified";
-      }
-    }
-  } /* end loop for different production modes */
-}
-
-
 
 combiner::~combiner()
 {
@@ -958,10 +844,6 @@ void combiner::makeSimCategory()
 			      );
 
   std::map<std::string, std::string> brRenamedMap;
-
-  if ( m_editPDF ) {
-    editPDF(m_pdf, m_comb, brRenamedMap);
-  }
 
   std::string oldStr = "";
   std::string newStr = "";
