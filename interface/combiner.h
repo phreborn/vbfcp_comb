@@ -116,7 +116,6 @@ class combiner {
 
 
   void doFit(double mu=-1);
-  void editBR(RooAbsPdf* pdf, RooWorkspace* w, std::map<std::string, std::string>& renameMap);
   void editPDF(RooAbsPdf* pdf, RooWorkspace* w, std::map<std::string, std::string>& renameMap);
 
 
@@ -239,11 +238,6 @@ class combiner {
 
   void write(std::string outputFile="");
 
-  void editBR(bool edit)
-  {
-    m_editBR = edit;
-  }
-
   void editPDF(bool edit)
   {
     m_editPDF = edit;
@@ -271,35 +265,6 @@ void tokenizeV(const std::string &s,
     std::string f(*j);
     boost::trim(f);
     o.push_back(boost::lexical_cast<T>(f));
-  }
-}
-
-/* read text file with title */
-void readTxt(std::string filename,
-             std::vector<std::string>& names,
-             std::map<double, std::vector<double> >& contentMap
-            )
-{
-  /* match line containing numbers */
-  static const boost::regex e("\\d{2}.*");
-
-  boost::iostreams::stream<boost::iostreams::file_source> file(filename.c_str());
-  std::string line;
-  while (std::getline(file, line)) {
-    bool isNumber =  boost::regex_match(line, e);
-
-    /* replace % with E-2 */
-    boost::xpressive::sregex re  =  boost::xpressive::as_xpr("%");
-    std::string format("E-2");
-    line  =  regex_replace( line, re, format );
-
-    if ( isNumber ) {
-      std::vector<double> results;
-      tokenizeV(line, results);
-      contentMap[results[0]] = results;
-    } else {
-      tokenizeV(line, names);
-    }
   }
 }
 
@@ -366,7 +331,6 @@ std::string m_catName;
 std::string m_outputFileName;
 
 double m_mass;
-bool m_editBR;
 bool m_editPDF;
 bool m_editRFV;
 bool m_mkBonly;

@@ -26,7 +26,7 @@ include(${ROOT_USE_FILE})
 
 # require Boost
 list(APPEND CMAKE_PREFIX_PATH $ENV{BOOST_HOME})
-find_package(Boost REQUIRED COMPONENTS program_options regex )
+find_package(Boost REQUIRED COMPONENTS program_options)
 include_directories(${Boost_INCLUDE_DIRS})
 
 # require RooFitExtensions
@@ -59,7 +59,7 @@ endforeach()
 ROOT_GENERATE_DICTIONARY(G__workspaceCombiner ${workspaceCombinerHeaders} LINKDEF interface/manager_LinkDef.h)
 
 add_library( workspaceCombiner SHARED ${workspaceCombinerSources} G__workspaceCombiner.cxx)
-target_link_libraries( workspaceCombiner ${ROOT_LIBRARIES} ${RooFitExtensions_LIBRARIES} Boost::regex )
+target_link_libraries( workspaceCombiner ${ROOT_LIBRARIES} ${RooFitExtensions_LIBRARIES})
 
 #add executables
 
