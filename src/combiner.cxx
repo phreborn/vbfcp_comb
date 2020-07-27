@@ -650,14 +650,6 @@ void combiner::regularizeWorkspace()
   m_comb->import( *m_mc );
   m_comb->importClassCode(); // Jared
 
-  /* H->ZZ */
-  RooRealVar* mHiggs = m_comb->var("mHiggs");
-  if ( mHiggs ) {
-    mHiggs->setVal(m_mass);
-    mHiggs->setConstant(1);
-    std::cout << "\tFixing higgs mass to " << m_mass << std::endl;
-  }
-
   RooArgSet* nuis = const_cast<RooArgSet*>(m_mc->GetNuisanceParameters()); nuis->sort();
   RooArgSet* gobs = const_cast<RooArgSet*>(m_mc->GetGlobalObservables()); gobs->sort();
 

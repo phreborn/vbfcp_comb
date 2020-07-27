@@ -849,18 +849,6 @@ void splitter::makeWorkspace(double rMax_, int reBin, double mass, bool editRFV)
     }
   }
 
-  /* fix the higgs mass */
-  if ( mass>0 ) {
-    RooRealVar* mHiggs = m_subComb->var("mHiggs");
-    if ( mHiggs ) {
-      mHiggs->setVal(mass);
-      mHiggs->setConstant(1);
-      std::cout << "\tFixing higgs mass to " << mass << std::endl;
-      // m_subNuis.remove(*mHiggs);
-      m_subNuis.remove(*(m_subNuis.find("mHiggs")));
-    }
-  }
-
   m_subComb->defineSet( m_obsName.c_str(), m_subObs, true );
   m_subComb->defineSet( m_gObsName.c_str(), m_subGobs, true );
   m_subComb->defineSet( m_nuisName.c_str(), m_subNuis, true );
