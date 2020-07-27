@@ -35,12 +35,12 @@ find_package(RooFitExtensions REQUIRED CONFIG)
 include_directories(${RooFitExtensions_INCLUDE_DIRS})
 link_directories(${RooFitExtensions_LIBRARY_DIRS})
 
-include_directories(${PROJECT_SOURCE_DIR}/interface)
+include_directories(${PROJECT_SOURCE_DIR}/inc)
 
 set(workspaceCombinerHeaders "")
 set(workspaceCombinerSources "")
 
-file(GLOB incPaths interface/*)
+file(GLOB incPaths inc/*)
 file(GLOB srcPaths src/*)
 
 foreach (_incPath ${incPaths})
@@ -56,7 +56,7 @@ foreach (_srcPath ${srcPaths})
 endforeach()
 
 # generate the dictionary source code
-ROOT_GENERATE_DICTIONARY(G__workspaceCombiner ${workspaceCombinerHeaders} LINKDEF interface/manager_LinkDef.h)
+ROOT_GENERATE_DICTIONARY(G__workspaceCombiner ${workspaceCombinerHeaders} LINKDEF inc/manager_LinkDef.h)
 
 add_library( workspaceCombiner SHARED ${workspaceCombinerSources} G__workspaceCombiner.cxx)
 target_link_libraries( workspaceCombiner ${ROOT_LIBRARIES} ${RooFitExtensions_LIBRARIES})
