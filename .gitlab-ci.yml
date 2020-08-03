@@ -68,6 +68,11 @@ latestroot_compile:
   
   script:
     - export CXX=$(which g++)
+    - git clone https://gitlab.cern.ch/atlas_higgs_combination/software/RooFitExtensions.git
+    - cd RooFitExtensions
+    - cmake .
+    - make
+    - cd ..
     - mkdir build
     - cd build
     - cmake -DCMAKE_MODULE_PATH=$ROOTSYS/etc/cmake ..
