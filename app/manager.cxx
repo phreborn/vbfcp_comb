@@ -88,13 +88,19 @@ int main( int argc, char** argv )
   RooMsgService::instance().setGlobalKillBelow(RooFit::ERROR);
 
   int oc;
-  while ((oc=getopt_long(argc, argv, ":x:v:m:s:t:n:p:b:c:o:h", longopts, NULL)) != -1){
+  while ((oc=getopt_long(argc, argv, ":w:x:f:p:i:v:m:s:t:n:c:r:h", longopts, NULL)) != -1){
     switch (oc) {
     case 'w':
       what_ = optarg;
       break;
     case 'x':
       configFile_ = optarg;
+      break;
+    case 'f':
+      combinedFile_ = optarg;
+      break;
+    case 'p':
+      splittedFile_ = optarg;
       break;
     case 'i':
       indice_ = optarg;
