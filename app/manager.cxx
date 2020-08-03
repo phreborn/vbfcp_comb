@@ -8,118 +8,77 @@
 #include "splitter.h"
 #include "Organizer.h"
 #include "decorator.h"
-#include <boost/program_options.hpp>
-
-
-// bool combine_ = true;
 
 std::string what_ = "";
 std::string configFile_ = "";
 std::string combinedFile_ = "";
 std::string splittedFile_ = "";
-bool snapShot_ = false;
-std::string snapshotHintFile_ = "";
+bool snapShot_ = false;		    // To be moved into XML file
+std::string snapshotHintFile_ = ""; // To be moved into XML file
 std::string indice_ = "";
-std::string toBeFixed_ = "";
-bool mkInjectedWS_ = false;
-bool simpleScale_ = false;
-std::string injectFile_ = "";
-std::string injectMass_ = "";
-std::string injectStr_ = "mu~1";
-std::string injectDataSet_ = "asimovData_1";
-std::string replaceStr_ = "";
-std::string usePseudoData_ = "";
-std::string dataName_ = "obsData";
-std::string wsName_ = "combWS";
-std::string mcName_ = "ModelConfig";
+std::string toBeFixed_ = "";	 // To be moved to workspace editing
+bool mkInjectedWS_ = false;	// To be moved to workspace editing
+bool simpleScale_ = false;	// To be moved to workspace editing
+std::string injectFile_ = "";	// To be moved to workspace editing
+std::string injectMass_ = "";	// To be moved to workspace editing
+std::string injectStr_ = "mu~1"; // To be moved to workspace editing
+std::string injectDataSet_ = "asimovData_1"; // To be moved to workspace editing
+std::string replaceStr_ = "";		     // To be moved to workspace editing
+std::string usePseudoData_ = "";	     // To be moved to workspace editing
+std::string dataName_ = "obsData";	     // To be moved to XML file
+std::string wsName_ = "combWS";		     // To be moved to XML file
+std::string mcName_ = "ModelConfig";	     // To be moved to XML file
 
-double rMax_ = -999;
-double mHiggs_ = -1;
-bool singlePoi_ = true;
-int fitFlag_ = 0;
+double rMax_ = -999;		// To be moved to XML file
+double mHiggs_ = -1;		// To be removed
+bool singlePoi_ = true;		// To be moved to XML file
+int fitFlag_ = 0;		// To be moved to XML file
 bool editRFV_ = false;
-int procedure_ = 0;
+int procedure_ = 0;		// To be moved to XML file
 bool verbose_ = false;
 
 int reBin_ = 500;
 
-bool histToData_=true;
+bool histToData_=true;		// To be moved to XML file
 std::string setVar_="";
+
+struct option longopts[] = {
+  { "what", required_argument, NULL, 'w'},
+  { "ConfigXml", required_argument, NULL, 'x'},
+  { "CombinedFile", required_argument, NULL, 'f'},
+  { "SplittedFile", required_argument, NULL, 'p'},
+  { "minimizerAlgo", required_argument, NULL, 'm'},
+  { "minimizerStrategy", required_argument, NULL, 's'},
+  { "minimizerTolerance", required_argument, NULL, 't'},
+  { "indices", required_argument, NULL, 'i'},
+  { "nllOffset", required_argument, NULL, 'n'},
+  { "constOpt", required_argument, NULL, 'c'},
+  { "editRFV", required_argument, NULL, 'r'},
+  { "verbose", required_argument, NULL, 'v'},
+  { "help", no_argument, NULL, 'h'},
+  {0, 0, 0, 0}
+};
+
+void printHelp(TString exe){
+  cout<<"Usage: "<<exe<<" [options]"<<endl;
+  cout<<"Allowed options:"<<endl;
+  cout<<" -w [ --what ] arg                  What to do: combine/split/organize/decorate (required)"<<endl; // Simplify to combine, edit (the old organize), and split (which should contain features in decorate)
+  cout<<" -x [ --ConfigXml ] arg             Input XML configure file"<<endl;
+  cout<<" -f [ --CombinedFile ] arg          Input workspace file"<<endl;
+  cout<<" -p [ --SplittedFile ] arg          Output workspace file"<<endl;
+  cout<<" -v [ --verbose ] arg               Printing out debug info or not (default no)"<<endl;
+  cout<<" -i [ --indices ] arg               Category indices to be included in the split file"<<endl;
+  cout<<" -m [ --minimizerAlgo ] arg         Minimizer algorithm (default Minuit2)"<<endl;
+  cout<<" -s [ --minimizerStrategy ] arg     Minimizer strategy (default 1)"<<endl;
+  cout<<" -t [ --minimizerTolerance ] arg    Minimizer tolerance (default 1e-3)"<<endl;
+  cout<<" -n [ --nllOffset ] arg             Enable nllOffset (default on)"<<endl;
+  cout<<" -c [ --constOpt ] arg              Enable constant optimization (default on)"<<endl;
+  cout<<" -r [ --editRFV ] arg               Fixing RooFormulaVar using hard-coded variable name (default off)"<<endl;
+  cout<<" -h [ --help ]                      Produce help message"<<endl;
+}
 
 int main( int argc, char** argv )
 {
-  using namespace boost;
-  namespace po = boost::program_options;
-  po::options_description desc( "Main options" );
-  desc.add_options()
-    ("help,h", "Produce help message")
-    // ( "Combine,c",               po::value<bool>( &combine_ )->default_value( combine_ ), "do the combination" )
-    ( "what,w",               po::value<std::string>( &what_ )->default_value( what_ ), "what to do? combine/split/organize/decorate" )
-    ( "ConfigXml,x",               po::value<std::string>( &configFile_ )->default_value( configFile_ ), "The configure xml file" )
-    ( "CombinedFile,f",               po::value<std::string>( &combinedFile_ )->default_value( combinedFile_ ), "force the output combined file name, even though it is given in the xml file" )
-    ( "SplittedFile,p",               po::value<std::string>( &splittedFile_ )->default_value( splittedFile_ ), "force the output splitted file name" )
-    ( "Snapshot,s",               po::value<bool>( &snapShot_ )->default_value( snapShot_ ), "" )
-    ( "SnapshotHintFile",               po::value<std::string>( &snapshotHintFile_ )->default_value( snapshotHintFile_ ), "" )
-    ( "minimizerAlgo,m",               po::value<std::string>( &fitUtil::_minimizerAlgo)->default_value(fitUtil::_minimizerAlgo), "" )
-    ( "Indice,i",               po::value<std::string>( &indice_ )->default_value( indice_ ), "Select the sub-categories indice" )
-    ( "Fix,F",               po::value<std::string>( &toBeFixed_ )->default_value( toBeFixed_ ), "Fix some nuisance parameters" )
-    ( "UsePseudoData",               po::value<std::string>( &usePseudoData_ )->default_value( usePseudoData_ ), "Use Pseudo data as observed data" )
-    ( "mkInjectedWS",               po::value<bool>( &mkInjectedWS_ )->default_value( mkInjectedWS_ ), "Make signal injected workspace" )
-    ( "lumiScale",               po::value<bool>( &simpleScale_ )->default_value( simpleScale_ ), "" )
-    ( "injectFile",               po::value<std::string>( &injectFile_ )->default_value( injectFile_ ), "" )
-    ( "injectMass",               po::value<std::string>( &injectMass_ )->default_value( injectMass_ ), "" )
-    ( "injectString",               po::value<std::string>( &injectStr_ )->default_value( injectStr_ ), "" )
-    ( "injectData",               po::value<std::string>( &injectDataSet_ )->default_value( injectDataSet_ ), "" )
-    ( "replaceString",               po::value<std::string>( &replaceStr_ )->default_value( replaceStr_ ), "" )
-    ( "rMax,r",               po::value<double>( &rMax_ )->default_value( rMax_ ), "Set the max value for the global poi" )
-    ( "mHiggs",               po::value<double>( &mHiggs_ )->default_value( mHiggs_ ), "Set the mass of the higgs" )
-    ( "ReBin",               po::value<int>( &reBin_ )->default_value( reBin_ ), "Rebin the gammagamma dataset" )
-    ( "fitFlag,t",               po::value<int>( &fitFlag_ )->default_value( fitFlag_ ), "Choose which one to fit" )
-    ( "editRFV",               po::value<bool>( &editRFV_ )->default_value( editRFV_ ), "Edit RooFormulaVar" )
-    ( "procedure",               po::value<int>( &procedure_ )->default_value( procedure_ ), "" )
-    ( "verbose",               po::value<bool>( &verbose_ )->default_value( verbose_ ), "verbose..." )
-    ( "dataName,d",               po::value<std::string>( &dataName_ )->default_value( dataName_ ), "Name of the dataset" )
-    ( "wsName",               po::value<std::string>( &wsName_ )->default_value( wsName_ ), "Name of the workspace" )
-    ( "mcName",               po::value<std::string>( &mcName_ )->default_value( mcName_ ), "Name of the ModelConfig" )
-    ("minimizerTolerance", po::value<double>(&fitUtil::_minimizerTolerance)->default_value(fitUtil::_minimizerTolerance),  "Tolerance for minimizer used for profiling")
-    ("minimizerStrategy", po::value<int>(&fitUtil::_minimizerStrategy)->default_value(fitUtil::_minimizerStrategy),  "Strategy for minimizer used for profiling")
-    ("nllOffset", po::value<bool>(&fitUtil::_nllOffset)->default_value(fitUtil::_nllOffset),  "Enable NLL offsetting")
-    ("constOpt", po::value<bool>(&fitUtil::_constOpt)->default_value(fitUtil::_constOpt),  "Enable constant optimization")
-    ("improveFit", po::value<bool>(&fitUtil::_improveFit)->default_value(fitUtil::_improveFit), "Whether to call improve() after fit converges")
-    ("setVar", po::value<std::string>(&setVar_)->default_value(setVar_), "Manipulating variables in the workspace")
-    ("generateAsimov", po::value<bool>(&asimovUtils::generateAsimov_)->default_value(asimovUtils::generateAsimov_), "Generate Asimov data or not")
-    ("preFit", po::value<bool>(&asimovUtils::preFit_)->default_value(asimovUtils::preFit_), "Generate prefit Asimov (default post-fit)")
-    ("makePlots", po::value<bool>(&asimovUtils::makePlots_)->default_value(asimovUtils::makePlots_), "Generate summary plots")
-    ("histToData", po::value<bool>(&histToData_)->default_value(histToData_), "Convert RooDataHist to RooDataSet")
-    ;
-  po::variables_map vm0;
-  
-  try
-  {
-    po::store( po::command_line_parser( argc, argv ).options( desc ).run(), vm0 );
-    po::notify( vm0 );
-  }
-  catch ( std::exception& ex )
-  {
-    std::cerr << "Invalid options: " << ex.what() << std::endl;
-    std::cout << "Invalid options: " << ex.what() << std::endl;
-    std::cout << "Use manager --help to get a list of all the allowed options"  << std::endl;
-    return 999;
-  }
-  catch ( ... )
-  {
-    std::cerr << "Unidentified error parsing options." << std::endl;
-    return 1000;
-  }
-
-  // if help, print help
-  if ( vm0.count( "help" ) )
-  {
-    std::cout << "Usage: manager [options]\n";
-    std::cout << desc;
-    return 0;
-  }
-
   RooMsgService::instance().getStream(1).removeTopic(RooFit::NumIntegration) ;
   RooMsgService::instance().getStream(1).removeTopic(RooFit::Fitting) ;
   RooMsgService::instance().getStream(1).removeTopic(RooFit::Minimization) ;
@@ -127,6 +86,63 @@ int main( int argc, char** argv )
   RooMsgService::instance().getStream(1).removeTopic(RooFit::Eval) ;
 
   RooMsgService::instance().setGlobalKillBelow(RooFit::ERROR);
+
+  int oc;
+  while ((oc=getopt_long(argc, argv, ":x:v:m:s:t:n:p:b:c:o:h", longopts, NULL)) != -1){
+    switch (oc) {
+    case 'w':
+      what_ = optarg;
+      break;
+    case 'x':
+      configFile_ = optarg;
+      break;
+    case 'i':
+      indice_ = optarg;
+      break;
+    case 'v':
+      verbose_ = auxUtil::to_bool(optarg);
+      cout<<"Set verbose mode to "<<verbose_<<endl;
+      break;
+    case 'm':
+      fitUtil::_minimizerAlgo = optarg;
+      cout<<"Set minimizer algorithm to "<<fitUtil::_minimizerAlgo<<endl;
+      break;
+    case 's':
+      fitUtil::_minimizerStrategy = atoi(optarg);
+      cout<<"Set minimizer strategy to "<<fitUtil::_minimizerStrategy<<endl;
+      break;
+    case 't':
+      fitUtil::_minimizerTolerance = atof(optarg);
+      cout<<"Set minimizer tolerance to "<<fitUtil::_minimizerTolerance<<endl;
+      break;
+    case 'n':
+      fitUtil::_nllOffset = auxUtil::to_bool(optarg);
+      cout<<"Set NLL offset to "<<fitUtil::_nllOffset<<endl;
+      break;
+    case 'c':
+      fitUtil::_constOpt = auxUtil::to_bool(optarg);
+      cout<<"Set constant optimization to "<<fitUtil::_constOpt<<endl;
+      break;
+    case 'r':
+      editRFV_ = auxUtil::to_bool(optarg);
+      cout<<"Set editing RooFormulaVar to "<<editRFV_<<endl;
+      break;           
+    case 'h':
+      printHelp(argv[0]);
+      return 0;
+    case ':':   /* missing option argument */
+      fprintf(stderr, "%s: option `-%c' requires an argument\n",
+	      argv[0], optopt);
+      printHelp(argv[0]);
+      return 0;
+    case '?':
+    default:
+      fprintf(stderr, "%s: option `-%c' is invalid: ignored\n",
+	      argv[0], optopt);
+      printHelp(argv[0]);
+      return 0;
+    }
+  }
 
   TStopwatch timer;
 

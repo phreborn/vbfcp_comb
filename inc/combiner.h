@@ -30,14 +30,6 @@
 
 #include "asimovUtils.h"
 
-#include <boost/tokenizer.hpp>
-#include <boost/lexical_cast.hpp>
-#include <boost/algorithm/string.hpp>
-#include <boost/regex.hpp>
-#include <boost/iostreams/device/file.hpp>
-#include <boost/iostreams/stream.hpp>
-#include <boost/xpressive/xpressive.hpp>
-
 #include <istream>
 #include <memory>
 #include <vector>
@@ -241,24 +233,6 @@ class combiner {
     m_editRFV = edit;
   }
 
-
-  template<class T>
-void tokenizeV(const std::string &s,
-               std::vector<T> &o)
-{
-  typedef boost::tokenizer<boost::char_separator<char> >  tok_t;
-
-  boost::char_separator<char> sep(" \t");
-  tok_t tok(s, sep);
-  for(tok_t::iterator j (tok.begin());
-      j != tok.end();
-      ++j)
-  {
-    std::string f(*j);
-    boost::trim(f);
-    o.push_back(boost::lexical_cast<T>(f));
-  }
-}
 
 TString editRFVString( TString& oldString )
 {

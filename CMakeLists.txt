@@ -24,11 +24,6 @@ list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 find_package( ROOT REQUIRED COMPONENTS RIO RooFitCore RooFit HistFactory RooStats MathCore MathMore Physics Minuit Foam XMLParser )
 include(${ROOT_USE_FILE})
 
-# require Boost
-list(APPEND CMAKE_PREFIX_PATH $ENV{BOOST_HOME})
-find_package(Boost REQUIRED COMPONENTS program_options)
-include_directories(${Boost_INCLUDE_DIRS})
-
 # require RooFitExtensions
 list(APPEND CMAKE_PREFIX_PATH $ENV{RooFitExtensions_DIR})
 find_package(RooFitExtensions REQUIRED CONFIG)
@@ -70,8 +65,8 @@ set(workspaceCombinerApp "")
 foreach (_exePath ${exePaths})
 	get_filename_component(_exeName ${_exePath} NAME_WE)
 	get_filename_component(_exeFile ${_exePath} NAME)
-	add_executable( ${_exeName} app/${_exeFile} )
-    	target_link_libraries( ${_exeName} workspaceCombiner Boost::program_options )
+	add_executable(${_exeName} app/${_exeFile})
+    	target_link_libraries(${_exeName} workspaceCombiner)
 	list(APPEND workspaceCombinerApp ${_exeName})
 endforeach()
 
