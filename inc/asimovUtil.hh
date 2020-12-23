@@ -12,7 +12,8 @@ using namespace std;
 using namespace RooFit;
 using namespace RooStats;
 
-class asimovUtil{
+class asimovUtil
+{
 private:
   vector<TString> _asimovNames, _asimovSetups, _asimovProfiles;
   vector<TString> _SnapshotsAll, _SnapshotsNuis, _SnapshotsGlob, _SnapshotsPOI, _Snapshots;
@@ -28,13 +29,14 @@ private:
   static const TString FIXALL;
   static const TString MATCHGLOB;
   static const TString SAVESNAPSHOT;
+
 public:
-  asimovUtil(){_rangeName="";}
+  asimovUtil() { _rangeName = ""; }
   void addEntry(TXMLNode *node);
   void generateAsimov(ModelConfig *mc, TString dataName);
   void printSummary();
-  bool genAsimov(){return _asimovNames.size()>0;}
-  void setRange(TString rangeName){_rangeName=rangeName;}
+  bool genAsimov() { return _asimovNames.size() > 0; }
+  void setRange(TString rangeName) { _rangeName = rangeName; }
   void matchGlob(ModelConfig *mc);
 };
 

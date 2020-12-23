@@ -21,6 +21,11 @@
 #ifndef Manager_Organizer
 #define Manager_Organizer
 
+#include "CommonHead.h"
+#include "RooFitHead.h"
+#include "RooStatsHead.h"
+#include "rooCommon.h"
+
 #include "auxUtil.hh"
 #include "asimovUtil.hh"
 

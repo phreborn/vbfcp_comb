@@ -70,6 +70,7 @@
 #include <TMarker.h>
 #include <TGaxis.h>
 #include <TBrowser.h>
+#include <TObjString.h>
 /// ROOT math headers
 #include <Math/QuantFuncMathCore.h>
 #include <Math/Minimizer.h>

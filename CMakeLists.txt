@@ -40,7 +40,7 @@ file(GLOB srcPaths src/*)
 
 foreach (_incPath ${incPaths})
 	get_filename_component(_incName ${_incPath} NAME)
-    	if(NOT ${_incName} MATCHES "manager_LinkDef.h")
+    	if(NOT ${_incName} MATCHES "manager_LinkDef.h" AND NOT ${_incName} MATCHES "spdlog")
     	       list(APPEND workspaceCombinerHeaders ${_incName})
 	endif()
 endforeach()

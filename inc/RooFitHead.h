@@ -47,4 +47,6 @@
 #include <RooRealSumPdf.h>
 #include <RooNumIntConfig.h>
 #include <RooUniform.h>
+#include <RooMultiVarGaussian.h>
+#include <RooBinning.h>
 #endif

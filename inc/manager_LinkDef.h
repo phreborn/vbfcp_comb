@@ -9,8 +9,6 @@
 
 #pragma link C++ nestedclass;
 
-#pragma link C++ namespace asimovUtils;
-
 #pragma link C++ class RooFormulaVarExt+;
 #pragma link C++ class FlexibleInterpVarExt+;
 #pragma link C++ class FlexibleInterpVarMkII+;
