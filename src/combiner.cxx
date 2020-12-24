@@ -76,6 +76,8 @@ void combiner::readConfigXml(TString filen)
         vector<TString> poiInfo = decomposeStr(poiStr, '~', auxUtil::SQUARE);
         POI poi;
         poi.name = poiInfo.back();
+        if (find(m_pois.begin(), m_pois.end(), poi.name) != m_pois.end())
+            auxUtil::alertAndAbort(Form("Combined POI %s is duplicated. Please double check the XML", poi.name.Data()));           
         switch (poiInfo.size())
         {
         case 2: /* Only central value provided: fix */
@@ -138,6 +140,7 @@ void combiner::readChannel(TXMLNode *rootNode)
         if (node->GetNodeName() == TString("RenameMap"))
         {
             TXMLNode *subNode = node->GetChildren();
+            vector<TString> NPSanity;
 
             while (subNode != 0)
             {
@@ -164,7 +167,12 @@ void combiner::readChannel(TXMLNode *rootNode)
                         if (auxUtil::getItemType(newName) == auxUtil::PDF)
                             auxUtil::alertAndAbort(Form("Error processing %s: Users are only supposed to provide a nuisance parameter name", newName.Data()));
                         newName = Form("%s_Pdf(%s, %s_In)", newName.Data(), newName.Data(), newName.Data());
+                        if(channel.pdfMap_.find(oldName) != channel.pdfMap_.end())
+                            auxUtil::alertAndAbort(Form("Old PDF %s is duplicated in channel %s. Please double check the XML file", oldName.Data(), channel.name_.Data()));
+                        if(find(NPSanity.begin(), NPSanity.end(), newName) != NPSanity.end())
+                            auxUtil::alertAndAbort(Form("New PDF %s is duplicated in channel %s. Please double check the XML file", newName.Data(), channel.name_.Data()));
                         channel.pdfMap_[oldName] = newName;
+                        NPSanity.push_back(newName);
                     }
                     else if (TString(oldName).BeginsWith("alpha_"))
                     {
@@ -173,11 +181,21 @@ void combiner::readChannel(TXMLNode *rootNode)
                         if (auxUtil::getItemType(newName) == auxUtil::PDF)
                             auxUtil::alertAndAbort(Form("Error processing %s: Users are only supposed to provide a nuisance parameter name", newName.Data()));
                         newName = Form("%s_Pdf(%s, %s_In)", newName.Data(), newName.Data(), newName.Data());
+                        if(channel.pdfMap_.find(oldName) != channel.pdfMap_.end())
+                            auxUtil::alertAndAbort(Form("Old PDF %s is duplicated in channel %s. Please double check the XML file", oldName.Data(), channel.name_.Data()));
+                        if(find(NPSanity.begin(), NPSanity.end(), newName) != NPSanity.end())
+                            auxUtil::alertAndAbort(Form("New PDF %s is duplicated in channel %s. Please double check the XML file", newName.Data(), channel.name_.Data()));                        
                         channel.pdfMap_[oldName] = newName;
+                        NPSanity.push_back(newName);
                     }
                     else
                     {
+                        if(channel.varMap_.find(oldName) != channel.varMap_.end())
+                            auxUtil::alertAndAbort(Form("Old NP %s is duplicated in channel %s. Please double check the XML file", oldName.Data(), channel.name_.Data()));
+                        if(find(NPSanity.begin(), NPSanity.end(), newName) != NPSanity.end())
+                            auxUtil::alertAndAbort(Form("New NP %s is duplicated in channel %s. Please double check the XML file", newName.Data(), channel.name_.Data()));
                         channel.varMap_[oldName] = newName;
+                        NPSanity.push_back(newName);
                     }
                 }
                 subNode = subNode->GetNextNode();
@@ -195,6 +213,8 @@ void combiner::readChannel(TXMLNode *rootNode)
             }
             for (int ipoi = 0; ipoi < nPOI; ipoi++)
             {
+                if(poiList[ipoi] != DUMMY && channel.poiMap_.find(poiList[ipoi]) != channel.poiMap_.end())
+                    auxUtil::alertAndAbort(Form("POI %s is duplicated in channel %s. Please double check the XML file", poiList[ipoi].Data(), channel.name_.Data()));
                 channel.poiMap_[poiList[ipoi]] = m_pois[ipoi].name;
             }
         }
