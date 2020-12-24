@@ -68,9 +68,7 @@ void combiner::readConfigXml(TString filen)
     m_outputFileName = auxUtil::getAttributeValue(rootNode, "OutputFile", true, m_outputFileName);
     m_strictMode = auxUtil::to_bool(auxUtil::getAttributeValue(rootNode, "StrictMode", true, m_strictMode));
 
-    TXMLNode *node = rootNode->GetChildren();
-
-    while (node != 0)
+    for (TXMLNode *node = rootNode->GetChildren(); node != 0; node = node->GetNextNode())
     {
         TString nodeName = node->GetNodeName();
         if (nodeName == "Asimov")
@@ -90,7 +88,7 @@ void combiner::readConfigXml(TString filen)
                 POI poi;
                 poi.name = poiInfo.back();
                 if (find(m_pois.begin(), m_pois.end(), poi.name) != m_pois.end())
-                    auxUtil::alertAndAbort(Form("Combined POI %s is duplicated. Please double check the XML", poi.name.Data()));
+                    auxUtil::alertAndAbort(Form("Combined POI %s is duplicated. Please double check the XML", poi.name.Data()), "Duplication");
                 switch (poiInfo.size())
                 {
                 case 2: /* Only central value provided: fix */
@@ -118,7 +116,6 @@ void combiner::readConfigXml(TString filen)
                 m_pois.push_back(poi);
             }
         }
-        node = node->GetNextNode();
     }
     spdlog::info("XML file processing finished");
 }
@@ -133,102 +130,6 @@ void combiner::readChannel(TXMLNode *rootNode)
     channel.wsName_ = auxUtil::getAttributeValue(rootNode, "WorkspaceName");
     channel.mcName_ = auxUtil::getAttributeValue(rootNode, "ModelConfigName");
     channel.dataName_ = auxUtil::getAttributeValue(rootNode, "DataName");
-
-    /* walk through children list */
-    TXMLNode *node = rootNode->GetChildren();
-
-    while (node != 0)
-    {
-        if (node->GetNodeName() == TString("RenameMap"))
-        {
-            TXMLNode *subNode = node->GetChildren();
-            vector<TString> NPSanity;
-
-            while (subNode != 0)
-            {
-                TString oldName = "";
-                TString newName = "";
-
-                if (subNode->GetNodeName() == TString("Syst"))
-                {
-                    oldName = auxUtil::getAttributeValue(subNode, "OldName");
-                    newName = auxUtil::getAttributeValue(subNode, "NewName");
-
-                    if (oldName == "")
-                    {
-                        spdlog::warn("Old object name is empty. Please check your config file!!!");
-                        if(m_strictMode) throw std::runtime_error("Flawed XML");
-                    }
-                    if (newName == "")
-                    {
-                        spdlog::warn("New object name is empty. Please check your config file!!!");
-                        if(m_strictMode) throw std::runtime_error("Flawed XML");
-                    }
-                }
-
-                /* add them to map */
-                if (oldName != "" && newName != "")
-                {
-                    if (auxUtil::getItemType(oldName) == auxUtil::PDF)
-                    {
-                        /* only require OldName has all these components, NewName can be only a nuis parameter name, since they should follow the same format */
-                        if (auxUtil::getItemType(newName) == auxUtil::PDF)
-                            auxUtil::alertAndAbort(Form("Error processing %s: Users are only supposed to provide a nuisance parameter name", newName.Data()));
-                        if(find(NPSanity.begin(), NPSanity.end(), newName) != NPSanity.end())
-                            auxUtil::alertAndAbort(Form("New NP %s is duplicated in channel %s. Please double check the XML file", newName.Data(), channel.name_.Data()));                            
-                        newName = Form("%s_Pdf(%s, %s_In)", newName.Data(), newName.Data(), newName.Data());
-                        if(channel.pdfMap_.find(oldName) != channel.pdfMap_.end())
-                            auxUtil::alertAndAbort(Form("Old PDF %s is duplicated in channel %s. Please double check the XML file", oldName.Data(), channel.name_.Data()));
-                        channel.pdfMap_[oldName] = newName;
-                        NPSanity.push_back(newName);
-                    }
-                    else if (TString(oldName).BeginsWith("alpha_"))
-                    {
-                        /* histfactory style for normal nuisance parameters(except lumi) */
-                        oldName = Form("%sConstraint(%s, nom_%s)", oldName.Data(), oldName.Data(), oldName.Data());
-                        if (auxUtil::getItemType(newName) == auxUtil::PDF)
-                            auxUtil::alertAndAbort(Form("Error processing %s: Users are only supposed to provide a nuisance parameter name", newName.Data()));
-                        if(find(NPSanity.begin(), NPSanity.end(), newName) != NPSanity.end())
-                            auxUtil::alertAndAbort(Form("New NP %s is duplicated in channel %s. Please double check the XML file", newName.Data(), channel.name_.Data()));                            
-                        newName = Form("%s_Pdf(%s, %s_In)", newName.Data(), newName.Data(), newName.Data());
-                        if(channel.pdfMap_.find(oldName) != channel.pdfMap_.end())
-                            auxUtil::alertAndAbort(Form("Old PDF %s is duplicated in channel %s. Please double check the XML file", oldName.Data(), channel.name_.Data()));                        
-                        channel.pdfMap_[oldName] = newName;
-                        NPSanity.push_back(newName);
-                    }
-                    else
-                    {
-                        if(channel.varMap_.find(oldName) != channel.varMap_.end())
-                            auxUtil::alertAndAbort(Form("Old NP %s is duplicated in channel %s. Please double check the XML file", oldName.Data(), channel.name_.Data()));
-                        if(find(NPSanity.begin(), NPSanity.end(), newName) != NPSanity.end())
-                            auxUtil::alertAndAbort(Form("New NP %s is duplicated in channel %s. Please double check the XML file", newName.Data(), channel.name_.Data()));
-                        channel.varMap_[oldName] = newName;
-                        NPSanity.push_back(newName);
-                    }
-                }
-                subNode = subNode->GetNextNode();
-            }
-        }
-
-        if (node->GetNodeName() == TString("POIList"))
-        {
-            TString poiStr = auxUtil::getAttributeValue(node, "Input");
-            std::vector<TString> poiList = auxUtil::splitString(poiStr, ',');
-            const int nPOI = poiList.size();
-            if (nPOI > m_pois.size())
-            {
-                auxUtil::alertAndAbort(Form("Channel %s has more POIs than combined model", channel.name_.Data()));
-            }
-            for (int ipoi = 0; ipoi < nPOI; ipoi++)
-            {
-                if(poiList[ipoi] != DUMMY && channel.poiMap_.find(poiList[ipoi]) != channel.poiMap_.end())
-                    auxUtil::alertAndAbort(Form("POI %s is duplicated in channel %s. Please double check the XML file", poiList[ipoi].Data(), channel.name_.Data()));
-                channel.poiMap_[poiList[ipoi]] = m_pois[ipoi].name;
-            }
-        }
-
-        node = node->GetNextNode();
-    }
 
     /* Check whether the file exists and whether the content is correct */
     /* Do not wait until a few hours later to find out that you made a typo in config file! */
@@ -246,7 +147,103 @@ void combiner::readChannel(TXMLNode *rootNode)
 
     RooDataSet *data = dynamic_cast<RooDataSet *>(w->data(channel.dataName_));
     if (!data)
-        auxUtil::alertAndAbort(Form("Input file %s for channel %s does not contain RooDataSet %s", channel.fileName_.Data(), channel.name_.Data(), channel.dataName_.Data())); 
+        auxUtil::alertAndAbort(Form("Input file %s for channel %s does not contain RooDataSet %s", channel.fileName_.Data(), channel.name_.Data(), channel.dataName_.Data()));
+
+    /* walk through children list */
+
+    for (TXMLNode *node = rootNode->GetChildren(); node != 0; node = node->GetNextNode())
+    {
+        if (node->GetNodeName() == TString("RenameMap"))
+        {
+            vector<TString> NPSanity;
+
+            for (TXMLNode *subNode = node->GetChildren(); subNode != 0; subNode = subNode->GetNextNode())
+            {
+                TString oldName = "";
+                TString newName = "";
+
+                if (subNode->GetNodeName() == TString("Syst"))
+                {
+                    oldName = auxUtil::getAttributeValue(subNode, "OldName");
+                    newName = auxUtil::getAttributeValue(subNode, "NewName");
+
+                    if (oldName == "")
+                    {
+                        spdlog::warn("Old object name is empty. Please check your config file!!!");
+                        if (m_strictMode)
+                            throw std::runtime_error("Flawed XML");
+                        continue;
+                    }
+                    if (newName == "")
+                    {
+                        spdlog::warn("New object name is empty. Please check your config file!!!");
+                        if (m_strictMode)
+                            throw std::runtime_error("Flawed XML");
+                        continue;
+                    }
+
+                    /* add them to map */
+                    if (auxUtil::getItemType(oldName) == auxUtil::CONSTR)
+                    {
+                        /* First check wether the old PDF exists. If not, simply ignore this line */
+                        if (!w->pdf(auxUtil::getObjName(oldName)))
+                        {
+                            spdlog::warn("Constraint PDF {} does not exist in workspace {}", oldName.Data(), channel.fileName_.Data());
+                            if (m_strictMode)
+                                if (m_strictMode)
+                                    throw std::runtime_error("Flawed XML");
+                            continue;
+                        }
+                        /* only require OldName has all these components, NewName can be only a nuis parameter name, since they should follow the same format */
+                        if (auxUtil::getItemType(newName) == auxUtil::CONSTR)
+                            auxUtil::alertAndAbort(Form("Error processing %s: Users are only supposed to provide a nuisance parameter name", newName.Data()), "XML error");
+                        if (find(NPSanity.begin(), NPSanity.end(), newName) != NPSanity.end())
+                            auxUtil::alertAndAbort(Form("New NP %s is duplicated in channel %s. Please double check the XML file", newName.Data(), channel.name_.Data()), "XML error");
+                        newName = Form("%s_Pdf(%s, %s_In)", newName.Data(), newName.Data(), newName.Data());
+                        if (channel.pdfMap_.find(oldName) != channel.pdfMap_.end())
+                            auxUtil::alertAndAbort(Form("Old constraint PDF %s is duplicated in channel %s. Please double check the XML file", oldName.Data(), channel.name_.Data()), "XML error");
+                        channel.pdfMap_[oldName] = newName;
+                        NPSanity.push_back(newName);
+                    }
+                    else
+                    {
+                        /* First check wether the old variable exists. If not, simply ignore this line */
+                        if (!w->var(oldName))
+                        {
+                            spdlog::warn("Variable {} does not exist in workspace {}", oldName.Data(), channel.fileName_.Data());
+                            if (m_strictMode)
+                                if (m_strictMode)
+                                    throw std::runtime_error("Flawed XML");
+                            continue;
+                        }
+                        if (channel.varMap_.find(oldName) != channel.varMap_.end())
+                            auxUtil::alertAndAbort(Form("Old NP %s is duplicated in channel %s. Please double check the XML file", oldName.Data(), channel.name_.Data()));
+                        if (find(NPSanity.begin(), NPSanity.end(), newName) != NPSanity.end())
+                            auxUtil::alertAndAbort(Form("New NP %s is duplicated in channel %s. Please double check the XML file", newName.Data(), channel.name_.Data()));
+                        channel.varMap_[oldName] = newName;
+                        NPSanity.push_back(newName);
+                    }
+                }
+            }
+        }
+
+        if (node->GetNodeName() == TString("POIList"))
+        {
+            TString poiStr = auxUtil::getAttributeValue(node, "Input");
+            std::vector<TString> poiList = auxUtil::splitString(poiStr, ',');
+            const int nPOI = poiList.size();
+            if (nPOI > m_pois.size())
+            {
+                auxUtil::alertAndAbort(Form("Channel %s has more POIs than combined model", channel.name_.Data()));
+            }
+            for (int ipoi = 0; ipoi < nPOI; ipoi++)
+            {
+                if (poiList[ipoi] != DUMMY && channel.poiMap_.find(poiList[ipoi]) != channel.poiMap_.end())
+                    auxUtil::alertAndAbort(Form("POI %s is duplicated in channel %s. Please double check the XML file", poiList[ipoi].Data(), channel.name_.Data()));
+                channel.poiMap_[poiList[ipoi]] = m_pois[ipoi].name;
+            }
+        }
+    }
     inputFile->Close();
 
     m_summary.push_back(channel);
@@ -337,40 +334,36 @@ void combiner::combineWorkspace()
                 auxUtil::alertAndAbort(Form("Constraint pdf %s in workspace %s is not listed as a normal Gaussian. It hence cannot be correlated with other channels. Please double check your config & workspace to see whether this is intended", oldPdfStr.Data(), m_summary[ich].fileName_.Data()));
 
             /* change the nuis/gobs/pdf name here, do not wait rename later */
-            RooAbsPdf *t_pdf = w->pdf(oldPdfName);
-            if (!t_pdf)
+            RooAbsPdf *t_pdf = w->pdf(oldPdfName); /* Already checked before that this pdf exists */
+
+            TString className = t_pdf->ClassName();
+            if (className != "RooGaussian")
             {
-                spdlog::warn("No pdf {} in workspace {}. Skip it", oldPdfName.Data(), m_summary[ich].fileName_.Data());
-                if(m_strictMode) throw std::runtime_error("Flawed input");
+                spdlog::warn("Constraint PDF {} is not RooGaussian. Only Gaussian is supported now. Skip it", pdfName.Data());
+                if (m_strictMode)
+                    throw std::runtime_error("Flawed input");
+                continue;
             }
-            else
+            RooRealVar *t_nuis = w->var(oldObsName);
+            if (!t_nuis)
             {
-                TString className = t_pdf->ClassName();
-                if (className != "RooGaussian")
-                {
-                    spdlog::warn("Pdf {} is not RooGaussian. Only Gaussian is supported now. Skip it", pdfName.Data());
-                    if(m_strictMode) throw std::runtime_error("Flawed input");
-                    continue;
-                }
-                RooRealVar *t_nuis = w->var(oldObsName);
-                if (!t_nuis)
-                {
-                    spdlog::warn("No nuisance parameter {} in workspace {}. Skip it", oldObsName.Data(), m_summary[ich].fileName_.Data());
-                    if(m_strictMode) throw std::runtime_error("Flawed input");
-                    continue;
-                }
-                RooRealVar *t_glob = w->var(oldMeanName);
-                if (!t_glob)
-                {
-                    spdlog::warn("No global observable {} in workspace {}. Skip it", oldMeanName.Data(), m_summary[ich].fileName_.Data());
-                    if(m_strictMode) throw std::runtime_error("Flawed input");
-                    continue;
-                }
-                /* TODO: Also should check whether the sigma of the Gaussian is unity */
-                auxUtil::renameAndAdd(t_pdf, pdfName, excludedPdfs);
-                auxUtil::renameAndAdd(t_nuis, obsName, excludedVars);
-                auxUtil::renameAndAdd(t_glob, meanName, excludedVars);
+                spdlog::warn("No nuisance parameter {} in workspace {}. Skip it", oldObsName.Data(), m_summary[ich].fileName_.Data());
+                if (m_strictMode)
+                    throw std::runtime_error("Flawed input");
+                continue;
             }
+            RooRealVar *t_glob = w->var(oldMeanName);
+            if (!t_glob)
+            {
+                spdlog::warn("No global observable {} in workspace {}. Skip it", oldMeanName.Data(), m_summary[ich].fileName_.Data());
+                if (m_strictMode)
+                    throw std::runtime_error("Flawed input");
+                continue;
+            }
+            /* TODO: Also should check whether the sigma of the Gaussian is unity */
+            auxUtil::renameAndAdd(t_pdf, pdfName, excludedPdfs);
+            auxUtil::renameAndAdd(t_nuis, obsName, excludedVars);
+            auxUtil::renameAndAdd(t_glob, meanName, excludedVars);
         }
 
         /* Rename free floating NPs already now to keep track of them */
@@ -382,7 +375,8 @@ void combiner::combineWorkspace()
             else
             {
                 spdlog::warn("No variable {} in workspace {}. Skip it", iterator->first.Data(), m_summary[ich].fileName_.Data());
-                if(m_strictMode) throw std::runtime_error("Flawed input");
+                if (m_strictMode)
+                    throw std::runtime_error("Flawed input");
             }
         }
 
@@ -443,9 +437,6 @@ void combiner::combineWorkspace()
             if (TString(pdfi->ClassName()) == "RooProdPdf")
             {
                 /* strip those disconnected pdfs from minimization */
-                // RooArgSet cPars = *pdfi->getParameters(datai);
-                // RooArgSet dPars = cPars;
-                // RooArgSet* constraints = pdfi->getAllConstraints(*datai->get(), cPars, true);
                 std::unique_ptr<RooArgSet> cPars(pdfi->getParameters(datai));
                 RooArgSet dPars = *cPars;
                 RooArgSet *constraints = pdfi->getAllConstraints(*datai->get(), *cPars, true);
@@ -528,7 +519,8 @@ void combiner::combineWorkspace()
         else
         {
             spdlog::warn("POI {} cannot be found in combined model", item.name.Data());
-            if(m_strictMode) throw std::runtime_error("Flawed XML");
+            if (m_strictMode)
+                throw std::runtime_error("Flawed XML");
         }
     }
 
@@ -573,7 +565,8 @@ RooArgSet *combiner::findArgSetIn(RooWorkspace *w, RooArgSet *set)
         if (!inV)
         {
             spdlog::warn("No variable {} in the workspace", v->GetName());
-            if(m_strictMode) throw std::runtime_error("Flawed combination");
+            if (m_strictMode)
+                throw std::runtime_error("Flawed combination");
             continue;
         }
         inSet->add(*inV, kTRUE);
