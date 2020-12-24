@@ -166,11 +166,11 @@ void combiner::readChannel(TXMLNode *rootNode)
                         /* only require OldName has all these components, NewName can be only a nuis parameter name, since they should follow the same format */
                         if (auxUtil::getItemType(newName) == auxUtil::PDF)
                             auxUtil::alertAndAbort(Form("Error processing %s: Users are only supposed to provide a nuisance parameter name", newName.Data()));
+                        if(find(NPSanity.begin(), NPSanity.end(), newName) != NPSanity.end())
+                            auxUtil::alertAndAbort(Form("New NP %s is duplicated in channel %s. Please double check the XML file", newName.Data(), channel.name_.Data()));                            
                         newName = Form("%s_Pdf(%s, %s_In)", newName.Data(), newName.Data(), newName.Data());
                         if(channel.pdfMap_.find(oldName) != channel.pdfMap_.end())
                             auxUtil::alertAndAbort(Form("Old PDF %s is duplicated in channel %s. Please double check the XML file", oldName.Data(), channel.name_.Data()));
-                        if(find(NPSanity.begin(), NPSanity.end(), newName) != NPSanity.end())
-                            auxUtil::alertAndAbort(Form("New PDF %s is duplicated in channel %s. Please double check the XML file", newName.Data(), channel.name_.Data()));
                         channel.pdfMap_[oldName] = newName;
                         NPSanity.push_back(newName);
                     }
@@ -180,11 +180,11 @@ void combiner::readChannel(TXMLNode *rootNode)
                         oldName = Form("%sConstraint(%s, nom_%s)", oldName.Data(), oldName.Data(), oldName.Data());
                         if (auxUtil::getItemType(newName) == auxUtil::PDF)
                             auxUtil::alertAndAbort(Form("Error processing %s: Users are only supposed to provide a nuisance parameter name", newName.Data()));
+                        if(find(NPSanity.begin(), NPSanity.end(), newName) != NPSanity.end())
+                            auxUtil::alertAndAbort(Form("New NP %s is duplicated in channel %s. Please double check the XML file", newName.Data(), channel.name_.Data()));                            
                         newName = Form("%s_Pdf(%s, %s_In)", newName.Data(), newName.Data(), newName.Data());
                         if(channel.pdfMap_.find(oldName) != channel.pdfMap_.end())
-                            auxUtil::alertAndAbort(Form("Old PDF %s is duplicated in channel %s. Please double check the XML file", oldName.Data(), channel.name_.Data()));
-                        if(find(NPSanity.begin(), NPSanity.end(), newName) != NPSanity.end())
-                            auxUtil::alertAndAbort(Form("New PDF %s is duplicated in channel %s. Please double check the XML file", newName.Data(), channel.name_.Data()));                        
+                            auxUtil::alertAndAbort(Form("Old PDF %s is duplicated in channel %s. Please double check the XML file", oldName.Data(), channel.name_.Data()));                        
                         channel.pdfMap_[oldName] = newName;
                         NPSanity.push_back(newName);
                     }
