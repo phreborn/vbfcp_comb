@@ -188,10 +188,19 @@ void combiner::readChannel(TXMLNode *rootNode)
                         /* First check wether the old PDF exists. If not, simply ignore this line */
                         if (!w->pdf(auxUtil::getObjName(oldName)))
                         {
-                            spdlog::warn("Constraint PDF {} does not exist in workspace {}", oldName.Data(), channel.fileName_.Data());
+                            spdlog::warn("Constraint PDF {} does not exist in workspace {}. Skip it", oldName.Data(), channel.fileName_.Data());
                             if (m_strictMode)
                                 if (m_strictMode)
                                     throw std::runtime_error("Flawed XML");
+                            continue;
+                        }
+                        /* Then check wether the old PDF is Gaussian. If not, simply ignore this line */
+                        TString className = w->pdf(auxUtil::getObjName(oldName))->ClassName();
+                        if (className != "RooGaussian")
+                        {
+                            spdlog::warn("Constraint PDF {} is not RooGaussian. Only Gaussian is supported now. Skip it", oldName.Data());
+                            if (m_strictMode)
+                                throw std::runtime_error("Flawed input");
                             continue;
                         }
                         /* only require OldName has all these components, NewName can be only a nuis parameter name, since they should follow the same format */
@@ -271,7 +280,7 @@ void combiner::combineWorkspace()
         TString channelName = m_summary[ich].name_;
 
         unique_ptr<TFile> inputFile(TFile::Open(m_summary[ich].fileName_));
-        RooWorkspace *w = dynamic_cast<RooWorkspace *>(inputFile->Get(m_summary[ich].wsName_));
+        unique_ptr<RooWorkspace> w(dynamic_cast<RooWorkspace *>(inputFile->Get(m_summary[ich].wsName_)));
         RooStats::ModelConfig *mc = dynamic_cast<RooStats::ModelConfig *>(w->obj(m_summary[ich].mcName_));
         RooDataSet *data = dynamic_cast<RooDataSet *>(w->data(m_summary[ich].dataName_));
 
@@ -334,32 +343,16 @@ void combiner::combineWorkspace()
                 auxUtil::alertAndAbort(Form("Constraint pdf %s in workspace %s is not listed as a normal Gaussian. It hence cannot be correlated with other channels. Please double check your config & workspace to see whether this is intended", oldPdfStr.Data(), m_summary[ich].fileName_.Data()));
 
             /* change the nuis/gobs/pdf name here, do not wait rename later */
-            RooAbsPdf *t_pdf = w->pdf(oldPdfName); /* Already checked before that this pdf exists */
+            RooAbsPdf *t_pdf = w->pdf(oldPdfName); /* Already checked before that this pdf exists and is Gaussian */
 
-            TString className = t_pdf->ClassName();
-            if (className != "RooGaussian")
-            {
-                spdlog::warn("Constraint PDF {} is not RooGaussian. Only Gaussian is supported now. Skip it", pdfName.Data());
-                if (m_strictMode)
-                    throw std::runtime_error("Flawed input");
-                continue;
-            }
             RooRealVar *t_nuis = w->var(oldObsName);
             if (!t_nuis)
-            {
-                spdlog::warn("No nuisance parameter {} in workspace {}. Skip it", oldObsName.Data(), m_summary[ich].fileName_.Data());
-                if (m_strictMode)
-                    throw std::runtime_error("Flawed input");
-                continue;
-            }
+                auxUtil::alertAndAbort(Form("No nuisance parameter %s in workspace %s", oldObsName.Data(), m_summary[ich].fileName_.Data()), "Input error");
+
             RooRealVar *t_glob = w->var(oldMeanName);
             if (!t_glob)
-            {
-                spdlog::warn("No global observable {} in workspace {}. Skip it", oldMeanName.Data(), m_summary[ich].fileName_.Data());
-                if (m_strictMode)
-                    throw std::runtime_error("Flawed input");
-                continue;
-            }
+                auxUtil::alertAndAbort(Form("No global observable %s in workspace %s", oldMeanName.Data(), m_summary[ich].fileName_.Data()), "Input error");
+
             /* TODO: Also should check whether the sigma of the Gaussian is unity */
             auxUtil::renameAndAdd(t_pdf, pdfName, excludedPdfs);
             auxUtil::renameAndAdd(t_nuis, obsName, excludedVars);
@@ -368,17 +361,7 @@ void combiner::combineWorkspace()
 
         /* Rename free floating NPs already now to keep track of them */
         for (std::map<TString, TString>::iterator iterator = m_summary[ich].varMap_.begin(); iterator != m_summary[ich].varMap_.end(); iterator++)
-        {
-            RooRealVar *arg = w->var(iterator->first);
-            if (arg)
-                auxUtil::renameAndAdd(arg, iterator->second, excludedVars);
-            else
-            {
-                spdlog::warn("No variable {} in workspace {}. Skip it", iterator->first.Data(), m_summary[ich].fileName_.Data());
-                if (m_strictMode)
-                    throw std::runtime_error("Flawed input");
-            }
-        }
+            auxUtil::renameAndAdd(w->var(iterator->first), iterator->second, excludedVars);
 
         /* Rename POIs */
         for (std::map<TString, TString>::iterator iterator = m_summary[ich].poiMap_.begin(); iterator != m_summary[ich].poiMap_.end(); iterator++)
@@ -419,8 +402,8 @@ void combiner::combineWorkspace()
         TList *indivDataList = data->split(*indivCat, true);
         const int ncat = indivCat->numBins(0);
 
-        combNuis->add(*mc->GetNuisanceParameters(), true);
-        combGlob->add(*mc->GetGlobalObservables(), true);
+        combNuis->add(*mc->GetNuisanceParameters()->snapshot(), true);
+        combGlob->add(*mc->GetGlobalObservables()->snapshot(), true);
 
         for (int icat = 0; icat < ncat; ++icat)
         {
@@ -468,7 +451,7 @@ void combiner::combineWorkspace()
 
             /* make observables */
             unique_ptr<RooArgSet> indivObs(pdfi->getObservables(*datai));
-            combObs->add(*indivObs);
+            combObs->add(*indivObs->snapshot());
 
             /* Make data */
             RooArgSet obsAndWgt(*indivObs, weight);
@@ -485,6 +468,11 @@ void combiner::combineWorkspace()
         }
         inputFile->Close();
     }
+
+    /* Redefine the variable sets */
+    combNuis.reset(findArgSetIn(m_comb.get(), combNuis.get()));
+    combGlob.reset(findArgSetIn(m_comb.get(), combGlob.get()));
+    combObs.reset(findArgSetIn(m_comb.get(), combObs.get()));
 
     /* Constructing combined pdf */
     m_comb->import(combCat);
@@ -531,10 +519,6 @@ void combiner::combineWorkspace()
     m_mc->SetProtoData(*m_comb->data(m_dataName));
     m_mc->SetParametersOfInterest(poi);
 
-    combNuis.reset(findArgSetIn(m_comb.get(), combNuis.get()));
-    combGlob.reset(findArgSetIn(m_comb.get(), combGlob.get()));
-    combObs.reset(findArgSetIn(m_comb.get(), combObs.get()));
-
     m_mc->SetNuisanceParameters(*combNuis);
     m_mc->SetGlobalObservables(*combGlob);
     m_mc->SetObservables(*combObs);
@@ -564,7 +548,7 @@ RooArgSet *combiner::findArgSetIn(RooWorkspace *w, RooArgSet *set)
         RooAbsArg *inV = (RooAbsArg *)w->obj(v->GetName());
         if (!inV)
         {
-            spdlog::warn("No variable {} in the workspace", v->GetName());
+            spdlog::warn("No variable {} in the combined workspace", v->GetName());
             if (m_strictMode)
                 throw std::runtime_error("Flawed combination");
             continue;
