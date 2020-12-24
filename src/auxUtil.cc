@@ -194,7 +194,7 @@ TString auxUtil::getAttributeValue(TXMLNode *rootNode, TString attributeKey, boo
 void auxUtil::alertAndAbort(TString msg)
 {
   spdlog::error(msg.Data());
-  exit(-1);
+  throw std::runtime_error("Critical error");
 }
 
 void auxUtil::setValAndFix(RooRealVar *var, double value)

@@ -125,4 +125,6 @@ private:
   std::unique_ptr<RooStats::ModelConfig> m_mc;
 
   unique_ptr<asimovUtil> m_asimovHandler;
+
+  bool m_strictMode;
 };

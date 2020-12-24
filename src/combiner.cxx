@@ -47,7 +47,8 @@ combiner::combiner() : m_wsName("combWS"),
                        m_dataName("combData"),
                        m_pdfName("combPdf"),
                        m_catName("combCat"),
-                       m_outputFileName("combined.root")
+                       m_outputFileName("combined.root"),
+                       m_strictMode(false)
 {
     m_asimovHandler.reset(new asimovUtil());
 }
@@ -65,56 +66,57 @@ void combiner::readConfigXml(TString filen)
     m_mcName = auxUtil::getAttributeValue(rootNode, "ModelConfigName", true, m_mcName);
     m_dataName = auxUtil::getAttributeValue(rootNode, "DataName", true, m_dataName);
     m_outputFileName = auxUtil::getAttributeValue(rootNode, "OutputFile", true, m_outputFileName);
-    TString poiStr = auxUtil::getAttributeValue(rootNode, "POIList");
-    vector<TString> poiList = auxUtil::splitString(poiStr, ',');
+    m_strictMode = auxUtil::to_bool(auxUtil::getAttributeValue(rootNode, "StrictMode", true, m_strictMode));
 
     TXMLNode *node = rootNode->GetChildren();
-    for (auto poiStr : poiList)
-    {
-        if (poiStr == "")
-            continue;
-        vector<TString> poiInfo = decomposeStr(poiStr, '~', auxUtil::SQUARE);
-        POI poi;
-        poi.name = poiInfo.back();
-        if (find(m_pois.begin(), m_pois.end(), poi.name) != m_pois.end())
-            auxUtil::alertAndAbort(Form("Combined POI %s is duplicated. Please double check the XML", poi.name.Data()));           
-        switch (poiInfo.size())
-        {
-        case 2: /* Only central value provided: fix */
-            poi.value = poiInfo[0].Atof();
-            poi.min = 1;
-            poi.max = 0;
-            break;
-        case 3: /* Only range provided */
-            poi.min = poiInfo[0].Atof();
-            poi.max = poiInfo[1].Atof();
-            if (fabs(poi.min - poi.max) < auxUtil::epsilon)
-            {
-                poi.value = poiInfo[0].Atof();
-                poi.min = 1;
-                poi.max = 0;
-            }
-            else
-                poi.value = poi.min - 1;
-            break;
-        case 4: /* Central value and range provided: float */
-            poi.value = poiInfo[0].Atof();
-            poi.min = poiInfo[1].Atof();
-            poi.max = poiInfo[2].Atof();
-        }
-        m_pois.push_back(poi);
-    }
+
     while (node != 0)
     {
         TString nodeName = node->GetNodeName();
         if (nodeName == "Asimov")
-        {
             m_asimovHandler->addEntry(node);
-        }
 
-        if (nodeName == "Channel")
-        {
+        else if (nodeName == "Channel")
             readChannel(node);
+        else if (nodeName == "POIList")
+        {
+            TString poiStr = auxUtil::getAttributeValue(node, "Combined");
+            vector<TString> poiList = auxUtil::splitString(poiStr, ',');
+            for (auto poiStr : poiList)
+            {
+                if (poiStr == "")
+                    continue;
+                vector<TString> poiInfo = decomposeStr(poiStr, '~', auxUtil::SQUARE);
+                POI poi;
+                poi.name = poiInfo.back();
+                if (find(m_pois.begin(), m_pois.end(), poi.name) != m_pois.end())
+                    auxUtil::alertAndAbort(Form("Combined POI %s is duplicated. Please double check the XML", poi.name.Data()));
+                switch (poiInfo.size())
+                {
+                case 2: /* Only central value provided: fix */
+                    poi.value = poiInfo[0].Atof();
+                    poi.min = 1;
+                    poi.max = 0;
+                    break;
+                case 3: /* Only range provided */
+                    poi.min = poiInfo[0].Atof();
+                    poi.max = poiInfo[1].Atof();
+                    if (fabs(poi.min - poi.max) < auxUtil::epsilon)
+                    {
+                        poi.value = poiInfo[0].Atof();
+                        poi.min = 1;
+                        poi.max = 0;
+                    }
+                    else
+                        poi.value = poi.min - 1;
+                    break;
+                case 4: /* Central value and range provided: float */
+                    poi.value = poiInfo[0].Atof();
+                    poi.min = poiInfo[1].Atof();
+                    poi.max = poiInfo[2].Atof();
+                }
+                m_pois.push_back(poi);
+            }
         }
         node = node->GetNextNode();
     }
@@ -153,9 +155,15 @@ void combiner::readChannel(TXMLNode *rootNode)
                     newName = auxUtil::getAttributeValue(subNode, "NewName");
 
                     if (oldName == "")
+                    {
                         spdlog::warn("Old object name is empty. Please check your config file!!!");
+                        if(m_strictMode) throw std::runtime_error("Flawed XML");
+                    }
                     if (newName == "")
+                    {
                         spdlog::warn("New object name is empty. Please check your config file!!!");
+                        if(m_strictMode) throw std::runtime_error("Flawed XML");
+                    }
                 }
 
                 /* add them to map */
@@ -202,9 +210,9 @@ void combiner::readChannel(TXMLNode *rootNode)
             }
         }
 
-        if (node->GetNodeName() == TString("ChannelPOI"))
+        if (node->GetNodeName() == TString("POIList"))
         {
-            TString poiStr = auxUtil::getAttributeValue(node, "Name");
+            TString poiStr = auxUtil::getAttributeValue(node, "Input");
             std::vector<TString> poiList = auxUtil::splitString(poiStr, ',');
             const int nPOI = poiList.size();
             if (nPOI > m_pois.size())
@@ -222,13 +230,32 @@ void combiner::readChannel(TXMLNode *rootNode)
         node = node->GetNextNode();
     }
 
+    /* Check whether the file exists and whether the content is correct */
+    /* Do not wait until a few hours later to find out that you made a typo in config file! */
+    unique_ptr<TFile> inputFile(TFile::Open(channel.fileName_));
+    if (!inputFile.get())
+        auxUtil::alertAndAbort(Form("Input file %s for channel %s does not exist", channel.fileName_.Data(), channel.name_.Data()));
+
+    RooWorkspace *w = dynamic_cast<RooWorkspace *>(inputFile->Get(channel.wsName_));
+    if (!w)
+        auxUtil::alertAndAbort(Form("Input file %s for channel %s does not contain workspace %s", channel.fileName_.Data(), channel.name_.Data(), channel.wsName_.Data()));
+
+    RooStats::ModelConfig *mc = dynamic_cast<RooStats::ModelConfig *>(w->obj(channel.mcName_));
+    if (!mc)
+        auxUtil::alertAndAbort(Form("Input file %s for channel %s does not contain ModelConfig %s", channel.fileName_.Data(), channel.name_.Data(), channel.mcName_.Data()));
+
+    RooDataSet *data = dynamic_cast<RooDataSet *>(w->data(channel.dataName_));
+    if (!data)
+        auxUtil::alertAndAbort(Form("Input file %s for channel %s does not contain RooDataSet %s", channel.fileName_.Data(), channel.name_.Data(), channel.dataName_.Data())); 
+    inputFile->Close();
+
     m_summary.push_back(channel);
 }
 
 void combiner::combineWorkspace()
 {
+    auxUtil::printTitle("Combination started", "-");
     m_comb.reset(new RooWorkspace(m_wsName, m_wsName));
-    vector<shared_ptr<TFile>> inputFileList;
 
     RooRealVar weight(WGTNAME, "", 1.);
 
@@ -246,21 +273,10 @@ void combiner::combineWorkspace()
     {
         TString channelName = m_summary[ich].name_;
 
-        shared_ptr<TFile> inputFile(TFile::Open(m_summary[ich].fileName_));
-        if (!inputFile.get())
-            auxUtil::alertAndAbort(Form("Input file %s for channel %s does not exist", m_summary[ich].fileName_.Data(), channelName.Data()));
-
+        unique_ptr<TFile> inputFile(TFile::Open(m_summary[ich].fileName_));
         RooWorkspace *w = dynamic_cast<RooWorkspace *>(inputFile->Get(m_summary[ich].wsName_));
-        if (!w)
-            auxUtil::alertAndAbort(Form("Input file %s for channel %s does not contain workspace %s", m_summary[ich].fileName_.Data(), channelName.Data(), m_summary[ich].wsName_.Data()));
-
         RooStats::ModelConfig *mc = dynamic_cast<RooStats::ModelConfig *>(w->obj(m_summary[ich].mcName_));
-        if (!mc)
-            auxUtil::alertAndAbort(Form("Input file %s for channel %s does not contain ModelConfig %s", m_summary[ich].fileName_.Data(), channelName.Data(), m_summary[ich].mcName_.Data()));
-
         RooDataSet *data = dynamic_cast<RooDataSet *>(w->data(m_summary[ich].dataName_));
-        if (!data)
-            auxUtil::alertAndAbort(Form("Input file %s for channel %s does not contain dataset %s", m_summary[ich].fileName_.Data(), channelName.Data(), m_summary[ich].dataName_.Data()));
 
         /* Bookkeeping */
         RooArgSet excludedVars, excludedPdfs;
@@ -323,26 +339,31 @@ void combiner::combineWorkspace()
             /* change the nuis/gobs/pdf name here, do not wait rename later */
             RooAbsPdf *t_pdf = w->pdf(oldPdfName);
             if (!t_pdf)
-                /* some channel does not have the same NPs for low and high masses, adding all of them could be easier */
+            {
                 spdlog::warn("No pdf {} in workspace {}. Skip it", oldPdfName.Data(), m_summary[ich].fileName_.Data());
+                if(m_strictMode) throw std::runtime_error("Flawed input");
+            }
             else
             {
                 TString className = t_pdf->ClassName();
                 if (className != "RooGaussian")
                 {
                     spdlog::warn("Pdf {} is not RooGaussian. Only Gaussian is supported now. Skip it", pdfName.Data());
+                    if(m_strictMode) throw std::runtime_error("Flawed input");
                     continue;
                 }
                 RooRealVar *t_nuis = w->var(oldObsName);
                 if (!t_nuis)
                 {
                     spdlog::warn("No nuisance parameter {} in workspace {}. Skip it", oldObsName.Data(), m_summary[ich].fileName_.Data());
+                    if(m_strictMode) throw std::runtime_error("Flawed input");
                     continue;
                 }
                 RooRealVar *t_glob = w->var(oldMeanName);
                 if (!t_glob)
                 {
                     spdlog::warn("No global observable {} in workspace {}. Skip it", oldMeanName.Data(), m_summary[ich].fileName_.Data());
+                    if(m_strictMode) throw std::runtime_error("Flawed input");
                     continue;
                 }
                 /* TODO: Also should check whether the sigma of the Gaussian is unity */
@@ -359,7 +380,10 @@ void combiner::combineWorkspace()
             if (arg)
                 auxUtil::renameAndAdd(arg, iterator->second, excludedVars);
             else
+            {
                 spdlog::warn("No variable {} in workspace {}. Skip it", iterator->first.Data(), m_summary[ich].fileName_.Data());
+                if(m_strictMode) throw std::runtime_error("Flawed input");
+            }
         }
 
         /* Rename POIs */
@@ -468,6 +492,7 @@ void combiner::combineWorkspace()
             m_comb->import(dataNew_i);
             dataMap[type.Data()] = (RooDataSet *)m_comb->data(dataNew_i.GetName());
         }
+        inputFile->Close();
     }
 
     /* Constructing combined pdf */
@@ -480,9 +505,6 @@ void combiner::combineWorkspace()
     RooDataSet combData(m_dataName, m_dataName, obsAndWgt, Index(combCat), Link(dataMap), WeightVar(WGTNAME));
 
     m_comb->import(combData);
-
-    for (auto item : inputFileList)
-        item->Close();
 
     /* Organizing parameters */
     RooArgSet poi;
@@ -504,7 +526,10 @@ void combiner::combineWorkspace()
             poi.add(*poiVar);
         }
         else
+        {
             spdlog::warn("POI {} cannot be found in combined model", item.name.Data());
+            if(m_strictMode) throw std::runtime_error("Flawed XML");
+        }
     }
 
     m_mc.reset(new ModelConfig(m_mcName, m_comb.get()));
@@ -532,6 +557,7 @@ void combiner::combineWorkspace()
     m_mc->GetGlobalObservables()->Print();
     spdlog::info("There are {} pois:\n", poi.getSize());
     m_mc->GetParametersOfInterest()->Print("v");
+    auxUtil::printTitle("Combination finished", "-");
 }
 
 RooArgSet *combiner::findArgSetIn(RooWorkspace *w, RooArgSet *set)
@@ -547,6 +573,7 @@ RooArgSet *combiner::findArgSetIn(RooWorkspace *w, RooArgSet *set)
         if (!inV)
         {
             spdlog::warn("No variable {} in the workspace", v->GetName());
+            if(m_strictMode) throw std::runtime_error("Flawed combination");
             continue;
         }
         inSet->add(*inV, kTRUE);
@@ -562,6 +589,7 @@ void combiner::makeSnapshots()
     outputFile->cd();
     m_comb->Write();
     outputFile->Close();
+    auxUtil::printTitle("Creating snapshot/Asimov", "-");
 
     if (m_asimovHandler->genAsimov())
         m_asimovHandler->generateAsimov(m_mc.get(), m_dataName);
