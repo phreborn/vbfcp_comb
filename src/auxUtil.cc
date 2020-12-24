@@ -128,7 +128,7 @@ int auxUtil::getItemType(TString item)
   if (item.Contains("::") && item.Contains("("))
     return FUNCTION; // Function or pdf
   else if (item.Contains('('))
-    return PDF;
+    return CONSTR;
   else if (item.Contains("["))
     return VARIABLE; // Variable
   else
@@ -163,7 +163,10 @@ TString auxUtil::getObjName(TString objName)
     objName = objName(0, objName.First('['));
     // cout<<"\tREGTEST: Getting variable name "<<objName<<endl;
   }
-
+  else if (type == CONSTR)
+  {
+    objName = objName(0, objName.First('('));
+  }
   else
   {
     objName = objName(objName.First("::") + 2, objName.First('(') - objName.First("::") - 2);
@@ -191,10 +194,10 @@ TString auxUtil::getAttributeValue(TXMLNode *rootNode, TString attributeKey, boo
   return attributeValue;
 }
 
-void auxUtil::alertAndAbort(TString msg)
+void auxUtil::alertAndAbort(TString msg, TString error)
 {
   spdlog::error(msg.Data());
-  throw std::runtime_error("Critical error");
+  throw std::runtime_error(error);
 }
 
 void auxUtil::setValAndFix(RooRealVar *var, double value)

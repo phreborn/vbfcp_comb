@@ -19,7 +19,7 @@ namespace auxUtil
   enum _itemType
   {
     FUNCTION,
-    PDF,
+    CONSTR,
     VARIABLE,
     EXIST
   };
@@ -59,7 +59,7 @@ namespace auxUtil
   TString translateItemType(TString item);
   TString translateUncertType(int type);
 
-  void alertAndAbort(TString msg);
+  void alertAndAbort(TString msg, TString error = "Crtical error");
   TString combineName(TString name, TString tag);
   void setValAndFix(RooRealVar *var, double value);
   int stripSign(TString &expr);
