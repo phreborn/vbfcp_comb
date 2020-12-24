@@ -247,8 +247,13 @@ void combiner::readChannel(TXMLNode *rootNode)
             }
             for (int ipoi = 0; ipoi < nPOI; ipoi++)
             {
-                if (poiList[ipoi] != DUMMY && channel.poiMap_.find(poiList[ipoi]) != channel.poiMap_.end())
-                    auxUtil::alertAndAbort(Form("POI %s is duplicated in channel %s. Please double check the XML file", poiList[ipoi].Data(), channel.name_.Data()));
+                if (poiList[ipoi] != DUMMY)
+                {
+                    if (!w->var(poiList[ipoi]))
+                        auxUtil::alertAndAbort(Form("POI %s does not exist in channel %s. Please double check the XML file", poiList[ipoi].Data(), channel.name_.Data()));
+                    if (channel.poiMap_.find(poiList[ipoi]) != channel.poiMap_.end())
+                        auxUtil::alertAndAbort(Form("POI %s is duplicated in channel %s. Please double check the XML file", poiList[ipoi].Data(), channel.name_.Data()));
+                }
                 channel.poiMap_[poiList[ipoi]] = m_pois[ipoi].name;
             }
         }
@@ -368,11 +373,7 @@ void combiner::combineWorkspace()
         {
             if (iterator->first == DUMMY)
                 continue;
-            RooRealVar *arg = w->var(iterator->first);
-            if (arg)
-                auxUtil::renameAndAdd(arg, iterator->second, excludedVars);
-            else
-                auxUtil::alertAndAbort(Form("No POI %s in workspace %s", iterator->first.Data(), m_summary[ich].fileName_.Data()));
+            auxUtil::renameAndAdd(w->var(iterator->first), iterator->second, excludedVars);
         }
 
         /* Exclude observables */
@@ -405,6 +406,7 @@ void combiner::combineWorkspace()
         combNuis->add(*mc->GetNuisanceParameters()->snapshot(), true);
         combGlob->add(*mc->GetGlobalObservables()->snapshot(), true);
 
+        auxUtil::printTitle("Channel " + channelName, "+");
         for (int icat = 0; icat < ncat; ++icat)
         {
             indivCat->setBin(icat);
