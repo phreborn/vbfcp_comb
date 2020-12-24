@@ -48,7 +48,7 @@ bool Organizer::run()
     const TString actionStr = m_actionItems[i];
     const TString actionType = m_actionTypes[i];
 
-    cout << "\tItem " << i << " (" << actionType << "), " << actionStr << endl;
+    spdlog::info("Item {} ({}), {}", i, actionType.Data(), actionStr.Data());
 
     TString objName = auxUtil::getObjName(actionStr);
     if (actionStr.Contains("FlexibleInterpVar"))
@@ -62,7 +62,7 @@ bool Organizer::run()
   // If there are additional constraint pdf to be attached
   if (m_constraintPdf.size() > 0)
   {
-    cout << "Attaching additional constraint terms" << endl;
+    spdlog::info("Attaching additional constraint terms");
     RooAbsCategoryLValue *m_cat = (RooAbsCategoryLValue *)&pdf->indexCat();
     int numChannels = m_cat->numBins(0);
 
@@ -71,7 +71,7 @@ bool Organizer::run()
     for (int i = 0; i < numChannels; i++)
     {
       m_cat->setBin(i);
-      cout << "Creating new PDFs for category " << m_cat->getLabel() << endl;
+      spdlog::info("Creating new PDFs for category {}", m_cat->getLabel());
       RooAbsPdf *pdfi = dynamic_cast<RooAbsPdf *>(pdf->getPdf(m_cat->getLabel()));
       RooArgSet baseComponents;
       if (typeid(*pdfi) == typeid(RooProdPdf))
@@ -144,8 +144,8 @@ bool Organizer::run()
   TString oldStr = "";
   TString newStr = "";
   auxUtil::linkMap(renameMap, oldStr, newStr, ",");
-  cout << "\told: " << oldStr << endl;
-  cout << "\tnew: " << newStr << endl;
+  spdlog::info("Old: {}", oldStr.Data());
+  spdlog::info("New: {}", newStr.Data());
 
   /* import pdf */
   nW->import(*(mc->GetPdf()),
@@ -161,8 +161,7 @@ bool Organizer::run()
 
   /* poi */
   RooArgSet newPOI;
-  cout << endl
-       << "List of POIs in the new parameterization: ";
+  spdlog::info("List of POIs in the new parameterization:");
   for (int i = 0; i < (int)m_poiNames.size(); i++)
   {
     RooRealVar *var = nW->var(m_poiNames[i]);
@@ -176,13 +175,11 @@ bool Organizer::run()
         continue;
       }
     }
-    cout << m_poiNames[i] << ", ";
+    spdlog::info(m_poiNames[i].Data());
     /* float by default */
     var->setConstant(false);
     newPOI.add(*var);
   }
-  cout << endl
-       << endl;
   nMc->SetParametersOfInterest(newPOI);
 
   // Set nuisance parameters, global observables, and observables
@@ -325,7 +322,7 @@ bool Organizer::run()
   unique_ptr<TFile> fout(TFile::Open(m_outFile, "recreate"));
   nW->Write();
   fout->Close();
-  cout << "Written to file: " << m_outFile << endl;
+  spdlog::info("Written to file: {}", m_outFile.Data());
 
   return true;
 }

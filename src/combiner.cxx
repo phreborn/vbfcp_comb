@@ -197,12 +197,6 @@ void combiner::readChannel(TXMLNode *rootNode)
             {
                 channel.poiMap_[poiList[ipoi]] = m_pois[ipoi].name;
             }
-            /* allow missing some POIs in individual channels */
-            if (nPOI < m_pois.size())
-            {
-                for (int ipoi = nPOI; ipoi < m_pois.size(); ipoi++)
-                    channel.poiMap_[DUMMY] = m_pois[ipoi].name;
-            }
         }
 
         node = node->GetNextNode();
