@@ -97,9 +97,9 @@ TString auxUtil::generateExpr(TString head, RooArgSet *set, bool closeExpr)
   return exprStr;
 }
 
-void auxUtil::defineSet(RooWorkspace *w, RooArgSet set, TString setName)
+void auxUtil::defineSet(RooWorkspace *w, RooArgSet *set, TString setName)
 {
-  unique_ptr<TIterator> iter(set.createIterator());
+  unique_ptr<TIterator> iter(set->createIterator());
   RooRealVar *parg = NULL;
   RooArgSet nameSet;
   while ((parg = dynamic_cast<RooRealVar *>(iter->Next())))
@@ -109,6 +109,27 @@ void auxUtil::defineSet(RooWorkspace *w, RooArgSet set, TString setName)
   }
 
   w->defineSet(setName, nameSet);
+}
+
+RooArgSet *auxUtil::findArgSetIn(RooWorkspace *w, RooArgSet *set, bool strict)
+{
+    TString setName = set->GetName();
+    RooArgSet *outSet = new RooArgSet(setName);
+    std::unique_ptr<TIterator> iter(set->createIterator());
+
+    for (RooAbsArg *v = dynamic_cast<RooAbsArg *>(iter->Next()); v != 0; v = dynamic_cast<RooAbsArg *>(iter->Next()))
+    {
+        RooAbsArg *inV = w->arg(v->GetName());
+        if (!inV)
+        {
+          spdlog::warn("No variable {} in workspace {}", v->GetName(), w->GetName());
+          if(strict) throw std::runtime_error("Missing object");
+          continue;
+        }
+        outSet->add(*inV, true);
+    }
+
+    return outSet;
 }
 
 void auxUtil::defineSet(RooWorkspace *w, vector<TString> set, TString setName)
@@ -717,43 +738,6 @@ void auxUtil::linkMap(
       valueStr += linker;
     }
     index += 1;
-  }
-}
-
-void auxUtil::deComposeGaus(TString gausStr, TString &pdf,
-                            TString &obs, TString &mean, double &sigma)
-{
-  /* lumiConstraint(Lumi, nominalLumi, 0.37), the default value of sigma(third parameter is 1, can be neglected) */
-  removeWhiteSpace(gausStr);
-
-  vector<TString> obsList = decomposeStr(gausStr, ',', ROUND);
-  const unsigned nPars = obsList.size();
-  pdf = obsList[nPars - 1];
-
-  if (nPars == 3)
-  {
-    /* first---> lumiConstraint(Lumi */
-    obs = obsList[0];
-
-    /* second---> nominalLumi) */
-    mean = obsList[1];
-
-    sigma = 1.;
-  }
-  else if (nPars == 4)
-  {
-    /* first---> lumiConstraint(Lumi */
-    obs = obsList[0];
-
-    /* second---> nominalLumi */
-    mean = obsList[1];
-
-    /* third---> 0.37) */
-    sigma = obsList[2].Atof();
-  }
-  else
-  {
-    alertAndAbort("Unknown input " + gausStr);
   }
 }
 

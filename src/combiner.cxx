@@ -18,6 +18,7 @@
  */
 
 #include "combiner.h"
+#include "textTable.h"
 
 using namespace RooStats;
 using namespace RooFit;
@@ -25,6 +26,12 @@ using namespace std;
 
 TString combiner::DUMMY = "dummy";
 TString combiner::WGTNAME = "_weight_";
+TString combiner::PDFPREFIX = "__PDF_TMPWS__";
+TString combiner::DATAPREFIX = "__DATA_TMPWS__";
+TString combiner::CATPREFIX = "__CAT_TMPWS__";
+TString combiner::WSPOSTFIX = "_tmp";
+TString combiner::TMPPOSTFIX = "_tmp.root";
+TString combiner::RAWPOSTFIX = "_raw.root";
 
 struct TOwnedList : public TList
 {
@@ -37,7 +44,7 @@ struct TOwnedList : public TList
     {
         if (!option || strcmp(option, "nodelete") != 0)
             for (TIter it(this); TObject *obj = it();)
-                delete obj;
+                SafeDelete(obj);
         TList::Clear("nodelete");
     }
 };
@@ -47,6 +54,8 @@ combiner::combiner() : m_wsName("combWS"),
                        m_dataName("combData"),
                        m_pdfName("combPdf"),
                        m_catName("combCat"),
+                       m_nuisName("nuisanceParameters"),
+                       m_globName("globalObservables"),
                        m_outputFileName("combined.root"),
                        m_strictMode(false)
 {
@@ -68,6 +77,12 @@ void combiner::readConfigXml(TString filen)
     m_outputFileName = auxUtil::getAttributeValue(rootNode, "OutputFile", true, m_outputFileName);
     m_strictMode = auxUtil::to_bool(auxUtil::getAttributeValue(rootNode, "StrictMode", true, m_strictMode));
 
+    /* Create output dir, if needed */
+    if (m_outputFileName.Contains('/'))
+    {
+        TString dirName = m_outputFileName(0, m_outputFileName.Last('/'));
+        system("mkdir -vp " + dirName);
+    }
     for (TXMLNode *node = rootNode->GetChildren(); node != 0; node = node->GetNextNode())
     {
         TString nodeName = node->GetNodeName();
@@ -131,13 +146,15 @@ void combiner::readChannel(TXMLNode *rootNode)
     channel.mcName_ = auxUtil::getAttributeValue(rootNode, "ModelConfigName");
     channel.dataName_ = auxUtil::getAttributeValue(rootNode, "DataName");
 
+    if (find(m_summary.begin(), m_summary.end(), channel.name_) != m_summary.end())
+        auxUtil::alertAndAbort(Form("Channel %s has duplicated name of other channels", channel.name_.Data()), "XML error");
     /* Check whether the file exists and whether the content is correct */
     /* Do not wait until a few hours later to find out that you made a typo in config file! */
-    unique_ptr<TFile> inputFile(TFile::Open(channel.fileName_));
-    if (!inputFile.get())
+    m_inputFile.reset(TFile::Open(channel.fileName_));
+    if (!m_inputFile.get())
         auxUtil::alertAndAbort(Form("Input file %s for channel %s does not exist", channel.fileName_.Data(), channel.name_.Data()));
 
-    RooWorkspace *w = dynamic_cast<RooWorkspace *>(inputFile->Get(channel.wsName_));
+    RooWorkspace *w = dynamic_cast<RooWorkspace *>(m_inputFile->Get(channel.wsName_));
     if (!w)
         auxUtil::alertAndAbort(Form("Input file %s for channel %s does not contain workspace %s", channel.fileName_.Data(), channel.name_.Data(), channel.wsName_.Data()));
 
@@ -185,8 +202,11 @@ void combiner::readChannel(TXMLNode *rootNode)
                     /* add them to map */
                     if (auxUtil::getItemType(oldName) == auxUtil::CONSTR)
                     {
+                        vector<TString> itemList = auxUtil::decomposeStr(oldName, ',', auxUtil::ROUND);
+                        if (itemList.size() != 3)
+                            auxUtil::alertAndAbort(Form("Wrong format for constraint pdf %s in channel %s", oldName.Data(), channel.name_.Data()), "XML error");
                         /* First check wether the old PDF exists. If not, simply ignore this line */
-                        if (!w->pdf(auxUtil::getObjName(oldName)))
+                        if (!w->pdf(itemList.back()))
                         {
                             spdlog::warn("Constraint PDF {} does not exist in workspace {}. Skip it", oldName.Data(), channel.fileName_.Data());
                             if (m_strictMode)
@@ -195,7 +215,7 @@ void combiner::readChannel(TXMLNode *rootNode)
                             continue;
                         }
                         /* Then check wether the old PDF is Gaussian. If not, simply ignore this line */
-                        TString className = w->pdf(auxUtil::getObjName(oldName))->ClassName();
+                        TString className = w->pdf(itemList.back())->ClassName();
                         if (className != "RooGaussian")
                         {
                             spdlog::warn("Constraint PDF {} is not RooGaussian. Only Gaussian is supported now. Skip it", oldName.Data());
@@ -203,6 +223,28 @@ void combiner::readChannel(TXMLNode *rootNode)
                                 throw std::runtime_error("Flawed input");
                             continue;
                         }
+                        if (!w->var(itemList[0]))
+                            auxUtil::alertAndAbort(Form("No nuisance parameter %s in workspace %s", itemList[0].Data(), channel.fileName_.Data()), "Input error");
+                        if (!w->var(itemList[1]))
+                            auxUtil::alertAndAbort(Form("No global observable %s in workspace %s", itemList[1].Data(), channel.fileName_.Data()), "Input error");
+                        /* Check whether sigma of the Gaussian is unity */
+                        unique_ptr<TIterator> iter(w->pdf(itemList.back())->serverIterator());
+                        bool sigmaCheck = false, NPCheck = false, GOCheck = false;
+                        for (RooAbsReal *arg = (RooAbsReal *)iter->Next(); arg != 0; arg = (RooAbsReal *)iter->Next())
+                        {
+                            if (itemList[0] == arg->GetName())
+                                NPCheck = true;
+                            else if (itemList[1] == arg->GetName())
+                                GOCheck = true;
+                            else if (fabs(arg->getVal() - 1) < auxUtil::epsilon)
+                                sigmaCheck = true;
+                        }
+                        if (!sigmaCheck)
+                            auxUtil::alertAndAbort(Form("Sigma of constraint PDF %s in workspace %s is not unity", itemList.back().Data(), channel.fileName_.Data()), "Input error");
+                        if (!NPCheck)
+                            auxUtil::alertAndAbort(Form("Nuisance parameter %s has no dependence on constraint PDF %s in workspace %s", itemList[0].Data(), itemList.back().Data(), channel.fileName_.Data()), "Input error");
+                        if (!GOCheck)
+                            auxUtil::alertAndAbort(Form("Global observable %s has no dependence on constraint PDF %s in workspace %s", itemList[1].Data(), itemList.back().Data(), channel.fileName_.Data()), "Input error");
                         /* only require OldName has all these components, NewName can be only a nuis parameter name, since they should follow the same format */
                         if (auxUtil::getItemType(newName) == auxUtil::CONSTR)
                             auxUtil::alertAndAbort(Form("Error processing %s: Users are only supposed to provide a nuisance parameter name", newName.Data()), "XML error");
@@ -238,6 +280,7 @@ void combiner::readChannel(TXMLNode *rootNode)
 
         if (node->GetNodeName() == TString("POIList"))
         {
+            vector<TString> POISanity;
             TString poiStr = auxUtil::getAttributeValue(node, "Input");
             std::vector<TString> poiList = auxUtil::splitString(poiStr, ',');
             const int nPOI = poiList.size();
@@ -251,41 +294,36 @@ void combiner::readChannel(TXMLNode *rootNode)
                 {
                     if (!w->var(poiList[ipoi]))
                         auxUtil::alertAndAbort(Form("POI %s does not exist in channel %s. Please double check the XML file", poiList[ipoi].Data(), channel.name_.Data()));
-                    if (channel.poiMap_.find(poiList[ipoi]) != channel.poiMap_.end())
+                    if (find(POISanity.begin(), POISanity.end(), poiList[ipoi]) != POISanity.end())
                         auxUtil::alertAndAbort(Form("POI %s is duplicated in channel %s. Please double check the XML file", poiList[ipoi].Data(), channel.name_.Data()));
+                    POISanity.push_back(poiList[ipoi]);
                 }
-                channel.poiMap_[poiList[ipoi]] = m_pois[ipoi].name;
+                channel.poiMap_[m_pois[ipoi].name] = poiList[ipoi];
             }
+            for (unsigned ipoi = nPOI; ipoi < m_pois.size(); ipoi++)
+                channel.poiMap_[m_pois[ipoi].name] = DUMMY;
         }
     }
-    inputFile->Close();
+    m_inputFile->Close();
 
     m_summary.push_back(channel);
 }
 
-void combiner::combineWorkspace()
+void combiner::rename(bool saveTmpWs)
 {
-    auxUtil::printTitle("Combination started", "-");
-    m_comb.reset(new RooWorkspace(m_wsName, m_wsName));
+    auxUtil::printTitle("Renaming variables, PDFs, and functions", "-");
+    m_tmpWs.reset(new RooWorkspace(m_wsName + WSPOSTFIX, m_wsName + WSPOSTFIX));
+    m_nuis.reset(new RooArgSet());
+    m_glob.reset(new RooArgSet());
 
-    RooRealVar weight(WGTNAME, "", 1.);
-
-    RooCategory combCat(m_catName, m_catName);
-    TString combPdfStr = "";
-
-    unique_ptr<RooArgSet> combObs(new RooArgSet());
-    unique_ptr<RooArgSet> combGlob(new RooArgSet());
-    unique_ptr<RooArgSet> combNuis(new RooArgSet());
-
-    map<string, RooAbsData *> dataMap;
-
-    const int m_numChannel = (int)m_summary.size();
+    const int m_numChannel = m_summary.size();
+    TOwnedList tmpKeep;
     for (int ich = 0; ich < m_numChannel; ich++)
     {
         TString channelName = m_summary[ich].name_;
 
-        unique_ptr<TFile> inputFile(TFile::Open(m_summary[ich].fileName_));
-        unique_ptr<RooWorkspace> w(dynamic_cast<RooWorkspace *>(inputFile->Get(m_summary[ich].wsName_)));
+        m_inputFile.reset(TFile::Open(m_summary[ich].fileName_));
+        unique_ptr<RooWorkspace> w(dynamic_cast<RooWorkspace *>(m_inputFile->Get(m_summary[ich].wsName_)));
         RooStats::ModelConfig *mc = dynamic_cast<RooStats::ModelConfig *>(w->obj(m_summary[ich].mcName_));
         RooDataSet *data = dynamic_cast<RooDataSet *>(w->data(m_summary[ich].dataName_));
 
@@ -311,8 +349,9 @@ void combiner::combineWorkspace()
             TString dataName = data->GetName();
 
             RooSimultaneous *pdf_new = new RooSimultaneous(pdfName, pdfName, pdfMap_tmp, *cat);
-
+            tmpKeep.Add(pdf_new);
             RooArgSet obsAndWgt = *data->get();
+            RooRealVar weight(WGTNAME, "", 1.);
             obsAndWgt.add(weight);
             RooDataSet *data_new = new RooDataSet(
                 dataName,
@@ -322,7 +361,7 @@ void combiner::combineWorkspace()
                 RooFit::Import(dataMap_tmp),
                 RooFit::WeightVar(WGTNAME) /* actually just pass a name */
             );
-
+            tmpKeep.Add(data_new);
             pdf = pdf_new;
             data = data_new;
         }
@@ -331,37 +370,19 @@ void combiner::combineWorkspace()
         RooStats::SetAllConstant(*mc->GetNuisanceParameters(), false);
         RooStats::SetAllConstant(*mc->GetGlobalObservables(), true);
 
+        /* TODO: check whether the support for HistFactory style lumi uncertainty is still needed */
+        /* Removed for now */
         for (std::map<TString, TString>::iterator iterator = m_summary[ich].pdfMap_.begin(); iterator != m_summary[ich].pdfMap_.end(); iterator++)
         {
-            TString pdfStr = iterator->second;
-            TString pdfName, obsName, meanName;
-            double sigma;
-            auxUtil::deComposeGaus(pdfStr, pdfName, obsName, meanName, sigma);
+            vector<TString> pdfItemList = auxUtil::decomposeStr(iterator->second, ',', auxUtil::ROUND);
+            TString pdfName = pdfItemList[2], obsName = pdfItemList[0], meanName = pdfItemList[1];
 
-            TString oldPdfStr = iterator->first;
-            TString oldPdfName, oldObsName, oldMeanName;
-            double oldSigma;
-            auxUtil::deComposeGaus(oldPdfStr, oldPdfName, oldObsName, oldMeanName, oldSigma);
+            vector<TString> oldPdfItemList = auxUtil::decomposeStr(iterator->first, ',', auxUtil::ROUND);
+            TString oldPdfName = oldPdfItemList[2], oldObsName = oldPdfItemList[0], oldMeanName = oldPdfItemList[1];
 
-            /* if the old gaus pdf is not normal */
-            if (fabs(oldSigma - 1) > auxUtil::epsilon)
-                auxUtil::alertAndAbort(Form("Constraint pdf %s in workspace %s is not listed as a normal Gaussian. It hence cannot be correlated with other channels. Please double check your config & workspace to see whether this is intended", oldPdfStr.Data(), m_summary[ich].fileName_.Data()));
-
-            /* change the nuis/gobs/pdf name here, do not wait rename later */
-            RooAbsPdf *t_pdf = w->pdf(oldPdfName); /* Already checked before that this pdf exists and is Gaussian */
-
-            RooRealVar *t_nuis = w->var(oldObsName);
-            if (!t_nuis)
-                auxUtil::alertAndAbort(Form("No nuisance parameter %s in workspace %s", oldObsName.Data(), m_summary[ich].fileName_.Data()), "Input error");
-
-            RooRealVar *t_glob = w->var(oldMeanName);
-            if (!t_glob)
-                auxUtil::alertAndAbort(Form("No global observable %s in workspace %s", oldMeanName.Data(), m_summary[ich].fileName_.Data()), "Input error");
-
-            /* TODO: Also should check whether the sigma of the Gaussian is unity */
-            auxUtil::renameAndAdd(t_pdf, pdfName, excludedPdfs);
-            auxUtil::renameAndAdd(t_nuis, obsName, excludedVars);
-            auxUtil::renameAndAdd(t_glob, meanName, excludedVars);
+            auxUtil::renameAndAdd(w->pdf(oldPdfName), pdfName, excludedPdfs);
+            auxUtil::renameAndAdd(w->var(oldObsName), obsName, excludedVars);
+            auxUtil::renameAndAdd(w->var(oldMeanName), meanName, excludedVars);
         }
 
         /* Rename free floating NPs already now to keep track of them */
@@ -371,9 +392,9 @@ void combiner::combineWorkspace()
         /* Rename POIs */
         for (std::map<TString, TString>::iterator iterator = m_summary[ich].poiMap_.begin(); iterator != m_summary[ich].poiMap_.end(); iterator++)
         {
-            if (iterator->first == DUMMY)
+            if (iterator->second == DUMMY)
                 continue;
-            auxUtil::renameAndAdd(w->var(iterator->first), iterator->second, excludedVars);
+            auxUtil::renameAndAdd(w->var(iterator->second), iterator->first, excludedVars);
         }
 
         /* Exclude observables */
@@ -396,6 +417,59 @@ void combiner::combineWorkspace()
         for (RooAbsReal *v = (RooAbsReal *)fiter->Next(); v != 0; v = (RooAbsReal *)fiter->Next())
             v->SetName((TString(v->GetName()) + "_" + channelName));
 
+        pdf->SetName(PDFPREFIX + channelName);
+        data->SetName(DATAPREFIX + channelName);
+        RooCategory *cat = dynamic_cast<RooCategory *>(w->obj(pdf->indexCat().GetName()));
+        TString oldCatName = cat->GetName();
+        TString newCatName = CATPREFIX + channelName;
+        cat->SetName(newCatName);
+
+        m_tmpWs->import(*pdf, RecycleConflictNodes(), Silence());
+        m_tmpWs->import(*data, RooFit::RenameVariable(oldCatName, newCatName));
+        m_nuis->add(*mc->GetNuisanceParameters()->snapshot(), true);
+        m_glob->add(*mc->GetGlobalObservables()->snapshot(), true);
+        auxUtil::defineSet(m_tmpWs.get(), m_nuis.get(), m_nuisName);
+        auxUtil::defineSet(m_tmpWs.get(), m_glob.get(), m_globName);
+        m_inputFile->Close();
+    }
+    if (saveTmpWs)
+    {
+        unique_ptr<TFile> outputFile(TFile::Open(m_outputFileName + TMPPOSTFIX, "recreate"));
+        outputFile->cd();
+        m_tmpWs->Write();
+        outputFile->Close();
+    }
+}
+
+void combiner::combine(bool readTmpWs, bool saveRawWs)
+{
+    auxUtil::printTitle("Combining likelihood and dataset", "-");
+    if (readTmpWs)
+    {
+        m_inputFile.reset(TFile::Open(m_outputFileName + TMPPOSTFIX));
+        m_tmpWs.reset(dynamic_cast<RooWorkspace *>(m_inputFile->Get(m_wsName + WSPOSTFIX)));
+        m_nuis.reset(const_cast<RooArgSet *>(m_tmpWs->set(m_nuisName)));
+        m_glob.reset(const_cast<RooArgSet *>(m_tmpWs->set(m_globName)));
+    }
+
+    m_comb.reset(new RooWorkspace(m_wsName, m_wsName));
+
+    RooCategory combCat(m_catName, m_catName);
+    RooSimultaneous combPdf(m_pdfName, m_pdfName, combCat);
+
+    m_obs.reset(new RooArgSet());
+    RooRealVar weight(WGTNAME, "", 1.);
+    map<string, RooDataSet *> dataMap;
+
+    TOwnedList tmpKeep;
+    const int m_numChannel = m_summary.size();
+    for (int ich = 0; ich < m_numChannel; ich++)
+    {
+        TString channelName = m_summary[ich].name_;
+
+        RooSimultaneous *pdf = dynamic_cast<RooSimultaneous *>(m_tmpWs->pdf(PDFPREFIX + channelName));
+        RooDataSet *data = dynamic_cast<RooDataSet *>(m_tmpWs->data(DATAPREFIX + channelName));
+
         /* Split pdf */
         RooCategory *indivCat = (RooCategory *)&pdf->indexCat();
 
@@ -403,21 +477,14 @@ void combiner::combineWorkspace()
         TList *indivDataList = data->split(*indivCat, true);
         const int ncat = indivCat->numBins(0);
 
-        combNuis->add(*mc->GetNuisanceParameters()->snapshot(), true);
-        combGlob->add(*mc->GetGlobalObservables()->snapshot(), true);
-
         auxUtil::printTitle("Channel " + channelName, "+");
         for (int icat = 0; icat < ncat; ++icat)
         {
             indivCat->setBin(icat);
-            spdlog::info("sub-index --> {} {}", icat, indivCat->getLabel());
+            spdlog::info("Category --> {} {}", icat, indivCat->getLabel());
 
             RooAbsPdf *pdfi = pdf->getPdf(indivCat->getLabel());
             RooDataSet *datai = (RooDataSet *)(indivDataList->FindObject(indivCat->getLabel()));
-
-            /* in case combining the same channel, it's good to differentiate them */
-            if (!TString(pdfi->GetName()).EndsWith(channelName))
-                pdfi->SetName((TString(pdfi->GetName()) + "_" + channelName));
 
             if (TString(pdfi->ClassName()) == "RooProdPdf")
             {
@@ -437,55 +504,70 @@ void combiner::combineWorkspace()
                 baseComponents.remove(*disConstraints);
 
                 TString newPdfName = TString(pdfi->GetName()) + "_deComposed";
+
                 pdfi = new RooProdPdf(newPdfName, newPdfName, baseComponents);
+                tmpKeep.Add(pdfi);
             }
 
             /* make category */
             TString type = Form("%s_%s_%s", m_catName.Data(), indivCat->getLabel(), channelName.Data());
 
-            spdlog::info("\ttype --> {}", type.Data());
+            spdlog::info("\tNew category name --> {}", type.Data());
 
             combCat.defineType(type);
-
-            /* Make pdf */
-            m_comb->import(*pdfi, RecycleConflictNodes(), Silence());
-            combPdfStr += (type + "=" + pdfi->GetName() + ",");
+            combPdf.addPdf(*pdfi, type);
 
             /* make observables */
             unique_ptr<RooArgSet> indivObs(pdfi->getObservables(*datai));
-            combObs->add(*indivObs->snapshot());
+            m_obs->add(*indivObs->snapshot(), true);
 
             /* Make data */
             RooArgSet obsAndWgt(*indivObs, weight);
-            RooDataSet dataNew_i(type + "_data", type + "_data", obsAndWgt, WeightVar(WGTNAME));
+            RooDataSet *dataNew_i = new RooDataSet(type + "_data", type + "_data", obsAndWgt, WeightVar(WGTNAME));
 
             for (int j = 0, nEntries = datai->numEntries(); j < nEntries; ++j)
             {
                 *indivObs = *datai->get(j);
                 double dataWgt = datai->weight();
-                dataNew_i.add(obsAndWgt, dataWgt);
+                dataNew_i->add(obsAndWgt, dataWgt);
             }
-            m_comb->import(dataNew_i);
-            dataMap[type.Data()] = (RooDataSet *)m_comb->data(dataNew_i.GetName());
+            dataMap[type.Data()] = dataNew_i;
+            tmpKeep.Add(dataNew_i);
         }
-        inputFile->Close();
     }
+    m_comb->import(combPdf);
+    spdlog::info("Combined pdf created");
+    m_obs->add(combCat);
+    RooArgSet obsAndWgt(*m_obs, weight);
 
-    /* Redefine the variable sets */
-    combNuis.reset(findArgSetIn(m_comb.get(), combNuis.get()));
-    combGlob.reset(findArgSetIn(m_comb.get(), combGlob.get()));
-    combObs.reset(findArgSetIn(m_comb.get(), combObs.get()));
-
-    /* Constructing combined pdf */
-    m_comb->import(combCat);
-    auxUtil::implementObj(m_comb.get(), Form("SIMUL::%s(%s, %s)", m_pdfName.Data(), m_catName.Data(), combPdfStr.Strip(TString::kTrailing, ',').Data()));
-
-    combObs->add(combCat);
-    RooArgSet obsAndWgt(*combObs, weight);
-
-    RooDataSet combData(m_dataName, m_dataName, obsAndWgt, Index(combCat), Link(dataMap), WeightVar(WGTNAME));
+    RooDataSet combData(m_dataName, m_dataName, obsAndWgt, Index(combCat), Import(dataMap), WeightVar(WGTNAME));
 
     m_comb->import(combData);
+    spdlog::info("Combined dataset created");
+
+    /* Redefine the variable sets */
+    m_nuis.reset(auxUtil::findArgSetIn(m_comb.get(), m_nuis.get(), m_strictMode));
+    m_glob.reset(auxUtil::findArgSetIn(m_comb.get(), m_glob.get(), m_strictMode));
+    m_obs.reset(auxUtil::findArgSetIn(m_comb.get(), m_obs.get(), m_strictMode));
+
+    if (m_inputFile.get())
+        m_inputFile->Close();
+
+    makeModelConfig();
+
+    if (saveRawWs)
+    {
+        spdlog::info("Saving pre-fit combined workspace to file {}", (m_outputFileName + RAWPOSTFIX).Data());
+        unique_ptr<TFile> outputFile(TFile::Open(m_outputFileName + RAWPOSTFIX, "recreate"));
+        outputFile->cd();
+        m_comb->Write();
+        outputFile->Close();
+    }
+}
+
+void combiner::makeModelConfig()
+{
+    auxUtil::printTitle("Creating ModelConfig", "-");
 
     /* Organizing parameters */
     RooArgSet poi;
@@ -507,11 +589,7 @@ void combiner::combineWorkspace()
             poi.add(*poiVar);
         }
         else
-        {
-            spdlog::warn("POI {} cannot be found in combined model", item.name.Data());
-            if (m_strictMode)
-                throw std::runtime_error("Flawed XML");
-        }
+            auxUtil::alertAndAbort(Form("POI %s cannot be found in combined model", item.name.Data()));
     }
 
     m_mc.reset(new ModelConfig(m_mcName, m_comb.get()));
@@ -521,61 +599,69 @@ void combiner::combineWorkspace()
     m_mc->SetProtoData(*m_comb->data(m_dataName));
     m_mc->SetParametersOfInterest(poi);
 
-    m_mc->SetNuisanceParameters(*combNuis);
-    m_mc->SetGlobalObservables(*combGlob);
-    m_mc->SetObservables(*combObs);
+    m_mc->SetNuisanceParameters(*m_nuis);
+    m_mc->SetGlobalObservables(*m_glob);
+    m_mc->SetObservables(*m_obs);
 
     m_comb->import(*m_mc);
     m_comb->importClassCode(); // Jared
 
     auxUtil::printTitle("Simple Summary", "~");
-    spdlog::info("There are {} nuisances parameters:", m_mc->GetNuisanceParameters()->getSize());
-    m_mc->GetNuisanceParameters()->Print();
-    spdlog::info("There are {} global observables:", m_mc->GetGlobalObservables()->getSize());
-    m_mc->GetGlobalObservables()->Print();
-    spdlog::info("There are {} pois:\n", poi.getSize());
-    m_mc->GetParametersOfInterest()->Print("v");
-    auxUtil::printTitle("Combination finished", "-");
+    spdlog::info("There are {} nuisances parameters", m_mc->GetNuisanceParameters()->getSize());
+    // m_mc->GetNuisanceParameters()->Print();
+    spdlog::info("There are {} global observables", m_mc->GetGlobalObservables()->getSize());
+    // m_mc->GetGlobalObservables()->Print();
+    spdlog::info("There are {} pois\n", poi.getSize());
+    // m_mc->GetParametersOfInterest()->Print();
 }
 
-RooArgSet *combiner::findArgSetIn(RooWorkspace *w, RooArgSet *set)
+void combiner::makeSnapshots(bool readRawWs)
 {
-    TString setName = set->GetName();
-    set->setName("old");
-    RooArgSet *inSet = (RooArgSet *)set->clone(setName);
-    std::unique_ptr<TIterator> iter(set->createIterator());
-
-    for (RooAbsArg *v = (RooAbsArg *)iter->Next(); v != 0; v = (RooAbsArg *)iter->Next())
-    {
-        RooAbsArg *inV = (RooAbsArg *)w->obj(v->GetName());
-        if (!inV)
-        {
-            spdlog::warn("No variable {} in the combined workspace", v->GetName());
-            if (m_strictMode)
-                throw std::runtime_error("Flawed combination");
-            continue;
-        }
-        inSet->add(*inV, kTRUE);
-    }
-
-    return inSet;
-}
-
-void combiner::makeSnapshots()
-{
-    spdlog::info("Saving pre-fit combined workspace to file {}_prefit.root", m_outputFileName.Data());
-    unique_ptr<TFile> outputFile(TFile::Open(m_outputFileName + "_prefit.root", "recreate"));
-    outputFile->cd();
-    m_comb->Write();
-    outputFile->Close();
     auxUtil::printTitle("Creating snapshot/Asimov", "-");
+
+    if (readRawWs)
+    {
+        m_inputFile.reset(TFile::Open(m_outputFileName + RAWPOSTFIX));
+        m_comb.reset(dynamic_cast<RooWorkspace*>(m_inputFile->Get(m_wsName)));
+        m_mc.reset(dynamic_cast<ModelConfig*>(m_comb->obj(m_mcName)));
+    }
 
     if (m_asimovHandler->genAsimov())
         m_asimovHandler->generateAsimov(m_mc.get(), m_dataName);
 
-    outputFile.reset(TFile::Open(m_outputFileName, "recreate"));
+    if (m_inputFile.get())
+        m_inputFile->Close();
+    unique_ptr<TFile> outputFile(TFile::Open(m_outputFileName, "recreate"));
     outputFile->cd();
     m_comb->Write();
     outputFile->Close();
     spdlog::info("Saving final combined workspace to file {}", m_outputFileName.Data());
+}
+
+void combiner::printSummary()
+{
+    int num = (int)m_summary.size();
+    auxUtil::printTitle(Form("Input summary (%d channels)", num));
+    for (int i = 0; i < num; i++)
+        m_summary[i].Print();
+
+    /* Print matrix of POI */
+    auxUtil::printTitle("POI matrix");
+    ofstream fout(m_outputFileName + "_POIMatrix.txt");
+    TextTable t('-', '|', '+');
+    t.add("Combined");
+    for (int i = 0; i < num; i++)
+        t.add(m_summary[i].name_.Data());
+    t.endOfRow();
+
+    for (auto poi : m_pois)
+    {
+        t.add(poi.name.Data());
+        for (int i = 0; i < num; i++)
+            t.add(m_summary[i].poiMap_[poi.name].Data());
+        t.endOfRow();
+    }
+    fout << t;
+    cout << t;
+    fout.close();
 }

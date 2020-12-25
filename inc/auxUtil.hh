@@ -47,7 +47,7 @@ namespace auxUtil
   void closeFuncExpr(TString &expr);
   TString getObjName(TString inputName);
 
-  void defineSet(RooWorkspace *w, RooArgSet set, TString setName);
+  void defineSet(RooWorkspace *w, RooArgSet *set, TString setName);
   void defineSet(RooWorkspace *w, vector<TString> set, TString setName);
   TString implementObj(RooWorkspace *w, TString expr, bool checkExistBeforeImp = false);
   void collectEverything(ModelConfig *mc, RooArgSet *set);
@@ -80,9 +80,9 @@ namespace auxUtil
   void copyAttributes(const RooAbsArg &from, RooAbsArg &to);
   RooAbsPdf *factorizePdf(const RooArgSet &observables, RooAbsPdf &pdf, RooArgList &constraints);
   void linkMap(std::map<TString, TString> &attMap, TString &keyStr, TString &valueStr, TString linker = ",");
-  void deComposeGaus(TString gausStr, TString &pdf, TString &obs, TString &mean, double &sigma);
   void renameAndAdd(RooAbsArg *arg, TString name, RooArgSet &set);
   void getBasePdf(RooProdPdf *pdf, RooArgSet &set);
+  RooArgSet *findArgSetIn(RooWorkspace *w, RooArgSet *set, bool strict = false);
 }; // namespace auxUtil
 
 #endif

@@ -63,9 +63,9 @@ struct Channel
     varMap_ = ch.varMap_;
   }
 
-  bool operator==(const Channel &ch)
+  bool operator==(const char *chName)
   {
-    return name_ == ch.name_; /* Channel name should never be duplicated */
+    return name_ == chName; /* Channel name should never be duplicated */
   }
 
   void Print()
@@ -75,11 +75,6 @@ struct Channel
     spdlog::info("\tWorkspace Name: {}", wsName_.Data());
     spdlog::info("\tModelConfig Name: {}", mcName_.Data());
     spdlog::info("\tData Name: {}", dataName_.Data());
-
-    for (std::map<TString, TString>::iterator iterator = poiMap_.begin(); iterator != poiMap_.end(); iterator++)
-      spdlog::info("\t\tOld POI name: {} ---> New POI name: {}", iterator->first.Data(), iterator->second.Data());
-    for (std::map<TString, TString>::iterator iterator = varMap_.begin(); iterator != varMap_.end(); iterator++)
-      spdlog::info("\t\tOld variable name: {} ---> New variable name: {}", iterator->first.Data(), iterator->second.Data());
   }
 };
 
@@ -89,42 +84,67 @@ public:
   combiner();
   ~combiner() {}
 
-  void combineWorkspace();
-  void makeSnapshots();
+  void rename(bool saveTmpWs = true);
+  void combine(bool readTmpWs = false, bool saveRawWs = true);
+  void makeSnapshots(bool readRawWs = false);
 
   void readConfigXml(TString configFileName);
-  void readChannel(TXMLNode *rootNode);
 
-  RooArgSet *findArgSetIn(RooWorkspace *w, RooArgSet *set);
-  void printSummary()
+  void printSummary();
+
+  /* Multi-threading */
+  void setNumThreads(unsigned num) { m_numThreads = num; }
+  void join()
   {
-    int num = (int)m_summary.size();
-    auxUtil::printTitle(Form("Input summary (%d channels)", num));
-    for (int i = 0; i < num; i++)
+    for (auto &thread : thread_ptrs)
     {
-      m_summary[i].Print();
+      if (thread->joinable())
+        thread->join();
     }
   }
 
   static TString DUMMY;
   static TString WGTNAME;
+  static TString PDFPREFIX;
+  static TString DATAPREFIX;
+  static TString CATPREFIX;
+  static TString WSPOSTFIX;
+  static TString TMPPOSTFIX;
+  static TString RAWPOSTFIX;
 
 private:
+  void makeModelConfig();
+  void readChannel(TXMLNode *rootNode);
+
   std::vector<Channel> m_summary;
   std::vector<POI> m_pois;
-  Channel m_outSummary;
 
   TString m_wsName;
   TString m_mcName;
   TString m_dataName;
   TString m_pdfName;
   TString m_catName;
+  TString m_nuisName;
+  TString m_globName;
   TString m_outputFileName;
 
   std::unique_ptr<RooWorkspace> m_comb;
   std::unique_ptr<RooStats::ModelConfig> m_mc;
+  std::unique_ptr<RooArgSet> m_nuis;
+  std::unique_ptr<RooArgSet> m_glob;
+  std::unique_ptr<RooArgSet> m_obs;
 
+  /* Temporary workspace */
+  std::unique_ptr<RooWorkspace> m_tmpWs;
+  std::unique_ptr<TFile> m_inputFile;
+
+  /* Asimov handler */
   unique_ptr<asimovUtil> m_asimovHandler;
 
   bool m_strictMode;
+
+  /* Multi-threading */
+  unsigned m_numThreads;
+  std::vector<std::unique_ptr<std::thread>> thread_ptrs;
+  std::mutex mtx;
 };

@@ -161,7 +161,8 @@ int main(int argc, char **argv)
     comb.reset(new combiner());
     comb->readConfigXml(configFile_);
     comb->printSummary();
-    comb->combineWorkspace();
+    comb->rename();
+    comb->combine();
     comb->makeSnapshots();
   }
   else if (what_ == "split")

@@ -22,6 +22,8 @@
 #include <functional>
 #include <memory>
 #include <getopt.h>
+#include <thread>
+#include <mutex>
 
 /// ROOT headers
 #include <TROOT.h>
