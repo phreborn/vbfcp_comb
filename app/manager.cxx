@@ -139,14 +139,12 @@ int main(int argc, char **argv)
       printHelp(argv[0]);
       return 0;
     case ':': /* missing option argument */
-      fprintf(stderr, "%s: option `-%c' requires an argument\n",
-              argv[0], optopt);
+      spdlog::error("{}: option `-{}' requires an argument", argv[0], optopt);
       printHelp(argv[0]);
       return 0;
     case '?':
     default:
-      fprintf(stderr, "%s: option `-%c' is invalid: ignored\n",
-              argv[0], optopt);
+      spdlog::error("{}: option `-{}' is invalid: ignored\n", argv[0], optopt);
       printHelp(argv[0]);
       return 0;
     }
@@ -226,7 +224,7 @@ int main(int argc, char **argv)
   timer.Stop();
   double t_cpu_ = timer.CpuTime() / 60.;
   double t_real_ = timer.RealTime() / 60.;
-  printf("Done in %.2f min (cpu), %.2f min (real)\n", t_cpu_, t_real_);
+  spdlog::info("Done in {} min (cpu), {} min (real)", t_cpu_, t_real_);
 
   return 1;
 }

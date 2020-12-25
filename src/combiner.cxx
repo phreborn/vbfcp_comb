@@ -32,6 +32,10 @@ TString combiner::CATPREFIX = "__CAT_TMPWS__";
 TString combiner::WSPOSTFIX = "_tmp";
 TString combiner::TMPPOSTFIX = "_tmp.root";
 TString combiner::RAWPOSTFIX = "_raw.root";
+TString combiner::PDFNAME = "combPdf";
+TString combiner::CATNAME = "combCat";
+TString combiner::NUISNAME = "nuisanceParameters";
+TString combiner::GLOBNAME = "globalObservables";
 
 struct TOwnedList : public TList
 {
@@ -52,12 +56,9 @@ struct TOwnedList : public TList
 combiner::combiner() : m_wsName("combWS"),
                        m_mcName("ModelConfig"),
                        m_dataName("combData"),
-                       m_pdfName("combPdf"),
-                       m_catName("combCat"),
-                       m_nuisName("nuisanceParameters"),
-                       m_globName("globalObservables"),
                        m_outputFileName("combined.root"),
-                       m_strictMode(false)
+                       m_strictMode(false),
+                       m_numThreads(1)
 {
     m_asimovHandler.reset(new asimovUtil());
 }
@@ -321,7 +322,7 @@ void combiner::rename(bool saveTmpWs)
     for (int ich = 0; ich < m_numChannel; ich++)
     {
         TString channelName = m_summary[ich].name_;
-
+        spdlog::info("Renaming channel {}", channelName.Data());
         m_inputFile.reset(TFile::Open(m_summary[ich].fileName_));
         unique_ptr<RooWorkspace> w(dynamic_cast<RooWorkspace *>(m_inputFile->Get(m_summary[ich].wsName_)));
         RooStats::ModelConfig *mc = dynamic_cast<RooStats::ModelConfig *>(w->obj(m_summary[ich].mcName_));
@@ -428,12 +429,12 @@ void combiner::rename(bool saveTmpWs)
         m_tmpWs->import(*data, RooFit::RenameVariable(oldCatName, newCatName));
         m_nuis->add(*mc->GetNuisanceParameters()->snapshot(), true);
         m_glob->add(*mc->GetGlobalObservables()->snapshot(), true);
-        auxUtil::defineSet(m_tmpWs.get(), m_nuis.get(), m_nuisName);
-        auxUtil::defineSet(m_tmpWs.get(), m_glob.get(), m_globName);
         m_inputFile->Close();
     }
     if (saveTmpWs)
     {
+        auxUtil::defineSet(m_tmpWs.get(), m_nuis.get(), NUISNAME);
+        auxUtil::defineSet(m_tmpWs.get(), m_glob.get(), GLOBNAME);        
         unique_ptr<TFile> outputFile(TFile::Open(m_outputFileName + TMPPOSTFIX, "recreate"));
         outputFile->cd();
         m_tmpWs->Write();
@@ -448,14 +449,14 @@ void combiner::combine(bool readTmpWs, bool saveRawWs)
     {
         m_inputFile.reset(TFile::Open(m_outputFileName + TMPPOSTFIX));
         m_tmpWs.reset(dynamic_cast<RooWorkspace *>(m_inputFile->Get(m_wsName + WSPOSTFIX)));
-        m_nuis.reset(const_cast<RooArgSet *>(m_tmpWs->set(m_nuisName)));
-        m_glob.reset(const_cast<RooArgSet *>(m_tmpWs->set(m_globName)));
+        m_nuis.reset(const_cast<RooArgSet *>(m_tmpWs->set(NUISNAME)));
+        m_glob.reset(const_cast<RooArgSet *>(m_tmpWs->set(GLOBNAME)));
     }
 
     m_comb.reset(new RooWorkspace(m_wsName, m_wsName));
 
-    RooCategory combCat(m_catName, m_catName);
-    RooSimultaneous combPdf(m_pdfName, m_pdfName, combCat);
+    RooCategory combCat(CATNAME, CATNAME);
+    RooSimultaneous combPdf(PDFNAME, PDFNAME, combCat);
 
     m_obs.reset(new RooArgSet());
     RooRealVar weight(WGTNAME, "", 1.);
@@ -510,7 +511,7 @@ void combiner::combine(bool readTmpWs, bool saveRawWs)
             }
 
             /* make category */
-            TString type = Form("%s_%s_%s", m_catName.Data(), indivCat->getLabel(), channelName.Data());
+            TString type = Form("%s_%s_%s", CATNAME.Data(), indivCat->getLabel(), channelName.Data());
 
             spdlog::info("\tNew category name --> {}", type.Data());
 
@@ -595,7 +596,7 @@ void combiner::makeModelConfig()
     m_mc.reset(new ModelConfig(m_mcName, m_comb.get()));
     m_mc->SetWorkspace(*m_comb);
 
-    m_mc->SetPdf(*m_comb->pdf(m_pdfName));
+    m_mc->SetPdf(*m_comb->pdf(PDFNAME));
     m_mc->SetProtoData(*m_comb->data(m_dataName));
     m_mc->SetParametersOfInterest(poi);
 
@@ -611,7 +612,7 @@ void combiner::makeModelConfig()
     // m_mc->GetNuisanceParameters()->Print();
     spdlog::info("There are {} global observables", m_mc->GetGlobalObservables()->getSize());
     // m_mc->GetGlobalObservables()->Print();
-    spdlog::info("There are {} pois\n", poi.getSize());
+    spdlog::info("There are {} pois", poi.getSize());
     // m_mc->GetParametersOfInterest()->Print();
 }
 

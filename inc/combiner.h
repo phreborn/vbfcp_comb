@@ -111,6 +111,10 @@ public:
   static TString WSPOSTFIX;
   static TString TMPPOSTFIX;
   static TString RAWPOSTFIX;
+  static TString CATNAME;
+  static TString NUISNAME;
+  static TString GLOBNAME;
+  static TString PDFNAME;
 
 private:
   void makeModelConfig();
@@ -122,10 +126,6 @@ private:
   TString m_wsName;
   TString m_mcName;
   TString m_dataName;
-  TString m_pdfName;
-  TString m_catName;
-  TString m_nuisName;
-  TString m_globName;
   TString m_outputFileName;
 
   std::unique_ptr<RooWorkspace> m_comb;
