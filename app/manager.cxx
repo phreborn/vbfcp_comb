@@ -109,31 +109,31 @@ int main(int argc, char **argv)
       break;
     case 'v':
       verbose_ = auxUtil::to_bool(optarg);
-      cout << "Set verbose mode to " << verbose_ << endl;
+      spdlog::info("Set verbose mode to {}", verbose_);
       break;
     case 'm':
       fitUtil::_minimizerAlgo = optarg;
-      cout << "Set minimizer algorithm to " << fitUtil::_minimizerAlgo << endl;
+      spdlog::info("Set minimizer algorithm to {}", fitUtil::_minimizerAlgo.c_str());
       break;
     case 's':
       fitUtil::_minimizerStrategy = atoi(optarg);
-      cout << "Set minimizer strategy to " << fitUtil::_minimizerStrategy << endl;
+      spdlog::info("Set minimizer strategy to {}", fitUtil::_minimizerStrategy);
       break;
     case 't':
       fitUtil::_minimizerTolerance = atof(optarg);
-      cout << "Set minimizer tolerance to " << fitUtil::_minimizerTolerance << endl;
+      spdlog::info("Set minimizer tolerance to {}", fitUtil::_minimizerTolerance);
       break;
     case 'n':
       fitUtil::_nllOffset = auxUtil::to_bool(optarg);
-      cout << "Set NLL offset to " << fitUtil::_nllOffset << endl;
+      spdlog::info("Set NLL offset to {}", fitUtil::_nllOffset);
       break;
     case 'c':
       fitUtil::_constOpt = auxUtil::to_bool(optarg);
-      cout << "Set constant optimization to " << fitUtil::_constOpt << endl;
+      spdlog::info("Set constant optimization to {}", fitUtil::_constOpt);
       break;
     case 'r':
       editRFV_ = auxUtil::to_bool(optarg);
-      cout << "Set editing RooFormulaVar to " << editRFV_ << endl;
+      spdlog::info("Set editing RooFormulaVar to {}", editRFV_);
       break;
     case 'h':
       printHelp(argv[0]);
@@ -218,7 +218,7 @@ int main(int argc, char **argv)
   }
   else
   {
-    std::cout << "Should at least point out what to do... " << std::endl;
+    spdlog::error("Should at least point out what to do... ");
     EXIT_FAILURE;
   }
 
