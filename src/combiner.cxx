@@ -412,7 +412,7 @@ void combiner::rename_core()
         pdf->SetName(PDFPREFIX + channelName);
         data->SetName(DATAPREFIX + channelName);
 
-        // inputFile->Close();
+        spdlog::info("Channel {} finished", channelName.Data());
     } while (m_idx < m_summary.size());
 }
 
