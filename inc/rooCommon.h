@@ -19,8 +19,3 @@
 /* Put the custom class headers here */
 #include "RooFormulaVarExt.h"
 #include "FlexibleInterpVarExt.h"
-#include "FlexibleInterpVarMkII.h"
-#include "RooFitExtensions/RooTwoSidedCBShape.h"
-#include "RooFitExtensions/RooEmpXHistShape.h"
-#include "HggMG5aMCNLOLineShapePdf.h"
-#include "Background.h"

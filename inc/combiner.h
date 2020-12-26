@@ -128,10 +128,11 @@ public:
 private:
   void makeModelConfig();
   void readChannel(TXMLNode *rootNode);
+  void readRenameMap(Channel &channel, TXMLNode *node, RooWorkspace *w);
   void rename_core();
   void combine_core();
   void join();
-  
+
   std::vector<Channel> m_summary;
   std::vector<POI> m_pois;
 

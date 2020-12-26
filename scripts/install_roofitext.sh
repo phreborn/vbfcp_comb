@@ -10,12 +10,20 @@ fi
 if [ ! -d ${outputDir}/RooFitExtensions ]; then
     mkdir -vp ${outputDir}
     echo "Cloning RooFitExtensions into target directory ${outputDir}..."
-    git clone https://gitlab.cern.ch/atlas_higgs_combination/software/RooFitExtensions.git ${outputDir}/RooFitExtensions
-    if [ -d ${outputDir}/RooFitExtensions ]; then
-        pushd ${outputDir}/RooFitExtensions
-        cmake . && make -j 4
-        popd
-    fi
-
-    export RooFitExtensions_DIR=${outputDir}/RooFitExtensions
+    git clone ssh://git@gitlab.cern.ch:7999/atlas_higgs_combination/software/RooFitExtensions.git ${outputDir}/RooFitExtensions
 fi
+
+if [ -d ${outputDir}/RooFitExtensions ]; then
+    pushd ${outputDir}/RooFitExtensions
+    git pull
+    mkdir -vp build
+    cd build
+    cmake ../ -D CMAKE_INSTALL_PREFIX=${outputDir}/RooFitExtensions
+    make -j 4
+    make install
+    cd -
+    popd
+fi
+
+export RooFitExtensions_DIR=${outputDir}/RooFitExtensions
+cp ${outputDir}/RooFitExtensions/lib/* ${outputDir}/lib/

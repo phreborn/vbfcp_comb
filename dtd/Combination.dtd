@@ -35,7 +35,11 @@
         Input                  CDATA            #IMPLIED
 > 
 
-<!ELEMENT RenameMap (Syst+)>
+<!ELEMENT RenameMap (Syst*)>
+<!ATTLIST RenameMap
+        InputFile              CDATA           #IMPLIED
+>
+
 <!ELEMENT Syst EMPTY>
 <!ATTLIST Syst
         OldName               CDATA            #REQUIRED
