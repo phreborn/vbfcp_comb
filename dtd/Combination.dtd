@@ -26,6 +26,7 @@
         WorkspaceName      CDATA            #REQUIRED
         ModelConfigName    CDATA            #REQUIRED
         DataName           CDATA            #REQUIRED
+        SimplifiedImport   CDATA            #IMPLIED
 > 
 
 <!ELEMENT POIList EMPTY>

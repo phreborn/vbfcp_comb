@@ -49,18 +49,7 @@ struct Channel
   std::map<TString, TString> poiMap_;
   std::map<TString, TString> varMap_;
 
-  void operator=(const Channel &ch)
-  {
-    name_ = ch.name_;
-    fileName_ = ch.fileName_;
-    wsName_ = ch.wsName_;
-    mcName_ = ch.mcName_;
-    dataName_ = ch.dataName_;
-    renameMap_ = ch.renameMap_;
-    pdfMap_ = ch.pdfMap_;
-    poiMap_ = ch.poiMap_;
-    varMap_ = ch.varMap_;
-  }
+  bool simplifiedImport_;
 
   bool operator==(const char *chName)
   {
@@ -127,9 +116,6 @@ public:
 
   static TString DUMMY;
   static TString WGTNAME;
-  static TString PDFPREFIX;
-  static TString DATAPREFIX;
-  static TString CATPREFIX;
   static TString WSPOSTFIX;
   static TString TMPPOSTFIX;
   static TString RAWPOSTFIX;
