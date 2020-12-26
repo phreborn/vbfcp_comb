@@ -33,6 +33,8 @@ TString combiner::PDFNAME = "combPdf";
 TString combiner::CATNAME = "combCat";
 TString combiner::NUISNAME = "nuisanceParameters";
 TString combiner::GLOBNAME = "globalObservables";
+TString combiner::OBSNAME = "observables";
+TString combiner::POINAME = "POI";
 TString combiner::CONSTRPOSTFIX = "_Pdf";
 TString combiner::GOPOSTFIX = "_In";
 
@@ -332,7 +334,13 @@ void combiner::rename_core()
 
         /* Bookkeeping */
         vector<TString> ignoreList; /* Not using RooArgSet due to potential hash table issue after renaming */
+        RooArgSet allVars, allPdfs;
 
+        if (!channel.simplifiedImport_)
+        {
+            allVars.add(w->allVars());
+            allPdfs.add(w->allPdfs());
+        }
         /* let global observables fixed, and nuisances parameters float */
         RooStats::SetAllConstant(*mc->GetNuisanceParameters(), false);
         RooStats::SetAllConstant(*mc->GetGlobalObservables(), true);
@@ -341,15 +349,21 @@ void combiner::rename_core()
         /* Removed for now */
         for (std::map<TString, TString>::iterator it = channel.pdfMap_.begin(); it != channel.pdfMap_.end(); it++)
         {
+            if (!channel.simplifiedImport_)
+                allPdfs.remove(*w->pdf(it->first));
+            else
+                ignoreList.push_back(it->second);
             w->pdf(it->first)->SetName(it->second);
-            ignoreList.push_back(it->second);
         }
 
         /* Rename free floating NPs already now to keep track of them */
         for (std::map<TString, TString>::iterator it = channel.varMap_.begin(); it != channel.varMap_.end(); it++)
         {
+            if (!channel.simplifiedImport_)
+                allVars.remove(*w->var(it->first));
+            else
+                ignoreList.push_back(it->second);
             w->var(it->first)->SetName(it->second);
-            ignoreList.push_back(it->second);
         }
 
         /* Rename POIs */
@@ -357,23 +371,16 @@ void combiner::rename_core()
         {
             if (it->second == DUMMY)
                 continue;
+            if (!channel.simplifiedImport_)
+                allVars.remove(*w->var(it->second));
+            else
+                ignoreList.push_back(it->first);
             w->var(it->second)->SetName(it->first);
-            ignoreList.push_back(it->first);
         }
-
-        /* Rename key objects */
-        TString oldCatName = pdf->indexCat().GetName();
-        TString newCatName = CATNAME + "_" + channelName;
-
-        pdf->SetName(PDFNAME + "_" + channelName);
-        data->SetName(m_dataName + "_" + channelName);
 
         if (channel.simplifiedImport_)
         {
             spdlog::info("Simplified import requested for channel {}. Will only rename constraint PDFs, nuisance parameters, and global observables.", channelName.Data());
-            exceptionStr.Strip(TString::kTrailing, ',');
-
-            vector<TString> exceptionList = auxUtil::splitString(exceptionStr, ',');
 
             unique_ptr<TIterator> it(mc->GetGlobalObservables()->createIterator());
             for (RooRealVar *arg = dynamic_cast<RooRealVar *>(it->Next()); arg != 0; arg = dynamic_cast<RooRealVar *>(it->Next()))
@@ -402,24 +409,27 @@ void combiner::rename_core()
         else{
             /* Exclude observables */
             unique_ptr<RooArgSet> tmpObs(pdf->getObservables(*data));
-            unique_ptr<TIterator> it(tmpObs->createIterator());
-            for (RooAbsArg *arg = dynamic_cast<RooAbsArg *>(it->Next()); arg != 0; arg = dynamic_cast<RooAbsArg *>(it->Next()))
-                ignoreList.push_back(arg->GetName());
+            allVars.remove(*tmpObs);
 
-            unique_ptr<RooArgSet> everything(new RooArgSet(channelName + "_everything"));
-            everything->add(w->allVars());
-            everything->add(w->allFunctions());
-            everything->add(w->allPdfs());
+            RooArgSet everything = w->allFunctions();
+            everything.add(allVars);
+            everything.add(allPdfs);
 
             /* Rename everything */
-            it.reset(everything->createIterator());
+            unique_ptr<TIterator> it(everything.createIterator());
             for (RooAbsArg *arg = dynamic_cast<RooAbsArg *>(it->Next()); arg != 0; arg = dynamic_cast<RooAbsArg *>(it->Next()))
             {
-                TString curName = v->GetName();
-                if (find(ignoreList.begin(), ignoreList.end(), curName) == ignoreList.end())
-                    v->SetName(curName + "_" + channelName));
+                TString curName = arg->GetName();
+                arg->SetName(curName + "_" + channelName);
             }
         }
+
+        /* Rename key objects */
+        TString oldCatName = pdf->indexCat().GetName();
+        TString newCatName = CATNAME + "_" + channelName;
+
+        pdf->SetName(PDFNAME + "_" + channelName);
+        data->SetName(m_dataName + "_" + channelName);
 
         lk.lock();
         m_tmpWs->import(*pdf, RenameVariable(oldCatName, newCatName), RecycleConflictNodes(), Silence());
@@ -457,7 +467,6 @@ void combiner::rename(bool saveTmpWs)
         spdlog::info("  -> Processor thread #{} started!", i);
     }
     join();
-    m_thread_ptrs.clear();
 
     for (int ich = 0; ich < numChannels; ich++)
     {
@@ -470,8 +479,11 @@ void combiner::rename(bool saveTmpWs)
 
     if (saveTmpWs)
     {
-        auxUtil::defineSet(m_tmpWs.get(), m_nuis.get(), NUISNAME);
-        auxUtil::defineSet(m_tmpWs.get(), m_glob.get(), GLOBNAME);        
+        /* Noticed that when running in concurrency mode, the hash table will sometimes be missing */
+        /* Therefore force importing all variables in the set, whether it can be found or not */
+        /* Hope this bug will be fixed in RooFit soon (enforce rehash?) */
+        m_tmpWs->defineSet(NUISNAME, *m_nuis, true);
+        m_tmpWs->defineSet(GLOBNAME, *m_glob, true);
         unique_ptr<TFile> outputFile(TFile::Open(m_outputFileName + TMPPOSTFIX, "recreate"));
         outputFile->cd();
         m_tmpWs->Write();
@@ -484,10 +496,11 @@ void combiner::combine(bool readTmpWs, bool saveRawWs)
     auxUtil::printTitle("Combining likelihood and dataset", "-");
     if (readTmpWs)
     {
+        spdlog::info("Reading file {}", (m_outputFileName + TMPPOSTFIX).Data());
         m_inputFile.reset(TFile::Open(m_outputFileName + TMPPOSTFIX));
         m_tmpWs.reset(dynamic_cast<RooWorkspace *>(m_inputFile->Get(m_wsName + WSPOSTFIX)));
-        m_nuis.reset(const_cast<RooArgSet *>(m_tmpWs->set(NUISNAME)));
-        m_glob.reset(const_cast<RooArgSet *>(m_tmpWs->set(GLOBNAME)));
+        m_nuis.reset(m_tmpWs->set(NUISNAME)->snapshot());
+        m_glob.reset(m_tmpWs->set(GLOBNAME)->snapshot());
     }
 
     m_comb.reset(new RooWorkspace(m_wsName, m_wsName));
@@ -524,7 +537,6 @@ void combiner::combine(bool readTmpWs, bool saveRawWs)
             spdlog::info("  -> Processor thread #{} started!", i);
         }
         join();
-        m_thread_ptrs.clear();
     }
     m_comb->import(*m_combPdf);
     spdlog::info("Combined pdf created");
@@ -537,15 +549,12 @@ void combiner::combine(bool readTmpWs, bool saveRawWs)
     m_comb->import(combData);
     spdlog::info("Combined dataset created");
 
-    /* Redefine the variable sets */
-    m_nuis.reset(auxUtil::findArgSetIn(m_comb.get(), m_nuis.get(), m_strictMode));
-    m_glob.reset(auxUtil::findArgSetIn(m_comb.get(), m_glob.get(), m_strictMode));
-    m_obs.reset(auxUtil::findArgSetIn(m_comb.get(), m_obs.get(), m_strictMode));
+    m_comb->defineSet(OBSNAME, *m_obs, true);
+    m_comb->defineSet(GLOBNAME, *m_glob, true);
+    m_comb->defineSet(NUISNAME, *m_nuis, true);
 
     if (m_inputFile.get())
         m_inputFile->Close();
-
-    makeModelConfig();
 
     if (saveRawWs)
     {
@@ -654,20 +663,24 @@ void combiner::makeModelConfig()
     // m_mc->GetParametersOfInterest()->Print();
 }
 
-void combiner::makeSnapshots(bool readRawWs)
+void combiner::finalize(bool readRawWs)
 {
-    auxUtil::printTitle("Creating snapshot/Asimov", "-");
-
+    auxUtil::printTitle("Creating ModelConfig & snapshot/Asimov", "-");
     if (readRawWs)
     {
+        spdlog::info("Reading file {}", (m_outputFileName + RAWPOSTFIX).Data());
         m_inputFile.reset(TFile::Open(m_outputFileName + RAWPOSTFIX));
         m_comb.reset(dynamic_cast<RooWorkspace*>(m_inputFile->Get(m_wsName)));
-        m_mc.reset(dynamic_cast<ModelConfig*>(m_comb->obj(m_mcName)));
+        m_obs.reset(m_comb->set(OBSNAME)->snapshot());
+        m_nuis.reset(m_comb->set(NUISNAME)->snapshot());
+        m_glob.reset(m_comb->set(GLOBNAME)->snapshot());
     }
 
+    makeModelConfig();
+    /* Make snapshots */
     if (m_asimovHandler->genAsimov())
         m_asimovHandler->generateAsimov(m_mc.get(), m_dataName);
-
+    
     if (m_inputFile.get())
         m_inputFile->Close();
     unique_ptr<TFile> outputFile(TFile::Open(m_outputFileName, "recreate"));
@@ -703,4 +716,13 @@ void combiner::printSummary()
     fout << t;
     cout << t;
     fout.close();
+}
+
+void combiner::join()
+{
+    for (auto &thread : m_thread_ptrs)
+    {
+      if (thread->joinable())
+        thread->join();
+    }
 }

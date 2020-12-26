@@ -1,6 +1,6 @@
 ##################################################################################################
 # Package: workspaceCombiner #####################################################################
-cmake_minimum_required( VERSION 2.8 )
+cmake_minimum_required( VERSION 3.1 )
 
 # Declare the package name:
 project( workspaceCombiner )
@@ -11,6 +11,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 set(CMAKE_INSTALL_LIBDIR ${PROJECT_SOURCE_DIR}/lib)
 set(TARGET_INSTALL_AREA ${PROJECT_SOURCE_DIR})
 set(SHARED_INSTALL_AREA ${PROJECT_SOURCE_DIR}/lib)
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
 
 file(MAKE_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
 file(MAKE_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
@@ -39,15 +41,15 @@ file(GLOB incPaths inc/*)
 file(GLOB srcPaths src/*)
 
 foreach (_incPath ${incPaths})
-	get_filename_component(_incName ${_incPath} NAME)
-    	if(NOT ${_incName} MATCHES "manager_LinkDef.h" AND NOT ${_incName} MATCHES "spdlog")
-    	       list(APPEND workspaceCombinerHeaders ${_incName})
-	endif()
+    get_filename_component(_incName ${_incPath} NAME)
+        if(NOT ${_incName} MATCHES "manager_LinkDef.h" AND NOT ${_incName} MATCHES "spdlog")
+               list(APPEND workspaceCombinerHeaders ${_incName})
+    endif()
 endforeach()
 
 foreach (_srcPath ${srcPaths})
-	get_filename_component(_srcName ${_srcPath} NAME)
-	list(APPEND workspaceCombinerSources "src/${_srcName}")
+    get_filename_component(_srcName ${_srcPath} NAME)
+    list(APPEND workspaceCombinerSources "src/${_srcName}")
 endforeach()
 
 # generate the dictionary source code
@@ -63,11 +65,11 @@ file(GLOB exePaths app/*)
 set(workspaceCombinerApp "")
 
 foreach (_exePath ${exePaths})
-	get_filename_component(_exeName ${_exePath} NAME_WE)
-	get_filename_component(_exeFile ${_exePath} NAME)
-	add_executable(${_exeName} app/${_exeFile})
-    	target_link_libraries(${_exeName} workspaceCombiner)
-	list(APPEND workspaceCombinerApp ${_exeName})
+    get_filename_component(_exeName ${_exePath} NAME_WE)
+    get_filename_component(_exeFile ${_exePath} NAME)
+    add_executable(${_exeName} app/${_exeFile})
+    target_link_libraries(${_exeName} workspaceCombiner Threads::Threads)
+    list(APPEND workspaceCombinerApp ${_exeName})
 endforeach()
 
 install(TARGETS ${workspaceCombinerApp} DESTINATION bin)

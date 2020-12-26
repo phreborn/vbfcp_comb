@@ -97,10 +97,8 @@ public:
 
   void rename(bool saveTmpWs = true);
   void combine(bool readTmpWs = false, bool saveRawWs = true);
-  void makeSnapshots(bool readRawWs = false);
-
+  void finalize(bool readRawWs = false);
   void readConfigXml(TString configFileName);
-
   void printSummary();
 
   /* Multi-threading */
@@ -113,15 +111,6 @@ public:
     }
   }
 
-  void join()
-  {
-    for (auto &thread : m_thread_ptrs)
-    {
-      if (thread->joinable())
-        thread->join();
-    }
-  }
-
   static TString DUMMY;
   static TString WGTNAME;
   static TString WSPOSTFIX;
@@ -130,6 +119,8 @@ public:
   static TString CATNAME;
   static TString NUISNAME;
   static TString GLOBNAME;
+  static TString OBSNAME;
+  static TString POINAME;
   static TString PDFNAME;
   static TString CONSTRPOSTFIX;
   static TString GOPOSTFIX;
@@ -139,7 +130,8 @@ private:
   void readChannel(TXMLNode *rootNode);
   void rename_core();
   void combine_core();
-
+  void join();
+  
   std::vector<Channel> m_summary;
   std::vector<POI> m_pois;
 

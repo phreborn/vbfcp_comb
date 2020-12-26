@@ -165,9 +165,9 @@ int main(int argc, char **argv)
     comb->setNumThreads(numThreads_);
     comb->readConfigXml(configFile_);
     comb->printSummary();
-    comb->rename();
-    comb->combine();
-    comb->makeSnapshots();
+    comb->rename(true);
+    comb->combine(true, true);
+    comb->finalize(true);
   }
   else if (what_ == "split")
   {
