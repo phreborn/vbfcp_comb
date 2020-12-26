@@ -175,8 +175,7 @@ private:
   /* Multi-threading */
   unsigned m_numThreads;
   std::vector<std::unique_ptr<std::thread>> m_thread_ptrs;
-  std::mutex m_mutex1;
-  std::mutex m_mutex2;
+  std::mutex m_mutex;
   int m_idx;
   int m_total;
   RooSimultaneous *m_curPdf;
