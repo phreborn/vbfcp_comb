@@ -313,13 +313,14 @@ void combiner::readChannel(TXMLNode *rootNode)
 
 void combiner::rename_core()
 {
-    std::unique_lock<std::mutex> lk(m_mutex, std::defer_lock);
+    std::unique_lock<std::mutex> lk1(m_mutex1, std::defer_lock);
+    std::unique_lock<std::mutex> lk2(m_mutex2, std::defer_lock);
     do
     {
-        lk.lock();
+        lk1.lock();
         if (m_idx >= m_summary.size())
         {
-            lk.unlock();
+            lk1.unlock();
             break;
         }
             
@@ -328,7 +329,7 @@ void combiner::rename_core()
         TString channelName = channel.name_;
         spdlog::info("Renaming channel {} {}", m_idx, channelName.Data());        
         m_idx++;
-        lk.unlock();
+        lk1.unlock();
 
         // unique_ptr<TFile> inputFile(TFile::Open(channel.fileName_));
         // RooWorkspace *w = dynamic_cast<RooWorkspace *>(inputFile->Get(channel.wsName_));
@@ -419,13 +420,13 @@ void combiner::rename_core()
         cat->SetName(newCatName);
         std::this_thread::sleep_for(std::chrono::microseconds(100));
 
-        lk.lock();
+        lk2.lock();
         m_tmpWs->import(*pdf, RecycleConflictNodes(), Silence());
         m_tmpWs->import(*data, RooFit::RenameVariable(oldCatName, newCatName));
         m_nuis->add(*mc->GetNuisanceParameters()->snapshot(), true);
         m_glob->add(*mc->GetGlobalObservables()->snapshot(), true);
         spdlog::info("Channel {} finished", channelName.Data());
-        lk.unlock();
+        lk2.unlock();
     } while (m_idx < m_summary.size());
 }
 
@@ -553,14 +554,14 @@ void combiner::combine(bool readTmpWs, bool saveRawWs)
 
 void combiner::combine_core()
 {
-    std::unique_lock<std::mutex> lk(m_mutex, std::defer_lock);
-
+    std::unique_lock<std::mutex> lk1(m_mutex1, std::defer_lock);
+    std::unique_lock<std::mutex> lk2(m_mutex2, std::defer_lock);
     do
     {
-        lk.lock();
+        lk1.lock();
         if (m_idx >= m_total)
         {
-            lk.unlock();
+            lk1.unlock();
             break;
         }
            
@@ -573,7 +574,7 @@ void combiner::combine_core()
         RooDataSet *datai = (RooDataSet *)(m_curDataList->FindObject(catName));        
         m_idx++;
         std::this_thread::sleep_for(std::chrono::microseconds(10));
-        lk.unlock();
+        lk1.unlock();
 
         /* Make data */
         unique_ptr<RooArgSet> indivObs(pdfi->getObservables(*datai));
@@ -588,14 +589,14 @@ void combiner::combine_core()
             dataNew_i->add(obsAndWgt, dataWgt);
         }
 
-        lk.lock();
+        lk2.lock();
         m_keep.Add(dataNew_i);        
         
         m_combCat->defineType(type);
         m_combPdf->addPdf(*pdfi, type);
         m_dataMap[type.Data()] = dataNew_i;
         m_obs->add(*indivObs->snapshot(), true);
-        lk.unlock();
+        lk2.unlock();
     } while (m_idx < m_total);
 }
 
