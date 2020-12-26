@@ -407,12 +407,25 @@ void combiner::rename_core()
         std::unique_ptr<TIterator> fiter(everything->createIterator());
         for (RooAbsReal *v = (RooAbsReal *)fiter->Next(); v != 0; v = (RooAbsReal *)fiter->Next())
             v->SetName((TString(v->GetName()) + "_" + channelName));
+        std::this_thread::sleep_for(std::chrono::microseconds(100));
 
         /* Rename key objects */
         pdf->SetName(PDFPREFIX + channelName);
         data->SetName(DATAPREFIX + channelName);
 
+        RooCategory *cat = dynamic_cast<RooCategory *>(w->obj(pdf->indexCat().GetName()));
+        TString oldCatName = cat->GetName();
+        TString newCatName = CATPREFIX + channelName;
+        cat->SetName(newCatName);
+        std::this_thread::sleep_for(std::chrono::microseconds(100));
+
+        lk.lock();
+        m_tmpWs->import(*pdf, RecycleConflictNodes(), Silence());
+        m_tmpWs->import(*data, RooFit::RenameVariable(oldCatName, newCatName));
+        m_nuis->add(*mc->GetNuisanceParameters()->snapshot(), true);
+        m_glob->add(*mc->GetGlobalObservables()->snapshot(), true);
         spdlog::info("Channel {} finished", channelName.Data());
+        lk.unlock();
     } while (m_idx < m_summary.size());
 }
 
@@ -446,20 +459,10 @@ void combiner::rename(bool saveTmpWs)
 
     for (int ich = 0; ich < numChannels; ich++)
     {
-        TString channelName = m_summary[ich].name_;
-        RooStats::ModelConfig *mc = dynamic_cast<RooStats::ModelConfig *>(m_wArr[ich]->obj(m_summary[ich].mcName_));
-        RooAbsData *data = m_wArr[ich]->data(DATAPREFIX + channelName);
-        RooSimultaneous *pdf = dynamic_cast<RooSimultaneous *>(m_wArr[ich]->pdf(PDFPREFIX + channelName));
-
-        RooCategory *cat = dynamic_cast<RooCategory *>(m_wArr[ich]->obj(pdf->indexCat().GetName()));
-        TString oldCatName = cat->GetName();
-        TString newCatName = CATPREFIX + channelName;
-        cat->SetName(newCatName);
-
-        m_tmpWs->import(*pdf, RecycleConflictNodes(), Silence());
-        m_tmpWs->import(*data, RooFit::RenameVariable(oldCatName, newCatName));
-        m_nuis->add(*mc->GetNuisanceParameters()->snapshot(), true);
-        m_glob->add(*mc->GetGlobalObservables()->snapshot(), true);
+        // TString channelName = m_summary[ich].name_;
+        // RooStats::ModelConfig *mc = dynamic_cast<RooStats::ModelConfig *>(m_wArr[ich]->obj(m_summary[ich].mcName_));
+        // RooAbsData *data = m_wArr[ich]->data(DATAPREFIX + channelName);
+        // RooSimultaneous *pdf = dynamic_cast<RooSimultaneous *>(m_wArr[ich]->pdf(PDFPREFIX + channelName));
         fileArr[ich]->Close();
     }
 
