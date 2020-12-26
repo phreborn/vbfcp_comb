@@ -232,13 +232,9 @@ void combiner::rename_core()
 
         /* Bookkeeping */
         vector<TString> ignoreList; /* Not using RooArgSet due to potential hash table issue after renaming */
-        RooArgSet allVars, allPdfs;
+        RooArgSet allVars = w->allVars();
+        RooArgSet allPdfs = w->allPdfs();
 
-        if (!channel.simplifiedImport_)
-        {
-            allVars.add(w->allVars());
-            allPdfs.add(w->allPdfs());
-        }
         /* let global observables fixed, and nuisances parameters float */
         RooStats::SetAllConstant(*mc->GetNuisanceParameters(), false);
         RooStats::SetAllConstant(*mc->GetGlobalObservables(), true);
@@ -309,17 +305,30 @@ void combiner::rename_core()
             unique_ptr<RooArgSet> tmpObs(pdf->getObservables(*data));
             allVars.remove(*tmpObs);
 
-            RooArgSet everything = w->allFunctions();
-            everything.add(allVars);
-            everything.add(allPdfs);
+            RooArgSet allFunc = w->allFunctions();
 
             /* Rename everything */
-            unique_ptr<TIterator> it(everything.createIterator());
+            unique_ptr<TIterator> it(allFunc.createIterator());
             for (RooAbsArg *arg = dynamic_cast<RooAbsArg *>(it->Next()); arg != 0; arg = dynamic_cast<RooAbsArg *>(it->Next()))
             {
                 TString curName = arg->GetName();
                 arg->SetName(curName + "_" + channelName);
             }
+            spdlog::info("All functions in channel {} {} renamed", ich, channelName.Data());
+            it.reset(allPdfs.createIterator());
+            for (RooAbsArg *arg = dynamic_cast<RooAbsArg *>(it->Next()); arg != 0; arg = dynamic_cast<RooAbsArg *>(it->Next()))
+            {
+                TString curName = arg->GetName();
+                arg->SetName(curName + "_" + channelName);
+            }
+            spdlog::info("All PDFs in channel {} {} renamed", ich, channelName.Data());
+            it.reset(allVars.createIterator());
+            for (RooAbsArg *arg = dynamic_cast<RooAbsArg *>(it->Next()); arg != 0; arg = dynamic_cast<RooAbsArg *>(it->Next()))
+            {
+                TString curName = arg->GetName();
+                arg->SetName(curName + "_" + channelName);
+            }
+            spdlog::info("All variables in channel {} {} renamed", ich, channelName.Data());            
         }
 
         /* Rename key objects */

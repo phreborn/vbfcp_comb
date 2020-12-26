@@ -18,7 +18,7 @@ if [ -d ${outputDir}/RooFitExtensions ]; then
     git pull
     mkdir -vp build
     cd build
-    cmake ../ -D CMAKE_INSTALL_PREFIX=${outputDir}/RooFitExtensions
+    cmake ../ -DCMAKE_INSTALL_PREFIX=${outputDir}/RooFitExtensions
     make -j 4
     make install
     cd -
