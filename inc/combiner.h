@@ -42,9 +42,8 @@ struct Channel
   TString fileName_;
   TString wsName_;
   TString mcName_;
-
   TString dataName_;
-  TString categoryName_;
+
   std::map<TString, TString> renameMap_;
   std::map<TString, TString> pdfMap_;
   std::map<TString, TString> poiMap_;
@@ -78,11 +77,34 @@ struct Channel
   }
 };
 
+struct TOwnedList : public TList
+{
+    // A collection class for keeping TObjects for deletion.
+    // TOwnedList is like TList with SetOwner(), but really deletes all objects, whether or not on heap.
+    // This is a horrible hack to work round the fact that RooArgSet and RooDataSet objects have have IsOnHeap() false.
+    TOwnedList() : TList() { SetOwner(); }
+    virtual ~TOwnedList() { Clear(); }
+    virtual void Clear(Option_t *option = "")
+    {
+        if (!option || strcmp(option, "nodelete") != 0)
+            for (TIter it(this); TObject *obj = it();)
+                SafeDelete(obj);
+        TList::Clear("nodelete");
+    }
+};
+
 class combiner
 {
 public:
   combiner();
-  ~combiner() {}
+  ~combiner()
+  {
+    m_thread_ptrs.clear();
+    m_wArr.clear();
+    m_keep.Clear();
+    m_summary.clear();
+    m_pois.clear();
+  }
 
   void rename(bool saveTmpWs = true);
   void combine(bool readTmpWs = false, bool saveRawWs = true);
@@ -96,7 +118,7 @@ public:
   void setNumThreads(unsigned num) { m_numThreads = num; }
   void join()
   {
-    for (auto &thread : thread_ptrs)
+    for (auto &thread : m_thread_ptrs)
     {
       if (thread->joinable())
         thread->join();
@@ -115,10 +137,14 @@ public:
   static TString NUISNAME;
   static TString GLOBNAME;
   static TString PDFNAME;
+  static TString CONSTRPOSTFIX;
+  static TString GOPOSTFIX;
 
 private:
   void makeModelConfig();
   void readChannel(TXMLNode *rootNode);
+  void rename_core();
+  void combine_core();
 
   std::vector<Channel> m_summary;
   std::vector<POI> m_pois;
@@ -133,6 +159,9 @@ private:
   std::unique_ptr<RooArgSet> m_nuis;
   std::unique_ptr<RooArgSet> m_glob;
   std::unique_ptr<RooArgSet> m_obs;
+  map<string, RooDataSet *> m_dataMap;
+  std::unique_ptr<RooSimultaneous> m_combPdf;
+  std::unique_ptr<RooCategory> m_combCat;
 
   /* Temporary workspace */
   std::unique_ptr<RooWorkspace> m_tmpWs;
@@ -145,6 +174,14 @@ private:
 
   /* Multi-threading */
   unsigned m_numThreads;
-  std::vector<std::unique_ptr<std::thread>> thread_ptrs;
-  std::mutex mtx;
+  std::vector<std::unique_ptr<std::thread>> m_thread_ptrs;
+  std::mutex m_mutex;
+  int m_idx;
+  int m_total;
+  RooSimultaneous *m_curPdf;
+  TList *m_curDataList;
+  RooCategory *m_curCat;
+  TString m_catNamePrefix;
+  TOwnedList m_keep;
+  std::vector<RooWorkspace *> m_wArr;
 };

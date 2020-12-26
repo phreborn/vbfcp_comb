@@ -36,22 +36,8 @@ TString combiner::PDFNAME = "combPdf";
 TString combiner::CATNAME = "combCat";
 TString combiner::NUISNAME = "nuisanceParameters";
 TString combiner::GLOBNAME = "globalObservables";
-
-struct TOwnedList : public TList
-{
-    // A collection class for keeping TObjects for deletion.
-    // TOwnedList is like TList with SetOwner(), but really deletes all objects, whether or not on heap.
-    // This is a horrible hack to work round the fact that RooArgSet and RooDataSet objects have have IsOnHeap() false.
-    TOwnedList() : TList() { SetOwner(); }
-    virtual ~TOwnedList() { Clear(); }
-    virtual void Clear(Option_t *option = "")
-    {
-        if (!option || strcmp(option, "nodelete") != 0)
-            for (TIter it(this); TObject *obj = it();)
-                SafeDelete(obj);
-        TList::Clear("nodelete");
-    }
-};
+TString combiner::CONSTRPOSTFIX = "_Pdf";
+TString combiner::GOPOSTFIX = "_In";
 
 combiner::combiner() : m_wsName("combWS"),
                        m_mcName("ModelConfig"),
@@ -163,6 +149,10 @@ void combiner::readChannel(TXMLNode *rootNode)
     if (!mc)
         auxUtil::alertAndAbort(Form("Input file %s for channel %s does not contain ModelConfig %s", channel.fileName_.Data(), channel.name_.Data(), channel.mcName_.Data()));
 
+    RooSimultaneous *pdf = dynamic_cast<RooSimultaneous *>(mc->GetPdf());
+    if (!pdf)
+        auxUtil::alertAndAbort(Form("Input file %s for channel %s ModelConfig %s does not contain a valid RooSimultaneous PDF", channel.fileName_.Data(), channel.name_.Data(), channel.mcName_.Data()));
+
     RooDataSet *data = dynamic_cast<RooDataSet *>(w->data(channel.dataName_));
     if (!data)
         auxUtil::alertAndAbort(Form("Input file %s for channel %s does not contain RooDataSet %s", channel.fileName_.Data(), channel.name_.Data(), channel.dataName_.Data()));
@@ -206,8 +196,10 @@ void combiner::readChannel(TXMLNode *rootNode)
                         vector<TString> itemList = auxUtil::decomposeStr(oldName, ',', auxUtil::ROUND);
                         if (itemList.size() != 3)
                             auxUtil::alertAndAbort(Form("Wrong format for constraint pdf %s in channel %s", oldName.Data(), channel.name_.Data()), "XML error");
+
+                        TString NPName = itemList[0], GOName = itemList[1], pdfName = itemList[2];
                         /* First check wether the old PDF exists. If not, simply ignore this line */
-                        if (!w->pdf(itemList.back()))
+                        if (!w->pdf(pdfName))
                         {
                             spdlog::warn("Constraint PDF {} does not exist in workspace {}. Skip it", oldName.Data(), channel.fileName_.Data());
                             if (m_strictMode)
@@ -216,7 +208,7 @@ void combiner::readChannel(TXMLNode *rootNode)
                             continue;
                         }
                         /* Then check wether the old PDF is Gaussian. If not, simply ignore this line */
-                        TString className = w->pdf(itemList.back())->ClassName();
+                        TString className = w->pdf(pdfName)->ClassName();
                         if (className != "RooGaussian")
                         {
                             spdlog::warn("Constraint PDF {} is not RooGaussian. Only Gaussian is supported now. Skip it", oldName.Data());
@@ -224,38 +216,47 @@ void combiner::readChannel(TXMLNode *rootNode)
                                 throw std::runtime_error("Flawed input");
                             continue;
                         }
-                        if (!w->var(itemList[0]))
-                            auxUtil::alertAndAbort(Form("No nuisance parameter %s in workspace %s", itemList[0].Data(), channel.fileName_.Data()), "Input error");
-                        if (!w->var(itemList[1]))
-                            auxUtil::alertAndAbort(Form("No global observable %s in workspace %s", itemList[1].Data(), channel.fileName_.Data()), "Input error");
+                        if (!w->var(NPName))
+                            auxUtil::alertAndAbort(Form("No nuisance parameter %s in workspace %s", NPName.Data(), channel.fileName_.Data()), "Input error");
+                        if (!w->var(GOName))
+                            auxUtil::alertAndAbort(Form("No global observable %s in workspace %s", GOName.Data(), channel.fileName_.Data()), "Input error");
                         /* Check whether sigma of the Gaussian is unity */
-                        unique_ptr<TIterator> iter(w->pdf(itemList.back())->serverIterator());
+                        unique_ptr<TIterator> iter(w->pdf(pdfName)->serverIterator());
+
                         bool sigmaCheck = false, NPCheck = false, GOCheck = false;
                         for (RooAbsReal *arg = (RooAbsReal *)iter->Next(); arg != 0; arg = (RooAbsReal *)iter->Next())
                         {
-                            if (itemList[0] == arg->GetName())
+                            if (NPName == arg->GetName())
                                 NPCheck = true;
-                            else if (itemList[1] == arg->GetName())
+                            else if (GOName == arg->GetName())
                                 GOCheck = true;
                             else if (fabs(arg->getVal() - 1) < auxUtil::epsilon)
                                 sigmaCheck = true;
                         }
                         if (!sigmaCheck)
-                            auxUtil::alertAndAbort(Form("Sigma of constraint PDF %s in workspace %s is not unity", itemList.back().Data(), channel.fileName_.Data()), "Input error");
+                            auxUtil::alertAndAbort(Form("Sigma of constraint PDF %s in workspace %s is not unity", pdfName.Data(), channel.fileName_.Data()), "Input error");
                         if (!NPCheck)
-                            auxUtil::alertAndAbort(Form("Nuisance parameter %s has no dependence on constraint PDF %s in workspace %s", itemList[0].Data(), itemList.back().Data(), channel.fileName_.Data()), "Input error");
+                            auxUtil::alertAndAbort(Form("Nuisance parameter %s has no dependence on constraint PDF %s in workspace %s", NPName.Data(), pdfName.Data(), channel.fileName_.Data()), "Input error");
                         if (!GOCheck)
-                            auxUtil::alertAndAbort(Form("Global observable %s has no dependence on constraint PDF %s in workspace %s", itemList[1].Data(), itemList.back().Data(), channel.fileName_.Data()), "Input error");
+                            auxUtil::alertAndAbort(Form("Global observable %s has no dependence on constraint PDF %s in workspace %s", GOName.Data(), pdfName.Data(), channel.fileName_.Data()), "Input error");
                         /* only require OldName has all these components, NewName can be only a nuis parameter name, since they should follow the same format */
                         if (auxUtil::getItemType(newName) == auxUtil::CONSTR)
                             auxUtil::alertAndAbort(Form("Error processing %s: Users are only supposed to provide a nuisance parameter name", newName.Data()), "XML error");
                         if (find(NPSanity.begin(), NPSanity.end(), newName) != NPSanity.end())
                             auxUtil::alertAndAbort(Form("New NP %s is duplicated in channel %s. Please double check the XML file", newName.Data(), channel.name_.Data()), "XML error");
-                        newName = Form("%s_Pdf(%s, %s_In)", newName.Data(), newName.Data(), newName.Data());
-                        if (channel.pdfMap_.find(oldName) != channel.pdfMap_.end())
-                            auxUtil::alertAndAbort(Form("Old constraint PDF %s is duplicated in channel %s. Please double check the XML file", oldName.Data(), channel.name_.Data()), "XML error");
-                        channel.pdfMap_[oldName] = newName;
                         NPSanity.push_back(newName);
+
+                        if (channel.pdfMap_.find(pdfName) != channel.pdfMap_.end())
+                            auxUtil::alertAndAbort(Form("Old constraint PDF %s is duplicated in channel %s. Please double check the XML file", pdfName.Data(), channel.name_.Data()), "XML error");
+                        channel.pdfMap_[pdfName] = newName + CONSTRPOSTFIX;
+
+                        if (channel.varMap_.find(NPName) != channel.varMap_.end())
+                            auxUtil::alertAndAbort(Form("Old nuisance parameter %s is duplicated in channel %s. Please double check the XML file", NPName.Data(), channel.name_.Data()), "XML error");
+                        channel.varMap_[NPName] = newName;
+
+                        if (channel.varMap_.find(GOName) != channel.varMap_.end())
+                            auxUtil::alertAndAbort(Form("Old global observable %s is duplicated in channel %s. Please double check the XML file", GOName.Data(), channel.name_.Data()), "XML error");
+                        channel.varMap_[GOName] = newName + GOPOSTFIX;
                     }
                     else
                     {
@@ -310,62 +311,34 @@ void combiner::readChannel(TXMLNode *rootNode)
     m_summary.push_back(channel);
 }
 
-void combiner::rename(bool saveTmpWs)
+void combiner::rename_core()
 {
-    auxUtil::printTitle("Renaming variables, PDFs, and functions", "-");
-    m_tmpWs.reset(new RooWorkspace(m_wsName + WSPOSTFIX, m_wsName + WSPOSTFIX));
-    m_nuis.reset(new RooArgSet());
-    m_glob.reset(new RooArgSet());
-
-    const int m_numChannel = m_summary.size();
-    TOwnedList tmpKeep;
-    for (int ich = 0; ich < m_numChannel; ich++)
+    std::unique_lock<std::mutex> lk(m_mutex, std::defer_lock);
+    do
     {
-        TString channelName = m_summary[ich].name_;
-        spdlog::info("Renaming channel {}", channelName.Data());
-        m_inputFile.reset(TFile::Open(m_summary[ich].fileName_));
-        unique_ptr<RooWorkspace> w(dynamic_cast<RooWorkspace *>(m_inputFile->Get(m_summary[ich].wsName_)));
-        RooStats::ModelConfig *mc = dynamic_cast<RooStats::ModelConfig *>(w->obj(m_summary[ich].mcName_));
-        RooDataSet *data = dynamic_cast<RooDataSet *>(w->data(m_summary[ich].dataName_));
+        lk.lock();
+        if (m_idx >= m_summary.size())
+        {
+            lk.unlock();
+            break;
+        }
+            
+        RooWorkspace *w = m_wArr[m_idx];
+        Channel channel = m_summary[m_idx];
+        TString channelName = channel.name_;
+        spdlog::info("Renaming channel {} {}", m_idx, channelName.Data());        
+        m_idx++;
+        lk.unlock();
+
+        // unique_ptr<TFile> inputFile(TFile::Open(channel.fileName_));
+        // RooWorkspace *w = dynamic_cast<RooWorkspace *>(inputFile->Get(channel.wsName_));
+        RooStats::ModelConfig *mc = dynamic_cast<RooStats::ModelConfig *>(w->obj(channel.mcName_));
+        RooDataSet *data = dynamic_cast<RooDataSet *>(w->data(channel.dataName_));
+        RooSimultaneous *pdf = dynamic_cast<RooSimultaneous *>(mc->GetPdf());
 
         /* Bookkeeping */
-        RooArgSet excludedVars, excludedPdfs;
-
-        RooSimultaneous *pdf = dynamic_cast<RooSimultaneous *>(mc->GetPdf());
-        /* what if it's not RooSimultaneous PDF??? */
-        if (!pdf)
-        {
-            RooAbsPdf *pdf_s = mc->GetPdf();
-            std::unique_ptr<RooCategory> cat(new RooCategory("adhocCat", "adhocCat"));
-            cat->defineType(channelName);
-
-            map<string, RooAbsPdf *> pdfMap_tmp;
-            map<string, RooDataSet *> dataMap_tmp;
-
-            /* make pdf */
-            pdfMap_tmp[channelName.Data()] = pdf;
-            /* make data */
-            dataMap_tmp[channelName.Data()] = data;
-            TString pdfName = pdf->GetName();
-            TString dataName = data->GetName();
-
-            RooSimultaneous *pdf_new = new RooSimultaneous(pdfName, pdfName, pdfMap_tmp, *cat);
-            tmpKeep.Add(pdf_new);
-            RooArgSet obsAndWgt = *data->get();
-            RooRealVar weight(WGTNAME, "", 1.);
-            obsAndWgt.add(weight);
-            RooDataSet *data_new = new RooDataSet(
-                dataName,
-                dataName,
-                obsAndWgt,
-                RooFit::Index(*cat),
-                RooFit::Import(dataMap_tmp),
-                RooFit::WeightVar(WGTNAME) /* actually just pass a name */
-            );
-            tmpKeep.Add(data_new);
-            pdf = pdf_new;
-            data = data_new;
-        }
+        unique_ptr<RooArgSet> excludedVars(new RooArgSet(channelName + "_excl_vars"));
+        unique_ptr<RooArgSet> excludedPdfs(new RooArgSet(channelName + "_excl_pdfs"));
 
         /* let global observables fixed, and nuisances parameters float */
         RooStats::SetAllConstant(*mc->GetNuisanceParameters(), false);
@@ -373,54 +346,112 @@ void combiner::rename(bool saveTmpWs)
 
         /* TODO: check whether the support for HistFactory style lumi uncertainty is still needed */
         /* Removed for now */
-        for (std::map<TString, TString>::iterator iterator = m_summary[ich].pdfMap_.begin(); iterator != m_summary[ich].pdfMap_.end(); iterator++)
+        for (std::map<TString, TString>::iterator iterator = channel.pdfMap_.begin(); iterator != channel.pdfMap_.end(); iterator++)
         {
-            vector<TString> pdfItemList = auxUtil::decomposeStr(iterator->second, ',', auxUtil::ROUND);
-            TString pdfName = pdfItemList[2], obsName = pdfItemList[0], meanName = pdfItemList[1];
-
-            vector<TString> oldPdfItemList = auxUtil::decomposeStr(iterator->first, ',', auxUtil::ROUND);
-            TString oldPdfName = oldPdfItemList[2], oldObsName = oldPdfItemList[0], oldMeanName = oldPdfItemList[1];
-
-            auxUtil::renameAndAdd(w->pdf(oldPdfName), pdfName, excludedPdfs);
-            auxUtil::renameAndAdd(w->var(oldObsName), obsName, excludedVars);
-            auxUtil::renameAndAdd(w->var(oldMeanName), meanName, excludedVars);
+            RooAbsPdf *arg = w->pdf(iterator->first);
+            arg->SetName(iterator->second);
+            std::this_thread::sleep_for(std::chrono::microseconds(10));
+            excludedPdfs->add(*arg);
+            // if (!w->pdf(iterator->second))
+            // {
+            //     w->Print();
+            //     auxUtil::alertAndAbort("Wrong PDF name " + iterator->second + " in channel " + channelName);
+            // }
         }
 
         /* Rename free floating NPs already now to keep track of them */
-        for (std::map<TString, TString>::iterator iterator = m_summary[ich].varMap_.begin(); iterator != m_summary[ich].varMap_.end(); iterator++)
-            auxUtil::renameAndAdd(w->var(iterator->first), iterator->second, excludedVars);
+        for (std::map<TString, TString>::iterator iterator = channel.varMap_.begin(); iterator != channel.varMap_.end(); iterator++)
+        {
+            RooRealVar *arg = w->var(iterator->first);
+            arg->SetName(iterator->second);
+            std::this_thread::sleep_for(std::chrono::microseconds(10));
+            excludedVars->add(*arg);
+            // if (!w->var(iterator->second))
+            // {
+            //     w->Print();
+            //     auxUtil::alertAndAbort("Wrong variable name " + iterator->second + " in channel " + channelName);
+            // }
+        }
 
         /* Rename POIs */
-        for (std::map<TString, TString>::iterator iterator = m_summary[ich].poiMap_.begin(); iterator != m_summary[ich].poiMap_.end(); iterator++)
+        for (std::map<TString, TString>::iterator iterator = channel.poiMap_.begin(); iterator != channel.poiMap_.end(); iterator++)
         {
             if (iterator->second == DUMMY)
                 continue;
-            auxUtil::renameAndAdd(w->var(iterator->second), iterator->first, excludedVars);
+            RooRealVar *arg = w->var(iterator->second);
+            arg->SetName(iterator->first);
+            std::this_thread::sleep_for(std::chrono::microseconds(10));
+            excludedVars->add(*arg);
+            // if (!w->var(iterator->first))
+            // {
+            //     w->Print();
+            //     auxUtil::alertAndAbort("Wrong variable name " + iterator->second + " in channel " + channelName);
+            // }
         }
 
         /* Exclude observables */
         std::unique_ptr<RooArgSet> tmpObs(pdf->getObservables(*data));
-        excludedVars.add(*tmpObs);
+        excludedVars->add(*tmpObs);
 
         /* rename functions & pdfs, to avoid naming conflicts */
-        RooArgSet everything = w->allFunctions();
-        RooArgSet allPdfs = w->allPdfs();
-        RooArgSet allVars = w->allVars();
+        unique_ptr<RooArgSet> everything(new RooArgSet(channelName + "_everything"));
 
-        allPdfs.remove(excludedPdfs);
-        allVars.remove(excludedVars);
+        everything->add(w->allFunctions());
+        everything->add(w->allPdfs());
+        everything->add(w->allVars());
 
-        everything.add(allPdfs);
-        everything.add(allVars);
+        everything->remove(*excludedPdfs);
+        everything->remove(*excludedVars);
 
         /* Rename everything */
-        std::unique_ptr<TIterator> fiter(everything.createIterator());
+        std::unique_ptr<TIterator> fiter(everything->createIterator());
         for (RooAbsReal *v = (RooAbsReal *)fiter->Next(); v != 0; v = (RooAbsReal *)fiter->Next())
             v->SetName((TString(v->GetName()) + "_" + channelName));
 
+        /* Rename key objects */
         pdf->SetName(PDFPREFIX + channelName);
         data->SetName(DATAPREFIX + channelName);
-        RooCategory *cat = dynamic_cast<RooCategory *>(w->obj(pdf->indexCat().GetName()));
+
+        // inputFile->Close();
+    } while (m_idx < m_summary.size());
+}
+
+void combiner::rename(bool saveTmpWs)
+{
+    auxUtil::printTitle("Renaming variables, PDFs, and functions", "-");
+    m_tmpWs.reset(new RooWorkspace(m_wsName + WSPOSTFIX, m_wsName + WSPOSTFIX));
+    m_nuis.reset(new RooArgSet());
+    m_glob.reset(new RooArgSet());
+
+    const int numChannels = m_summary.size();
+    shared_ptr<TFile> fileArr[numChannels];
+
+    for (int ich = 0; ich < numChannels; ich++)
+    {
+        fileArr[ich].reset(TFile::Open(m_summary[ich].fileName_));
+        RooWorkspace *w = dynamic_cast<RooWorkspace *>(fileArr[ich]->Get(m_summary[ich].wsName_));
+        m_wArr.push_back(w);
+    }
+
+    m_idx = 0; /* Reset counter */
+    m_thread_ptrs.clear();
+    
+    for (unsigned i = 0; i < m_numThreads; i++)
+    {
+        m_thread_ptrs.emplace_back(new std::thread(&combiner::rename_core, this));
+        spdlog::info("  -> Processor thread #{} started!", i);
+    }
+    join();
+    m_thread_ptrs.clear();
+
+    for (int ich = 0; ich < numChannels; ich++)
+    {
+        TString channelName = m_summary[ich].name_;
+        RooStats::ModelConfig *mc = dynamic_cast<RooStats::ModelConfig *>(m_wArr[ich]->obj(m_summary[ich].mcName_));
+        RooAbsData *data = m_wArr[ich]->data(DATAPREFIX + channelName);
+        RooSimultaneous *pdf = dynamic_cast<RooSimultaneous *>(m_wArr[ich]->pdf(PDFPREFIX + channelName));
+
+        RooCategory *cat = dynamic_cast<RooCategory *>(m_wArr[ich]->obj(pdf->indexCat().GetName()));
         TString oldCatName = cat->GetName();
         TString newCatName = CATPREFIX + channelName;
         cat->SetName(newCatName);
@@ -429,8 +460,9 @@ void combiner::rename(bool saveTmpWs)
         m_tmpWs->import(*data, RooFit::RenameVariable(oldCatName, newCatName));
         m_nuis->add(*mc->GetNuisanceParameters()->snapshot(), true);
         m_glob->add(*mc->GetGlobalObservables()->snapshot(), true);
-        m_inputFile->Close();
+        fileArr[ich]->Close();
     }
+
     if (saveTmpWs)
     {
         auxUtil::defineSet(m_tmpWs.get(), m_nuis.get(), NUISNAME);
@@ -455,93 +487,43 @@ void combiner::combine(bool readTmpWs, bool saveRawWs)
 
     m_comb.reset(new RooWorkspace(m_wsName, m_wsName));
 
-    RooCategory combCat(CATNAME, CATNAME);
-    RooSimultaneous combPdf(PDFNAME, PDFNAME, combCat);
+    m_combCat.reset(new RooCategory(CATNAME, CATNAME));
+    m_combPdf.reset(new RooSimultaneous(PDFNAME, PDFNAME, *m_combCat));
 
     m_obs.reset(new RooArgSet());
-    RooRealVar weight(WGTNAME, "", 1.);
-    map<string, RooDataSet *> dataMap;
 
-    TOwnedList tmpKeep;
-    const int m_numChannel = m_summary.size();
-    for (int ich = 0; ich < m_numChannel; ich++)
+    for (int ich = 0; ich < m_summary.size(); ich++)
     {
         TString channelName = m_summary[ich].name_;
 
-        RooSimultaneous *pdf = dynamic_cast<RooSimultaneous *>(m_tmpWs->pdf(PDFPREFIX + channelName));
+        m_curPdf = dynamic_cast<RooSimultaneous *>(m_tmpWs->pdf(PDFPREFIX + channelName));
+        m_curCat = (RooCategory *)&m_curPdf->indexCat();
+
         RooDataSet *data = dynamic_cast<RooDataSet *>(m_tmpWs->data(DATAPREFIX + channelName));
-
-        /* Split pdf */
-        RooCategory *indivCat = (RooCategory *)&pdf->indexCat();
-
         /* split the original dataSet */
-        TList *indivDataList = data->split(*indivCat, true);
-        const int ncat = indivCat->numBins(0);
+        m_curDataList = data->split(*m_curCat, true);
 
         auxUtil::printTitle("Channel " + channelName, "+");
-        for (int icat = 0; icat < ncat; ++icat)
+        m_total = m_curCat->numBins(0);
+        m_catNamePrefix = CATNAME + "_" + channelName;
+        m_idx = 0;
+        m_thread_ptrs.clear();
+
+        for (unsigned i = 0; i < m_numThreads; i++)
         {
-            indivCat->setBin(icat);
-            spdlog::info("Category --> {} {}", icat, indivCat->getLabel());
-
-            RooAbsPdf *pdfi = pdf->getPdf(indivCat->getLabel());
-            RooDataSet *datai = (RooDataSet *)(indivDataList->FindObject(indivCat->getLabel()));
-
-            if (TString(pdfi->ClassName()) == "RooProdPdf")
-            {
-                /* strip those disconnected pdfs from minimization */
-                std::unique_ptr<RooArgSet> cPars(pdfi->getParameters(datai));
-                RooArgSet dPars = *cPars;
-                RooArgSet *constraints = pdfi->getAllConstraints(*datai->get(), *cPars, true);
-
-                std::unique_ptr<RooArgSet> disConstraints(pdfi->getAllConstraints(*datai->get(), dPars, false));
-                disConstraints->remove(*constraints);
-
-                RooProdPdf *prodPdf = dynamic_cast<RooProdPdf *>(pdfi);
-                assert(prodPdf);
-                RooArgSet baseComponents;
-                auxUtil::getBasePdf(prodPdf, baseComponents);
-                /* remove disconnected pdfs */
-                baseComponents.remove(*disConstraints);
-
-                TString newPdfName = TString(pdfi->GetName()) + "_deComposed";
-
-                pdfi = new RooProdPdf(newPdfName, newPdfName, baseComponents);
-                tmpKeep.Add(pdfi);
-            }
-
-            /* make category */
-            TString type = Form("%s_%s_%s", CATNAME.Data(), indivCat->getLabel(), channelName.Data());
-
-            spdlog::info("\tNew category name --> {}", type.Data());
-
-            combCat.defineType(type);
-            combPdf.addPdf(*pdfi, type);
-
-            /* make observables */
-            unique_ptr<RooArgSet> indivObs(pdfi->getObservables(*datai));
-            m_obs->add(*indivObs->snapshot(), true);
-
-            /* Make data */
-            RooArgSet obsAndWgt(*indivObs, weight);
-            RooDataSet *dataNew_i = new RooDataSet(type + "_data", type + "_data", obsAndWgt, WeightVar(WGTNAME));
-
-            for (int j = 0, nEntries = datai->numEntries(); j < nEntries; ++j)
-            {
-                *indivObs = *datai->get(j);
-                double dataWgt = datai->weight();
-                dataNew_i->add(obsAndWgt, dataWgt);
-            }
-            dataMap[type.Data()] = dataNew_i;
-            tmpKeep.Add(dataNew_i);
+            m_thread_ptrs.emplace_back(new std::thread(&combiner::combine_core, this));
+            spdlog::info("  -> Processor thread #{} started!", i);
         }
+        join();
+        m_thread_ptrs.clear();
     }
-    m_comb->import(combPdf);
+    m_comb->import(*m_combPdf);
     spdlog::info("Combined pdf created");
-    m_obs->add(combCat);
+    m_obs->add(*m_combCat);
+    RooRealVar weight(WGTNAME, "", 1.);
     RooArgSet obsAndWgt(*m_obs, weight);
 
-    RooDataSet combData(m_dataName, m_dataName, obsAndWgt, Index(combCat), Import(dataMap), WeightVar(WGTNAME));
+    RooDataSet combData(m_dataName, m_dataName, obsAndWgt, Index(*m_combCat), Import(m_dataMap), WeightVar(WGTNAME));
 
     m_comb->import(combData);
     spdlog::info("Combined dataset created");
@@ -564,6 +546,54 @@ void combiner::combine(bool readTmpWs, bool saveRawWs)
         m_comb->Write();
         outputFile->Close();
     }
+}
+
+void combiner::combine_core()
+{
+    std::unique_lock<std::mutex> lk(m_mutex, std::defer_lock);
+
+    do
+    {
+        lk.lock();
+        if (m_idx >= m_total)
+        {
+            lk.unlock();
+            break;
+        }
+           
+        m_curCat->setBin(m_idx);
+        TString catName = m_curCat->getLabel();
+        TString type = m_catNamePrefix + "_" + catName;
+        spdlog::info("Category --> {} {}", m_idx, catName.Data());
+        spdlog::info("\tNew category name --> {}", type.Data());
+        RooAbsPdf *pdfi = m_curPdf->getPdf(catName);
+        RooDataSet *datai = (RooDataSet *)(m_curDataList->FindObject(catName));        
+        m_idx++;
+        std::this_thread::sleep_for(std::chrono::microseconds(10));
+        lk.unlock();
+
+        /* Make data */
+        unique_ptr<RooArgSet> indivObs(pdfi->getObservables(*datai));
+        RooRealVar weight(WGTNAME, "", 1.);
+        RooArgSet obsAndWgt(*indivObs, weight);
+        RooDataSet *dataNew_i = new RooDataSet(type + "_data", type + "_data", obsAndWgt, WeightVar(WGTNAME));
+
+        for (int j = 0, nEntries = datai->numEntries(); j < nEntries; ++j)
+        {
+            *indivObs = *datai->get(j);
+            double dataWgt = datai->weight();
+            dataNew_i->add(obsAndWgt, dataWgt);
+        }
+
+        lk.lock();
+        m_keep.Add(dataNew_i);        
+        
+        m_combCat->defineType(type);
+        m_combPdf->addPdf(*pdfi, type);
+        m_dataMap[type.Data()] = dataNew_i;
+        m_obs->add(*indivObs->snapshot(), true);
+        lk.unlock();
+    } while (m_idx < m_total);
 }
 
 void combiner::makeModelConfig()

@@ -80,7 +80,7 @@ namespace auxUtil
   void copyAttributes(const RooAbsArg &from, RooAbsArg &to);
   RooAbsPdf *factorizePdf(const RooArgSet &observables, RooAbsPdf &pdf, RooArgList &constraints);
   void linkMap(std::map<TString, TString> &attMap, TString &keyStr, TString &valueStr, TString linker = ",");
-  void renameAndAdd(RooAbsArg *arg, TString name, RooArgSet &set);
+
   void getBasePdf(RooProdPdf *pdf, RooArgSet &set);
   RooArgSet *findArgSetIn(RooWorkspace *w, RooArgSet *set, bool strict = false);
 }; // namespace auxUtil

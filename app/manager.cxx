@@ -36,6 +36,7 @@ int procedure_ = 0; // To be moved to XML file
 bool verbose_ = false;
 
 int reBin_ = 500;
+int numThreads_ = 1;
 
 bool histToData_ = true; // To be moved to XML file
 std::string setVar_ = "";
@@ -69,7 +70,7 @@ void printHelp(TString exe)
   cout << " -m [ --minimizerAlgo ] arg         Minimizer algorithm (default Minuit2)" << endl;
   cout << " -s [ --minimizerStrategy ] arg     Minimizer strategy (default 1)" << endl;
   cout << " -t [ --minimizerTolerance ] arg    Minimizer tolerance (default 1e-3)" << endl;
-  cout << " -n [ --nllOffset ] arg             Enable nllOffset (default on)" << endl;
+  cout << " -o [ --nllOffset ] arg             Enable nllOffset (default on)" << endl;
   cout << " -c [ --constOpt ] arg              Enable constant optimization (default on)" << endl;
   cout << " -r [ --editRFV ] arg               Fixing RooFormulaVar using hard-coded variable name (default off)" << endl;
   cout << " -h [ --help ]                      Produce help message" << endl;
@@ -85,10 +86,10 @@ int main(int argc, char **argv)
 
   RooMsgService::instance().setGlobalKillBelow(RooFit::ERROR);
 
-  spdlog::set_pattern("[%Y-%m-%d %H:%M:%S] [%^%l%$] \t %v");
+  spdlog::set_pattern("[%Y-%m-%d %H:%M:%S] [thread %t] [%^%l%$] \t %v");
 
   int oc;
-  while ((oc = getopt_long(argc, argv, ":w:x:f:p:i:v:m:s:t:n:c:r:h", longopts, NULL)) != -1)
+  while ((oc = getopt_long(argc, argv, ":w:x:f:p:i:v:m:s:t:o:c:r:n:h", longopts, NULL)) != -1)
   {
     switch (oc)
     {
@@ -123,7 +124,7 @@ int main(int argc, char **argv)
       fitUtil::_minimizerTolerance = atof(optarg);
       spdlog::info("Set minimizer tolerance to {}", fitUtil::_minimizerTolerance);
       break;
-    case 'n':
+    case 'o':
       fitUtil::_nllOffset = auxUtil::to_bool(optarg);
       spdlog::info("Set NLL offset to {}", fitUtil::_nllOffset);
       break;
@@ -135,6 +136,10 @@ int main(int argc, char **argv)
       editRFV_ = auxUtil::to_bool(optarg);
       spdlog::info("Set editing RooFormulaVar to {}", editRFV_);
       break;
+    case 'n':
+      numThreads_ = atoi(optarg);
+      spdlog::info("Set number of threads to {}", numThreads_);
+      break;      
     case 'h':
       printHelp(argv[0]);
       return 0;
@@ -157,6 +162,7 @@ int main(int argc, char **argv)
     spdlog::info("Performing workspace combination");
     std::unique_ptr<combiner> comb;
     comb.reset(new combiner());
+    comb->setNumThreads(numThreads_);
     comb->readConfigXml(configFile_);
     comb->printSummary();
     comb->rename();

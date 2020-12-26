@@ -741,12 +741,6 @@ void auxUtil::linkMap(
   }
 }
 
-void auxUtil::renameAndAdd(RooAbsArg *arg, TString name, RooArgSet &set)
-{
-  arg->SetName(name);
-  set.add(*arg, true);
-}
-
 void auxUtil::getBasePdf(RooProdPdf *pdf, RooArgSet &set)
 {
   RooArgList pdfList = pdf->pdfList();
