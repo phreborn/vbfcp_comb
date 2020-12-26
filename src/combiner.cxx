@@ -314,21 +314,19 @@ void combiner::readChannel(TXMLNode *rootNode)
 void combiner::rename_core()
 {
     std::unique_lock<std::mutex> lk(m_mutex, std::defer_lock);
-    do
+    while (m_idx < m_summary.size())
     {
-        lk.lock();
-        if (m_idx >= m_summary.size())
+        int ich = m_idx++;
+
+        if (m_idx > m_summary.size())
         {
-            lk.unlock();
             break;
         }
-            
-        RooWorkspace *w = m_wArr[m_idx];
-        Channel channel = m_summary[m_idx];
+
+        RooWorkspace *w = m_wArr[ich];
+        Channel channel = m_summary[ich];
         TString channelName = channel.name_;
-        spdlog::info("Renaming channel {} {}", m_idx, channelName.Data());        
-        m_idx++;
-        lk.unlock();
+        spdlog::info("Renaming channel {} {}", ich, channelName.Data());        
 
         // unique_ptr<TFile> inputFile(TFile::Open(channel.fileName_));
         // RooWorkspace *w = dynamic_cast<RooWorkspace *>(inputFile->Get(channel.wsName_));
@@ -426,7 +424,7 @@ void combiner::rename_core()
         m_glob->add(*mc->GetGlobalObservables()->snapshot(), true);
         spdlog::info("Channel {} finished", channelName.Data());
         lk.unlock();
-    } while (m_idx < m_summary.size());
+    }
 }
 
 void combiner::rename(bool saveTmpWs)
@@ -555,25 +553,23 @@ void combiner::combine_core()
 {
     std::unique_lock<std::mutex> lk(m_mutex, std::defer_lock);
 
-    do
+    while (m_idx < m_total)
     {
-        lk.lock();
-        if (m_idx >= m_total)
+        int icat = m_idx++;
+        if (m_idx > m_total)
         {
-            lk.unlock();
             break;
         }
            
-        m_curCat->setBin(m_idx);
+        m_curCat->setBin(icat);
         TString catName = m_curCat->getLabel();
         TString type = m_catNamePrefix + "_" + catName;
-        spdlog::info("Category --> {} {}", m_idx, catName.Data());
+        spdlog::info("Category --> {} {}", icat, catName.Data());
         spdlog::info("\tNew category name --> {}", type.Data());
         RooAbsPdf *pdfi = m_curPdf->getPdf(catName);
         RooDataSet *datai = (RooDataSet *)(m_curDataList->FindObject(catName));        
-        m_idx++;
+
         std::this_thread::sleep_for(std::chrono::microseconds(10));
-        lk.unlock();
 
         /* Make data */
         unique_ptr<RooArgSet> indivObs(pdfi->getObservables(*datai));
@@ -596,7 +592,7 @@ void combiner::combine_core()
         m_dataMap[type.Data()] = dataNew_i;
         m_obs->add(*indivObs->snapshot(), true);
         lk.unlock();
-    } while (m_idx < m_total);
+    }
 }
 
 void combiner::makeModelConfig()

@@ -176,7 +176,7 @@ private:
   unsigned m_numThreads;
   std::vector<std::unique_ptr<std::thread>> m_thread_ptrs;
   std::mutex m_mutex;
-  int m_idx;
+  std::atomic<int> m_idx;
   int m_total;
   RooSimultaneous *m_curPdf;
   TList *m_curDataList;
