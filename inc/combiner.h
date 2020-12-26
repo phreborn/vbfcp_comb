@@ -104,7 +104,15 @@ public:
   void printSummary();
 
   /* Multi-threading */
-  void setNumThreads(unsigned num) { m_numThreads = num; }
+  void setNumThreads(unsigned num) { 
+    m_numThreads = num;
+    if (m_numThreads > std::thread::hardware_concurrency())
+    {
+      m_numThreads = std::thread::hardware_concurrency();
+      spdlog::warn("Reducing number of threads to {} to match hardware concurrency", m_numThreads);
+    }
+  }
+
   void join()
   {
     for (auto &thread : m_thread_ptrs)
@@ -159,7 +167,7 @@ private:
   bool m_strictMode;
 
   /* Multi-threading */
-  unsigned m_numThreads;
+  int m_numThreads;
   std::vector<std::unique_ptr<std::thread>> m_thread_ptrs;
   std::mutex m_mutex;
   std::atomic<int> m_idx;

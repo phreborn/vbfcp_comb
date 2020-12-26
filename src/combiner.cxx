@@ -451,7 +451,7 @@ void combiner::rename(bool saveTmpWs)
     m_idx = 0; /* Reset counter */
     m_thread_ptrs.clear();
     
-    for (unsigned i = 0; i < m_numThreads; i++)
+    for (unsigned i = 0; i < std::min(m_numThreads, numChannels); i++)
     {
         m_thread_ptrs.emplace_back(new std::thread(&combiner::rename_core, this));
         spdlog::info("  -> Processor thread #{} started!", i);
@@ -518,7 +518,7 @@ void combiner::combine(bool readTmpWs, bool saveRawWs)
         m_idx = 0;
         m_thread_ptrs.clear();
 
-        for (unsigned i = 0; i < m_numThreads; i++)
+        for (unsigned i = 0; i < std::min(m_numThreads, m_total); i++)
         {
             m_thread_ptrs.emplace_back(new std::thread(&combiner::combine_core, this));
             spdlog::info("  -> Processor thread #{} started!", i);
@@ -568,9 +568,12 @@ void combiner::combine_core()
         {
             break;
         }
-           
+        
+        lk.lock();
         m_curCat->setBin(icat);
         TString catName = m_curCat->getLabel();
+        lk.unlock();
+        
         TString type = m_catNamePrefix + "_" + catName;
         spdlog::info("Category --> {} {}", icat, catName.Data());
         spdlog::info("\tNew category name --> {}", type.Data());
@@ -625,7 +628,7 @@ void combiner::makeModelConfig()
             poi.add(*poiVar);
         }
         else
-            auxUtil::alertAndAbort(Form("POI %s cannot be found in combined model", item.name.Data()));
+            spdlog::warn("POI {} cannot be found in combined model", item.name.Data());
     }
 
     m_mc.reset(new ModelConfig(m_mcName, m_comb.get()));
