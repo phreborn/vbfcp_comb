@@ -234,9 +234,7 @@ void combiner::rename_core()
         RooArgSet allVars = w->allVars();
         RooArgSet allPdfs = w->allPdfs();
         RooArgSet allFunc = w->allFunctions();
-
-        unique_ptr<RooArgSet> tmpNuis(mc->GetNuisanceParameters()->snapshot());
-        unique_ptr<RooArgSet> tmpGlob(mc->GetGlobalObservables()->snapshot());
+        vector<TString> ignoreList;
 
         /* let global observables fixed, and nuisances parameters float */
         RooStats::SetAllConstant(*mc->GetNuisanceParameters(), false);
@@ -258,10 +256,7 @@ void combiner::rename_core()
             if (!channel.simplifiedImport_)
                 allVars.remove(*w->var(it->first));
             else
-            {
-                tmpNuis->remove(*w->var(it->first));
-                tmpGlob->remove(*w->var(it->first));
-            }
+                ignoreList.push_back(it->second);
             w->var(it->first)->SetName(it->second);
         }
 
@@ -272,21 +267,23 @@ void combiner::rename_core()
                 continue;
             if (!channel.simplifiedImport_)
                 allVars.remove(*w->var(it->second));
-
+            else
+                ignoreList.push_back(it->first);
             w->var(it->second)->SetName(it->first);
         }
 
         if (channel.simplifiedImport_)
         {
-            spdlog::info("Simplified import requested for channel {}. Will only rename constraint PDFs, nuisance parameters, and global observables.", channelName.Data());
+            spdlog::info("Simplified import requested for channel {}. Will only rename unspecified constraint PDFs, nuisance parameters, global observables, and POIs.", channelName.Data());
 
-            unique_ptr<TIterator> it(tmpGlob->createIterator());
+            unique_ptr<TIterator> it(mc->GetGlobalObservables()->createIterator());
             for (RooRealVar *arg = dynamic_cast<RooRealVar *>(it->Next()); arg != 0; arg = dynamic_cast<RooRealVar *>(it->Next()))
             {
                 TString globName = arg->GetName();
-                RooRealVar *var = w->var(globName);
-                unique_ptr<TIterator> constrIt(var->clientIterator());
-                var->SetName(globName + "_" + channelName);
+                if (find(ignoreList.begin(), ignoreList.end(), globName) != ignoreList.end())
+                    continue;
+                unique_ptr<TIterator> constrIt(arg->clientIterator());
+                arg->SetName(globName + "_" + channelName);
                 RooAbsPdf *constr = dynamic_cast<RooAbsPdf *>(constrIt->Next());
                 if (!constr)
                     spdlog::warn("Global observable {} in channel {} does not have constraint PDF", globName.Data(), channelName.Data());
@@ -296,13 +293,23 @@ void combiner::rename_core()
                     auxUtil::alertAndAbort(Form("Global observable %s in channel %s has more than one constraint PDF", globName.Data(), channelName.Data()));
             }
 
-            it.reset(tmpNuis->createIterator());
+            it.reset(mc->GetNuisanceParameters()->createIterator());
             for (RooRealVar *arg = dynamic_cast<RooRealVar *>(it->Next()); arg != 0; arg = dynamic_cast<RooRealVar *>(it->Next()))
             {
                 TString nuisName = arg->GetName();
-                RooRealVar *var = w->var(nuisName);
-                var->SetName(nuisName + "_" + channelName);
+                if (find(ignoreList.begin(), ignoreList.end(), nuisName) != ignoreList.end())
+                    continue;                
+                arg->SetName(nuisName + "_" + channelName);
             }
+
+            it.reset(mc->GetParametersOfInterest()->createIterator());
+            for (RooRealVar *arg = dynamic_cast<RooRealVar *>(it->Next()); arg != 0; arg = dynamic_cast<RooRealVar *>(it->Next()))
+            {
+                TString POIName = arg->GetName();
+                if (find(ignoreList.begin(), ignoreList.end(), POIName) != ignoreList.end())
+                    continue;                
+                arg->SetName(POIName + "_" + channelName);
+            }            
         }
         else{
             /* Exclude observables */
