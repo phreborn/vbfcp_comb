@@ -234,6 +234,7 @@ void combiner::rename_core()
         vector<TString> ignoreList; /* Not using RooArgSet due to potential hash table issue after renaming */
         RooArgSet allVars = w->allVars();
         RooArgSet allPdfs = w->allPdfs();
+        RooArgSet allFunc = w->allFunctions();
 
         /* let global observables fixed, and nuisances parameters float */
         RooStats::SetAllConstant(*mc->GetNuisanceParameters(), false);
@@ -305,8 +306,6 @@ void combiner::rename_core()
             unique_ptr<RooArgSet> tmpObs(pdf->getObservables(*data));
             allVars.remove(*tmpObs);
 
-            RooArgSet allFunc = w->allFunctions();
-
             /* Rename everything */
             unique_ptr<TIterator> it(allFunc.createIterator());
             for (RooAbsArg *arg = dynamic_cast<RooAbsArg *>(it->Next()); arg != 0; arg = dynamic_cast<RooAbsArg *>(it->Next()))
@@ -314,21 +313,21 @@ void combiner::rename_core()
                 TString curName = arg->GetName();
                 arg->SetName(curName + "_" + channelName);
             }
-            spdlog::info("All functions in channel {} {} renamed", ich, channelName.Data());
+            spdlog::debug("All functions in channel {} {} renamed", ich, channelName.Data());
             it.reset(allPdfs.createIterator());
             for (RooAbsArg *arg = dynamic_cast<RooAbsArg *>(it->Next()); arg != 0; arg = dynamic_cast<RooAbsArg *>(it->Next()))
             {
                 TString curName = arg->GetName();
                 arg->SetName(curName + "_" + channelName);
             }
-            spdlog::info("All PDFs in channel {} {} renamed", ich, channelName.Data());
+            spdlog::debug("All PDFs in channel {} {} renamed", ich, channelName.Data());
             it.reset(allVars.createIterator());
             for (RooAbsArg *arg = dynamic_cast<RooAbsArg *>(it->Next()); arg != 0; arg = dynamic_cast<RooAbsArg *>(it->Next()))
             {
                 TString curName = arg->GetName();
                 arg->SetName(curName + "_" + channelName);
             }
-            spdlog::info("All variables in channel {} {} renamed", ich, channelName.Data());            
+            spdlog::debug("All variables in channel {} {} renamed", ich, channelName.Data());            
         }
 
         /* Rename key objects */
