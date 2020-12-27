@@ -284,8 +284,9 @@ void combiner::rename_core()
             for (RooRealVar *arg = dynamic_cast<RooRealVar *>(it->Next()); arg != 0; arg = dynamic_cast<RooRealVar *>(it->Next()))
             {
                 TString globName = arg->GetName();
-                arg->SetName(globName + "_" + channelName);
-                unique_ptr<TIterator> constrIt(arg->clientIterator());
+                RooRealVar *var = w->var(globName);
+                unique_ptr<TIterator> constrIt(var->clientIterator());
+                var->SetName(globName + "_" + channelName);
                 RooAbsPdf *constr = dynamic_cast<RooAbsPdf *>(constrIt->Next());
                 if (!constr)
                     spdlog::warn("Global observable {} in channel {} does not have constraint PDF", globName.Data(), channelName.Data());
@@ -298,8 +299,9 @@ void combiner::rename_core()
             it.reset(tmpNuis->createIterator());
             for (RooRealVar *arg = dynamic_cast<RooRealVar *>(it->Next()); arg != 0; arg = dynamic_cast<RooRealVar *>(it->Next()))
             {
-                TString curName = arg->GetName();
-                arg->SetName(curName + "_" + channelName);
+                TString nuisName = arg->GetName();
+                RooRealVar *var = w->var(nuisName);
+                var->SetName(nuisName + "_" + channelName);
             }
         }
         else{
