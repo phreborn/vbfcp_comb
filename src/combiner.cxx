@@ -231,10 +231,12 @@ void combiner::rename_core()
         RooSimultaneous *pdf = dynamic_cast<RooSimultaneous *>(mc->GetPdf());
 
         /* Bookkeeping */
-        vector<TString> ignoreList; /* Not using RooArgSet due to potential hash table issue after renaming */
         RooArgSet allVars = w->allVars();
         RooArgSet allPdfs = w->allPdfs();
         RooArgSet allFunc = w->allFunctions();
+
+        unique_ptr<RooArgSet> tmpNuis(mc->GetNuisanceParameters()->snapshot());
+        unique_ptr<RooArgSet> tmpGlob(mc->GetGlobalObservables()->snapshot());
 
         /* let global observables fixed, and nuisances parameters float */
         RooStats::SetAllConstant(*mc->GetNuisanceParameters(), false);
@@ -246,8 +248,7 @@ void combiner::rename_core()
         {
             if (!channel.simplifiedImport_)
                 allPdfs.remove(*w->pdf(it->first));
-            else
-                ignoreList.push_back(it->second);
+
             w->pdf(it->first)->SetName(it->second);
         }
 
@@ -257,7 +258,10 @@ void combiner::rename_core()
             if (!channel.simplifiedImport_)
                 allVars.remove(*w->var(it->first));
             else
-                ignoreList.push_back(it->second);
+            {
+                tmpNuis->remove(*w->var(it->first));
+                tmpGlob->remove(*w->var(it->first));
+            }
             w->var(it->first)->SetName(it->second);
         }
 
@@ -268,8 +272,7 @@ void combiner::rename_core()
                 continue;
             if (!channel.simplifiedImport_)
                 allVars.remove(*w->var(it->second));
-            else
-                ignoreList.push_back(it->first);
+
             w->var(it->second)->SetName(it->first);
         }
 
@@ -277,12 +280,11 @@ void combiner::rename_core()
         {
             spdlog::info("Simplified import requested for channel {}. Will only rename constraint PDFs, nuisance parameters, and global observables.", channelName.Data());
 
-            unique_ptr<TIterator> it(mc->GetGlobalObservables()->createIterator());
+            unique_ptr<TIterator> it(tmpGlob->createIterator());
             for (RooRealVar *arg = dynamic_cast<RooRealVar *>(it->Next()); arg != 0; arg = dynamic_cast<RooRealVar *>(it->Next()))
             {
                 TString globName = arg->GetName();
-                if (find(ignoreList.begin(), ignoreList.end(), globName) == ignoreList.end())
-                    arg->SetName(globName + "_" + channelName);
+                arg->SetName(globName + "_" + channelName);
                 unique_ptr<TIterator> constrIt(arg->clientIterator());
                 RooAbsPdf *constr = dynamic_cast<RooAbsPdf *>(constrIt->Next());
                 if (!constr)
@@ -293,12 +295,11 @@ void combiner::rename_core()
                     auxUtil::alertAndAbort(Form("Global observable %s in channel %s has more than one constraint PDF", globName.Data(), channelName.Data()));
             }
 
-            it.reset(mc->GetNuisanceParameters()->createIterator());
+            it.reset(tmpNuis->createIterator());
             for (RooRealVar *arg = dynamic_cast<RooRealVar *>(it->Next()); arg != 0; arg = dynamic_cast<RooRealVar *>(it->Next()))
             {
                 TString curName = arg->GetName();
-                if (find(ignoreList.begin(), ignoreList.end(), curName) == ignoreList.end())
-                    arg->SetName(curName + "_" + channelName);
+                arg->SetName(curName + "_" + channelName);
             }
         }
         else{
