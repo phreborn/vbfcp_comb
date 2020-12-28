@@ -13,6 +13,22 @@ using namespace RooStats;
 
 namespace auxUtil
 {
+  struct TOwnedList : public TList
+  {
+    // A collection class for keeping TObjects for deletion.
+    // TOwnedList is like TList with SetOwner(), but really deletes all objects, whether or not on heap.
+    // This is a horrible hack to work round the fact that RooArgSet and RooDataSet objects have have IsOnHeap() false.
+    TOwnedList() : TList() { SetOwner(); }
+    virtual ~TOwnedList() { Clear(); }
+    virtual void Clear(Option_t *option = "")
+    {
+        if (!option || strcmp(option, "nodelete") != 0)
+            for (TIter it(this); TObject *obj = it();)
+                SafeDelete(obj);
+        TList::Clear("nodelete");
+    }
+  };
+  
   const TString WARNING = "\033[91m";
   const TString ENDC = "\033[0m";
 

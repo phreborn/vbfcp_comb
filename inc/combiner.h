@@ -7,11 +7,13 @@
  *
  *        Version:  1.0
  *        Created:  05/17/2012 02:49:27 PM
- *       Revision:  none
+ *       Revision:  12/27/20 during pandemic
  *       Compiler:  gcc
  *
- *         Author:  haoshuang.ji (), haoshuang.ji@cern.ch
- *   Organization:
+ *         Author:  Haoshuang Ji, haoshuang.ji@cern.ch
+ *                  Hongtao Yang, Hongtao.Yang@cern.ch
+ *   Organization:  University of Wisconsin
+ *                  Lawrence Berkeley National Lab
  *
  * =====================================================================================
  */
@@ -22,6 +24,7 @@
 #include "rooCommon.h"
 
 #include "asimovUtil.hh"
+#include "auxUtil.hh"
 
 struct POI
 {
@@ -66,39 +69,15 @@ struct Channel
   }
 };
 
-struct TOwnedList : public TList
-{
-    // A collection class for keeping TObjects for deletion.
-    // TOwnedList is like TList with SetOwner(), but really deletes all objects, whether or not on heap.
-    // This is a horrible hack to work round the fact that RooArgSet and RooDataSet objects have have IsOnHeap() false.
-    TOwnedList() : TList() { SetOwner(); }
-    virtual ~TOwnedList() { Clear(); }
-    virtual void Clear(Option_t *option = "")
-    {
-        if (!option || strcmp(option, "nodelete") != 0)
-            for (TIter it(this); TObject *obj = it();)
-                SafeDelete(obj);
-        TList::Clear("nodelete");
-    }
-};
-
 class combiner
 {
 public:
-  combiner();
-  ~combiner()
-  {
-    m_thread_ptrs.clear();
-    m_wArr.clear();
-    m_keep.Clear();
-    m_summary.clear();
-    m_pois.clear();
-  }
+  combiner(TString configFileName);
+  ~combiner(){}
 
   void rename(bool saveTmpWs = true);
   void combine(bool readTmpWs = false, bool saveRawWs = true);
   void finalize(bool readRawWs = false);
-  void readConfigXml(TString configFileName);
   void printSummary();
 
   /* Multi-threading */
@@ -126,6 +105,7 @@ public:
   static TString GOPOSTFIX;
 
 private:
+  void readConfigXml(TString configFileName);
   void makeModelConfig();
   void readChannel(TXMLNode *rootNode);
   void readRenameMap(Channel &channel, TXMLNode *node, RooWorkspace *w);
@@ -169,6 +149,6 @@ private:
   TList *m_curDataList;
   RooCategory *m_curCat;
   TString m_catNamePrefix;
-  TOwnedList m_keep;
+  auxUtil::TOwnedList m_keep;
   std::vector<RooWorkspace *> m_wArr;
 };

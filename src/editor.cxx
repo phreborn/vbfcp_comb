@@ -1,45 +1,46 @@
 /*
  * =====================================================================================
- * *       Filename:  Organizer.cxx
+ * *       Filename:  editor.cxx
  *
  *    Description:  Orgnize the workspace
  *
  *        Version:  1.0
  *        Created:  07/19/12 17:33:20
- *       Revision:  none
+ *       Revision:  12/27/20
  *       Compiler:  gcc
  *
- *         Author:  Haoshuang Ji (那你是真的牛逼), haoshuang.ji@cern.ch 
+ *         Author:  Haoshuang Ji, haoshuang.ji@cern.ch 
+ *                  Hongtao Yang, Hongtao.Yang@cern.ch
  *   Organization:  University of Wisconsin
- *
- * Rewritten by Hongtao Yang (Hongtao.Yang@cern.ch) in 2019.
- *
+ *                  Lawrence Berkeley National Lab
+  *
  * =====================================================================================
  */
-#include "Organizer.h"
+#include "editor.h"
+#include "textTable.h"
 
-const TString Organizer::CONSTRAINT = "constraint";
-const TString Organizer::NORMAL = "normal";
-const TString Organizer::EXTERNAL = "external";
+const TString editor::CONSTRAINT = "constraint";
+const TString editor::NORMAL = "normal";
+const TString editor::EXTERNAL = "external";
 
-Organizer::Organizer(TString configFileName)
+editor::editor(TString configFileName)
 {
-  // cout<<__PRETTY_FUNCTION__<<endl;
+  m_numThreads = 1;
   _asimovHandler.reset(new asimovUtil());
   readConfigXml(configFileName);
 }
 
-bool Organizer::run()
+bool editor::run()
 {
   // cout<<__PRETTY_FUNCTION__<<endl;
   TFile *f = TFile::Open(m_inFile);
   RooWorkspace *w = (RooWorkspace *)(f->Get(m_wsName));
   RooStats::ModelConfig *mc = (RooStats::ModelConfig *)(w->obj(m_mcName));
-  RooSimultaneous *pdf = dynamic_cast<RooSimultaneous *>(mc->GetPdf());
+  m_pdf = dynamic_cast<RooSimultaneous *>(mc->GetPdf());
 
   /* make new workspace to hold them */
-  RooWorkspace *nW = new RooWorkspace(m_wsName);
-  ModelConfig *nMc = new ModelConfig(m_mcName, nW);
+  m_nW.reset(new RooWorkspace(m_wsName));
+  unique_ptr<ModelConfig> nMc(new ModelConfig(m_mcName, m_nW.get()));
 
   // Implement objects
   int nItems = (int)m_actionItems.size();
@@ -52,53 +53,32 @@ bool Organizer::run()
 
     TString objName = auxUtil::getObjName(actionStr);
     if (actionStr.Contains("FlexibleInterpVar"))
-      implementFlexibleInterpVar(nW, actionStr);
+      implementFlexibleInterpVar(m_nW.get(), actionStr);
     else if (actionStr.Contains("RooMultiVarGaussian"))
-      implementMultiVarGaussian(nW, actionStr);
+      implementMultiVarGaussian(m_nW.get(), actionStr);
     else
-      auxUtil::implementObj(nW, actionStr);
+      auxUtil::implementObj(m_nW.get(), actionStr);
   }
 
   // If there are additional constraint pdf to be attached
   if (m_constraintPdf.size() > 0)
   {
     spdlog::info("Attaching additional constraint terms");
-    RooAbsCategoryLValue *m_cat = (RooAbsCategoryLValue *)&pdf->indexCat();
-    int numChannels = m_cat->numBins(0);
-
-    map<string, RooAbsPdf *> pdfMap;
-
-    for (int i = 0; i < numChannels; i++)
+    m_cat = (RooCategory *)(&m_pdf->indexCat());
+    m_total = m_cat->numBins(0);
+    m_idx = 0; /* Reset counter */
+    m_thread_ptrs.clear();
+    for (unsigned i = 0; i < std::min(m_numThreads, m_total); i++)
     {
-      m_cat->setBin(i);
-      spdlog::info("Creating new PDFs for category {}", m_cat->getLabel());
-      RooAbsPdf *pdfi = dynamic_cast<RooAbsPdf *>(pdf->getPdf(m_cat->getLabel()));
-      RooArgSet baseComponents;
-      if (typeid(*pdfi) == typeid(RooProdPdf))
-      {
-        auxUtil::getBasePdf((RooProdPdf *)pdfi, baseComponents);
-        for (map<TString, pair<TString, TString>>::iterator it = m_constraintPdf.begin(); it != m_constraintPdf.end(); ++it)
-        {
-          RooAbsPdf *pdf_tmp = nW->pdf((it->first));
-          if (not pdf_tmp)
-            auxUtil::alertAndAbort("PDF " + it->first + " does not exist in the new workspace");
-          baseComponents.add(*pdf_tmp);
-        }
-      }
-      else
-      {
-        baseComponents.add(*pdfi);
-      }
-      TString newPdfName = TString(pdfi->GetName()) + "__addConstr";
-      pdfi = new RooProdPdf(newPdfName, newPdfName, baseComponents);
-
-      pdfMap[m_cat->getLabel()] = pdfi;
+        m_thread_ptrs.emplace_back(new std::thread(&editor::remakeCategories, this));
+        spdlog::info("  -> Processor thread #{} started!", i);
     }
+    join();
 
     RooSimultaneous *newPdf = new RooSimultaneous(
-        (TString(pdf->GetName()) + "__addConstr"),
-        (TString(pdf->GetName()) + "__addConstr"),
-        pdfMap,
+        (TString(m_pdf->GetName()) + "__addConstr"),
+        (TString(m_pdf->GetName()) + "__addConstr"),
+        m_pdfMap,
         *m_cat);
 
     mc->SetPdf(*newPdf);
@@ -115,6 +95,10 @@ bool Organizer::run()
   // cout << "Rename action: " << renameStr << endl;
 
   vector<TString> renameList = auxUtil::splitString(renameStr, ',');
+  TextTable t('-', '|', '+');
+  t.add("Old");
+  t.add("New");
+  t.endOfRow();
   for (auto iStr : renameList)
   {
     if (!iStr.Contains("="))
@@ -134,37 +118,40 @@ bool Organizer::run()
         continue;
       }
     }
-    if (not nW->arg(newObjName))
+    if (!m_nW->arg(newObjName))
       auxUtil::alertAndAbort("Object " + newObjName + " (<- " + oldObjName + ") does not exist in the new workspace"); // If it is missing in the new workspace, it is not acceptable
     if (renameMap.find(oldObjName.Data()) != renameMap.end())
       auxUtil::alertAndAbort("Object " + oldObjName + " is renamed more than once"); // Same variable renamed multiple times
     renameMap[oldObjName.Data()] = newObjName.Data();
+    t.add(oldObjName.Data());
+    t.add(newObjName.Data());
+    t.endOfRow();
   }
+  spdlog::info("Replace table:");
+  cout << t;
 
   TString oldStr = "";
   TString newStr = "";
   auxUtil::linkMap(renameMap, oldStr, newStr, ",");
-  spdlog::info("Old: {}", oldStr.Data());
-  spdlog::info("New: {}", newStr.Data());
 
   /* import pdf */
-  nW->import(*(mc->GetPdf()),
+  m_nW->import(*(mc->GetPdf()),
              RooFit::RenameVariable(oldStr, newStr),
              RooFit::RecycleConflictNodes(), RooFit::Silence());
-  RooAbsPdf *nPdf = nW->pdf((mc->GetPdf())->GetName());
+  RooAbsPdf *nPdf = m_nW->pdf((mc->GetPdf())->GetName());
   nMc->SetPdf(*nPdf);
 
   /* import data */
   list<RooAbsData *> dataList = w->allData();
   for (list<RooAbsData *>::iterator it = dataList.begin(); it != dataList.end(); ++it)
-    nW->import(**it);
+    m_nW->import(**it);
 
   /* poi */
   RooArgSet newPOI;
-  spdlog::info("List of POIs in the new parameterization:");
+  spdlog::debug("List of POIs in the new parameterization:");
   for (int i = 0; i < (int)m_poiNames.size(); i++)
   {
-    RooRealVar *var = nW->var(m_poiNames[i]);
+    RooRealVar *var = m_nW->var(m_poiNames[i]);
     if (!var)
     {
       if (m_isStrict)
@@ -175,7 +162,7 @@ bool Organizer::run()
         continue;
       }
     }
-    spdlog::info(m_poiNames[i].Data());
+    spdlog::debug(m_poiNames[i].Data());
     /* float by default */
     var->setConstant(false);
     newPOI.add(*var);
@@ -191,15 +178,15 @@ bool Organizer::run()
     unique_ptr<TIterator> iterN(mc->GetNuisanceParameters()->createIterator());
     for (RooRealVar *v = (RooRealVar *)iterN->Next(); v != 0; v = (RooRealVar *)iterN->Next())
     {
-      RooRealVar *var = nW->var(v->GetName());
-      if (!(bool)var)
+      RooRealVar *var = m_nW->var(v->GetName());
+      if (!var)
       {
-        spdlog::warn("old nuisance parameter {} no longer exists in the new workspace...", v->GetName());
+        spdlog::warn("Old nuisance parameter {} no longer exists in the new workspace. Remove from ModelConfig...", v->GetName());
         continue;
       }
       if (var->isConstant())
       {
-        spdlog::warn("nuisance parameter {} is set to constant. Floating the parameter...", v->GetName());
+        spdlog::warn("Nuisance parameter {} is set to constant. Floating the parameter...", v->GetName());
         var->setConstant(false);
       }
       nuis.add(*var);
@@ -211,15 +198,15 @@ bool Organizer::run()
     unique_ptr<TIterator> iterG(mc->GetGlobalObservables()->createIterator());
     for (RooRealVar *v = (RooRealVar *)iterG->Next(); v != 0; v = (RooRealVar *)iterG->Next())
     {
-      RooRealVar *var = nW->var(v->GetName());
-      if (!(bool)var)
+      RooRealVar *var = m_nW->var(v->GetName());
+      if (!var)
       {
-        spdlog::warn("old global observable {} no longer exists in the new workspace...", v->GetName());
+        spdlog::warn("Old global observable {} no longer exists in the new workspace. Remove from ModelConfig...", v->GetName());
         continue;
       }
       if (!var->isConstant())
       {
-        spdlog::warn("global observable {} is not set to constant. Fixing the parameter...", v->GetName());
+        spdlog::warn("Global observable {} is set to float. Fixing the parameter...", v->GetName());
         var->setConstant(true);
       }
       gobs.add(*var);
@@ -231,10 +218,10 @@ bool Organizer::run()
     unique_ptr<TIterator> iterM(mc->GetObservables()->createIterator());
     for (RooAbsArg *v = (RooAbsArg *)iterM->Next(); v != 0; v = (RooAbsArg *)iterM->Next())
     {
-      RooAbsArg *var = dynamic_cast<RooAbsArg *>(nW->obj(v->GetName()));
+      RooAbsArg *var = dynamic_cast<RooAbsArg *>(m_nW->obj(v->GetName()));
       if (!var)
       {
-        auxUtil::alertAndAbort(Form("old observable %s no longer exists in the new workspace", v->GetName())); // Renaming observable is currently not supported
+        auxUtil::alertAndAbort(Form("Old observable %s no longer exists in the new workspace", v->GetName())); // Renaming observable is currently not supported
       }
       mobs.add(*var);
     }
@@ -247,18 +234,18 @@ bool Organizer::run()
     vector<TString> NPList = auxUtil::splitString(NPGO.first, ',');
     for (auto NPName : NPList)
     {
-      RooRealVar *np = nW->var(NPName);
+      RooRealVar *np = m_nW->var(NPName);
       if (not np)
-        auxUtil::alertAndAbort("nuisance parameter " + NPName + " does not exist in the new workspace");
+        auxUtil::alertAndAbort("Nuisance parameter " + NPName + " does not exist in the new workspace");
       nuis.add(*np);
     }
 
     vector<TString> GOList = auxUtil::splitString(NPGO.second, ',');
     for (auto GOName : GOList)
     {
-      RooRealVar *go = nW->var(GOName);
+      RooRealVar *go = m_nW->var(GOName);
       if (not go)
-        auxUtil::alertAndAbort("global observable " + GOName + " does not exist in the new workspace");
+        auxUtil::alertAndAbort("Global observable " + GOName + " does not exist in the new workspace");
       gobs.add(*go);
     }
   }
@@ -267,12 +254,12 @@ bool Organizer::run()
   nMc->SetGlobalObservables(gobs);
   nMc->SetObservables(mobs);
 
-  nW->import(*nMc);
-  nW->importClassCode();
+  m_nW->import(*nMc);
+  m_nW->importClassCode();
 
   // Copy snapshots
   RooArgSet everything_new, everything_old;
-  auxUtil::collectEverything(nMc, &everything_new);
+  auxUtil::collectEverything(nMc.get(), &everything_new);
   RooArgSet *everything_new_snapshot = dynamic_cast<RooArgSet *>(everything_new.snapshot());
   auxUtil::collectEverything(mc, &everything_old);
 
@@ -282,7 +269,7 @@ bool Organizer::run()
     if (not w->loadSnapshot(snapshot))
       spdlog::warn("nuisance parameter snapshot {} does not exist in the old workspace", snapshot.Data());
     nuis = *mc->GetNuisanceParameters();
-    nW->saveSnapshot(snapshot, nuis);
+    m_nW->saveSnapshot(snapshot, nuis);
   }
 
   // Global observable snapshot
@@ -291,7 +278,7 @@ bool Organizer::run()
     if (not w->loadSnapshot(snapshot))
       spdlog::warn("global observable snapshot {} does not exist in the old workspace", snapshot.Data());
     gobs = *mc->GetGlobalObservables();
-    nW->saveSnapshot(snapshot, gobs);
+    m_nW->saveSnapshot(snapshot, gobs);
   }
 
   // POI snapshot
@@ -300,7 +287,7 @@ bool Organizer::run()
     if (not w->loadSnapshot(snapshot))
       spdlog::warn("POI snapshot {} does not exist in the old workspace", snapshot.Data());
     newPOI = *mc->GetParametersOfInterest();
-    nW->saveSnapshot(snapshot, newPOI);
+    m_nW->saveSnapshot(snapshot, newPOI);
   }
 
   // Everything snapshot
@@ -310,24 +297,24 @@ bool Organizer::run()
       spdlog::warn("Everything snapshot {} does not exist in the old workspace", snapshot.Data());
 
     everything_new = everything_old;
-    nW->saveSnapshot(snapshot, everything_new);
+    m_nW->saveSnapshot(snapshot, everything_new);
   }
 
   everything_new = *everything_new_snapshot; // Recover values
 
   // Performing fits
   if (_asimovHandler->genAsimov())
-    _asimovHandler->generateAsimov(nMc, m_dsName);
+    _asimovHandler->generateAsimov(nMc.get(), m_dsName);
 
   unique_ptr<TFile> fout(TFile::Open(m_outFile, "recreate"));
-  nW->Write();
+  m_nW->Write();
   fout->Close();
   spdlog::info("Written to file: {}", m_outFile.Data());
 
   return true;
 }
 
-void Organizer::readConfigXml(TString filen)
+void editor::readConfigXml(TString filen)
 {
   // cout<<__PRETTY_FUNCTION__<<endl;
   TDOMParser xmlparser;
@@ -382,7 +369,7 @@ void Organizer::readConfigXml(TString filen)
   }
 }
 
-void Organizer::implementFlexibleInterpVar(RooWorkspace *w, TString actionStr)
+void editor::implementFlexibleInterpVar(RooWorkspace *w, TString actionStr)
 {
   actionStr = actionStr.ReplaceAll(" ", "");
   actionStr = actionStr.ReplaceAll("FlexibleInterpVar::", "");
@@ -399,11 +386,11 @@ void Organizer::implementFlexibleInterpVar(RooWorkspace *w, TString actionStr)
     auxUtil::alertAndAbort("the format of FlexibleInterpVar (" + actionStr + ") is not correct");
 
   TString NPName = ((TObjString *)iArray->At(0))->GetString();
-  if (!w->var(NPName))
-  {
+  // if (!w->var(NPName))
+  // {
     // cerr<<"ERROR: nuisance parameter "<<NPName<<" is missing."<<endl;
     // abort();
-  }
+  // }
 
   RooArgList nuiList(*w->arg(NPName));
 
@@ -421,11 +408,10 @@ void Organizer::implementFlexibleInterpVar(RooWorkspace *w, TString actionStr)
 
   RooStats::HistFactory::FlexibleInterpVar expected_var(responseName, responseName, nuiList, nominal, sigma_var_low, sigma_var_high, code);
 
-  // expected_var.Print();
   w->import(expected_var);
 }
 
-void Organizer::implementMultiVarGaussian(RooWorkspace *w, TString actionStr)
+void editor::implementMultiVarGaussian(RooWorkspace *w, TString actionStr)
 {
   actionStr = actionStr.ReplaceAll(" ", "");
   actionStr = actionStr.ReplaceAll("RooMultiVarGaussian::", "");
@@ -503,4 +489,45 @@ void Organizer::implementMultiVarGaussian(RooWorkspace *w, TString actionStr)
   V.Print();
   RooMultiVarGaussian *model = new RooMultiVarGaussian(functionName, functionName, obsList, meanList, V);
   w->import(*model);
+}
+
+void editor::remakeCategories()
+{
+  std::unique_lock<std::mutex> lk(m_mutex, std::defer_lock);
+  while(m_idx < m_total)
+  {
+    int icat = m_idx++;
+    if (m_idx > m_total)
+      break;
+    lk.lock();
+    m_cat->setBin(icat);
+    TString catName = m_cat->getLabel();
+    lk.unlock();
+
+    spdlog::info("Creating new PDF for category {}", catName.Data());
+    RooAbsPdf *pdfi = dynamic_cast<RooAbsPdf *>(m_pdf->getPdf(catName));
+    RooArgSet baseComponents;
+    if (typeid(*pdfi) == typeid(RooProdPdf))
+    {
+      auxUtil::getBasePdf((RooProdPdf *)pdfi, baseComponents);
+      for (map<TString, pair<TString, TString>>::iterator it = m_constraintPdf.begin(); it != m_constraintPdf.end(); ++it)
+      {
+        RooAbsPdf *pdf_tmp = m_nW->pdf((it->first));
+        if (!pdf_tmp)
+          auxUtil::alertAndAbort("PDF " + it->first + " does not exist in the new workspace");
+        baseComponents.add(*pdf_tmp);
+      }
+    }
+    else
+    {
+      baseComponents.add(*pdfi);
+    }
+    TString newPdfName = TString(pdfi->GetName()) + "__addConstr";
+
+    lk.lock();
+    pdfi = new RooProdPdf(newPdfName, newPdfName, baseComponents);    
+    m_pdfMap[catName.Data()] = pdfi;
+    m_keep.Add(pdfi);
+    lk.unlock();
+  }
 }

@@ -1,8 +1,8 @@
 #include "CommonHead.h"
 
 #include "combiner.h"
+#include "editor.h"
 #include "splitter.h"
-#include "Organizer.h"
 #include "decorator.h"
 
 #include "spdlog/spdlog.h"
@@ -61,7 +61,7 @@ void printHelp(TString exe)
 {
   cout << "Usage: " << exe << " [options]" << endl;
   cout << "Allowed options:" << endl;
-  cout << " -w [ --what ] arg                  What to do: combine/split/organize/decorate (required)" << endl; // Simplify to combine, edit (the old organize), and split (which should contain features in decorate)
+  cout << " -w [ --what ] arg                  What to do: combine/edit/split/decorate (required)" << endl; // Simplify to combine, edit (the old organize), and split (which should contain features in decorate)
   cout << " -x [ --ConfigXml ] arg             Input XML configure file" << endl;
   cout << " -f [ --CombinedFile ] arg          Input workspace file" << endl;
   cout << " -p [ --SplittedFile ] arg          Output workspace file" << endl;
@@ -160,11 +160,9 @@ int main(int argc, char **argv)
   if (what_ == "combine")
   {
     spdlog::info("Performing workspace combination");
-    std::unique_ptr<combiner> comb;
-    comb.reset(new combiner());
-    comb->setNumThreads(numThreads_);
-    comb->readConfigXml(configFile_);
+    std::unique_ptr<combiner> comb(new combiner(configFile_));
     comb->printSummary();
+    comb->setNumThreads(numThreads_);
     comb->rename(true);
     comb->combine(true, true);
     comb->finalize(true);
@@ -196,10 +194,10 @@ int main(int argc, char **argv)
       split->grabAsimov(combinedFile_);
     }
   }
-  else if (what_ == "organize")
+  else if (what_ == "editor")
   {
-    Organizer *org = new Organizer(configFile_);
-    // org->printSummary();
+    unique_ptr<editor> org(new editor(configFile_));
+    org->setNumThreads(numThreads_);
     org->run();
   }
   else if (what_ == "decorate")

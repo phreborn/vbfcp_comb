@@ -7,12 +7,13 @@
  *
  *        Version:  1.1
  *        Created:  05/17/2012 02:49:27 PM
- *       Revision:  13/12/2020
+ *       Revision:  12/27/20 during pandemic
  *       Compiler:  gcc
  *
- *         Author:  haoshuang.ji (已经去工业界了，别联系), haoshuang.ji@cern.ch
+ *         Author:  Haoshuang Ji (已经去工业界了，别联系), haoshuang.ji@cern.ch
  *                  Hongtao Yang (还没跑，可以联系), Hongtao.Yang@cern.ch
- *   Organization:
+ *   Organization:  University of Wisconsin
+ *                  Lawrence Berkeley National Lab
  *
  * =====================================================================================
  */
@@ -38,14 +39,16 @@ TString combiner::POINAME = "POI";
 TString combiner::CONSTRPOSTFIX = "_Pdf";
 TString combiner::GOPOSTFIX = "_In";
 
-combiner::combiner() : m_wsName("combWS"),
-                       m_mcName("ModelConfig"),
-                       m_dataName("combData"),
-                       m_outputFileName("combined.root"),
-                       m_strictMode(false),
-                       m_numThreads(1)
+combiner::combiner(TString inputXMLFileName)
 {
     m_asimovHandler.reset(new asimovUtil());
+    m_wsName = "combWS";
+    m_mcName = "ModelConfig";
+    m_dataName = "combData";
+    m_outputFileName = "combined.root";
+    m_strictMode = false;
+    m_numThreads = 1;
+    readConfigXml(inputXMLFileName);  
 }
 
 void combiner::readConfigXml(TString filen)
@@ -397,6 +400,7 @@ void combiner::rename(bool saveTmpWs)
         outputFile->cd();
         m_tmpWs->Write();
         outputFile->Close();
+        spdlog::info("Saving temporary workspace to file {}", (m_outputFileName + TMPPOSTFIX).Data());
     }
 }
 
@@ -490,20 +494,22 @@ void combiner::combine_core()
         lk.lock();
         m_curCat->setBin(icat);
         TString catName = m_curCat->getLabel();
-        lk.unlock();
-        
         TString type = m_catNamePrefix + "_" + catName;
         spdlog::info("Category --> {} {}", icat, catName.Data());
         spdlog::info("\tNew category name --> {}", type.Data());
         RooAbsPdf *pdfi = m_curPdf->getPdf(catName);
         RooDataSet *datai = (RooDataSet *)(m_curDataList->FindObject(catName));
-
+        lk.unlock();
+        
         /* Make data */
         unique_ptr<RooArgSet> indivObs(pdfi->getObservables(*datai));
         RooRealVar weight(WGTNAME, "", 1.);
         RooArgSet obsAndWgt(*indivObs, weight);
-        RooDataSet *dataNew_i = new RooDataSet(type + "_data", type + "_data", obsAndWgt, WeightVar(WGTNAME));
 
+        lk.lock();
+        RooDataSet *dataNew_i = new RooDataSet(type + "_data", type + "_data", obsAndWgt, WeightVar(WGTNAME));
+        lk.unlock();
+        
         for (int j = 0, nEntries = datai->numEntries(); j < nEntries; ++j)
         {
             *indivObs = *datai->get(j);

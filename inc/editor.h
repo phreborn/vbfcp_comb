@@ -1,25 +1,25 @@
 /*
  * =====================================================================================
  *
- *       Filename:  Organizer.h
+ *       Filename:  editor.h
  *
- *    Description:  Orgnize the workspace
+ *    Description:  Edit the workspace
  *
- *        Version:  1.0
+ *        Version:  1.1
  *        Created:  07/19/12 17:32:58
- *       Revision:  none
+ *       Revision:  12/27/20 during pandemic
  *       Compiler:  gcc
  *
- *         Author:  Haoshuang Ji (那你是真的牛逼), haoshuang.ji@cern.ch
+ *         Author:  Haoshuang Ji, haoshuang.ji@cern.ch
+ *                  Hongtao Yang, Hongtao.Yang@cern.ch
  *   Organization:  University of Wisconsin
- *
- * Rewritten by Hongtao Yang (Hongtao.Yang@cern.ch) in 2019.
- *
+ *                  Lawrence Berkeley National Lab
+ *                  
  * =====================================================================================
  */
 
-#ifndef Manager_Organizer
-#define Manager_Organizer
+#ifndef Manager_editor
+#define Manager_editor
 
 #include "CommonHead.h"
 #include "RooFitHead.h"
@@ -29,29 +29,39 @@
 #include "auxUtil.hh"
 #include "asimovUtil.hh"
 
-class Organizer {
+class editor {
 public:
-  Organizer(TString configFileName) ;
-
+  editor(TString configFileName) ;
+  ~editor() {}
   bool run();
-
   void readConfigXml( TString configFileName );
-  void printSummary()
-  {
-    int nItems = (int)m_actionItems.size();
-    for ( int i= 0; i < nItems; i++ ) {
-      cout << "\tItem " << i << ", " << m_actionItems[i] << endl;
+  /* Multi-threading */
+  void setNumThreads(unsigned num) { 
+    m_numThreads = num;
+    if (m_numThreads > std::thread::hardware_concurrency())
+    {
+      m_numThreads = std::thread::hardware_concurrency();
+      spdlog::warn("Reducing number of threads to {} to match hardware concurrency", m_numThreads);
     }
   }
 
 private:
   void implementFlexibleInterpVar(RooWorkspace *w, TString actionStr);
   void implementMultiVarGaussian(RooWorkspace *w, TString actionStr);
+  void remakeCategories();
+  void join()
+  {
+    for (auto &thread : m_thread_ptrs)
+    {
+      if (thread->joinable())
+        thread->join();
+    }
+  }
 
   unique_ptr<asimovUtil> _asimovHandler;
   vector<TString> m_actionItems;
   vector<TString> m_actionTypes;
-  TString m_modelName;
+  TString m_modelName; 
   vector<TString> m_poiNames;
   vector<TString> m_snapshotNP, m_snapshotGO, m_snapshotPOI, m_snapshotAll;
   TString m_mapStr;
@@ -69,6 +79,18 @@ private:
   TString m_dsName;		// Dataset name
   TString m_inFile;		// Input file name
   TString m_outFile;	// Output file name
+
+  /* Multi-threading */
+  int m_numThreads;
+  std::vector<std::unique_ptr<std::thread>> m_thread_ptrs;
+  std::mutex m_mutex;
+  std::atomic<int> m_idx;
+  std::map<std::string, RooAbsPdf*> m_pdfMap;
+  RooCategory *m_cat;
+  RooSimultaneous *m_pdf;
+  std::unique_ptr<RooWorkspace> m_nW;
+  int m_total;
+  auxUtil::TOwnedList m_keep;
 };
 
 #endif
