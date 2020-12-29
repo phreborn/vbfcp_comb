@@ -11,9 +11,9 @@ TString configFile_ = "";
 bool verbose_ = false;
 int numThreads_ = 1;
 
-/* Following are only used in workspace split/regularization */
+/* Following are only used in workspace split/regulate */
 TString inputFile_ = "";
-TString outputFile_ = "";
+TString outputFile_ = "splitted.root";
 TString dataName_ = "obsData";
 TString wsName_ = "combWS";
 TString mcName_ = "ModelConfig";
@@ -21,12 +21,13 @@ TString indices_ = "";
 TString snapshots_ = "";
 bool editRFV_ = false;
 int reBin_ = -1;
+bool rebuildPdf_ = false;
 
 struct option longopts[] = {
     {"what", required_argument, NULL, 'w'},
-    {"ConfigXml", required_argument, NULL, 'x'},
-    {"CombinedFile", required_argument, NULL, 'f'},
-    {"OutputFile", required_argument, NULL, 'p'},
+    {"configXml", required_argument, NULL, 'x'},
+    {"inputFile", required_argument, NULL, 'f'},
+    {"outputFile", required_argument, NULL, 'p'},
     {"minimizerAlgo", required_argument, NULL, 'm'},
     {"minimizerStrategy", required_argument, NULL, 's'},
     {"minimizerTolerance", required_argument, NULL, 't'},
@@ -40,6 +41,7 @@ struct option longopts[] = {
     {"editRFV", required_argument, NULL, 304},    
     {"rebin", required_argument, NULL, 305},
     {"snapshots", required_argument, NULL, 306},
+    {"rebuildPdf", required_argument, NULL, 307},
     {"help", no_argument, NULL, 'h'},
     {0, 0, 0, 0}};
 
@@ -47,18 +49,24 @@ void printHelp(TString exe)
 {
   cout << "Usage: " << exe << " [options]" << endl;
   cout << "Allowed options:" << endl;
-  cout << " -w [ --what ] arg                  What to do: combine/edit/split/regulate (required)" << endl; // Simplify to combine, edit (the old organize), and split (which should contain features in decorate)
-  cout << " -x [ --ConfigXml ] arg             Input XML configure file" << endl;
-  cout << " -f [ --CombinedFile ] arg          Input workspace file" << endl;
-  cout << " -p [ --SplittedFile ] arg          Output workspace file" << endl;
-  cout << " -v [ --verbose ] arg               Printing out debug info or not (default no)" << endl;
-  cout << " -i [ --indices ] arg               Category indices to be included in the split file" << endl;
+  cout << " -w [ --what ] arg                  What to do: combine/edit/split/regulate/print (required)" << endl; // Simplify to combine, edit (the old organize), and split (which should contain features in decorate)
+  cout << " -x [ --configXml ] arg             Input XML configure file" << endl;
+  cout << " -f [ --inputFile ] arg             Input workspace file" << endl;
+  cout << " -p [ --outputFile ] arg            Output workspace file" << endl;
   cout << " -m [ --minimizerAlgo ] arg         Minimizer algorithm (default Minuit2)" << endl;
   cout << " -s [ --minimizerStrategy ] arg     Minimizer strategy (default 1)" << endl;
   cout << " -t [ --minimizerTolerance ] arg    Minimizer tolerance (default 1e-3)" << endl;
+  cout << " -i [ --indices ] arg               Category indices to be included in the split file" << endl;
   cout << " -o [ --nllOffset ] arg             Enable nllOffset (default on)" << endl;
   cout << " -c [ --constOpt ] arg              Enable constant optimization (default on)" << endl;
-  cout << " -r [ --editRFV ] arg               Fixing RooFormulaVar using hard-coded variable name (default off)" << endl;
+  cout << " -v [ --verbose ] arg               Printing out debug info or not (default no)" << endl;
+  cout << " --wsName arg                       Workspace name (default combWS)" << endl;
+  cout << " --mcName arg                       ModelConfig name (default ModelConfig)" << endl;
+  cout << " --dataName arg                     Dataset name (default obsData)" << endl;
+  cout << " --editRFV arg                      Fixing RooFormulaVar using hard-coded variable name (default off)" << endl;
+  cout << " --rebin arg                        Set binning of dataset (default -1)" << endl;
+  cout << " --snapshots arg                    Set snapshots to be copied" << endl;
+  cout << " --rebuildPdf arg                   Set rebuild PDF (default false)" << endl;
   cout << " -h [ --help ]                      Produce help message" << endl;
 }
 
@@ -149,7 +157,11 @@ int main(int argc, char **argv)
     case 306:
       snapshots_ = optarg;
       spdlog::info("Set snapshots to {}", snapshots_.Data());
-      break;                  
+      break;
+    case 307:
+      rebuildPdf_ = atoi(optarg);
+      spdlog::info("Set rebuild PDF to {}", rebuildPdf_);
+      break;
     case 'h':
       printHelp(argv[0]);
       return 0;
@@ -179,22 +191,32 @@ int main(int argc, char **argv)
   }
   else if (what_ == "edit")
   {
+    spdlog::info("Performing workspace editing");
     unique_ptr<editor> edit(new editor(configFile_));
     edit->setNumThreads(numThreads_);
     edit->run();
   }
-  else if (what_ == "split" || what_ == "regulate")
+  else if (what_ == "split" || what_ == "regulate" || what_ == "print")
   {
-    if (outputFile_ == "")
-      outputFile_ = "splitted.root";
     if (inputFile_ == "")
       auxUtil::alertAndAbort("Please specify input file to split");
-    if (what_ == "regulate")
+    if (what_ == "print")
+    {
+      spdlog::info("Print out workspace content");
+      indices_ = "";
+    }
+    else if (what_ == "regulate")
+    {
+      spdlog::info("Performing workspace regulation");
       indices_ = "all";
-
+      rebuildPdf_ = true;
+    }
+    else
+      spdlog::info("Performing workspace splitting");
     unique_ptr<splitter> split(new splitter(inputFile_, outputFile_, wsName_, mcName_, dataName_));
     split->setEditRFV(editRFV_);
     split->setRebin(reBin_);
+    split->setRebuildPdf(rebuildPdf_);
     if (snapshots_ != "")
       split->setSnapshots(snapshots_);
     split->printSummary();

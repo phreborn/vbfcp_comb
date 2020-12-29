@@ -40,16 +40,22 @@ public:
     void fillIndices(TString indices);
     void setRebin(int reBin) { m_reBin = reBin; }
     void setEditRFV(bool flag) { m_editRFV = flag; }
+    void setRebuildPdf(bool flag) { m_rebuildPdf = flag; }
     void setSnapshots(TString snapshots) { m_snapshots = auxUtil::splitString(snapshots, ','); }
     void makeWorkspace();
     static TString WGTNAME;
+    static TString PDFPOSTFIX;
 
 private:
     void buildSimPdf(RooAbsPdf *pdf, RooAbsData *data);
     void histToDataset(RooDataHist *data);
+    RooAbsPdf *rebuildCatPdf(RooAbsPdf *pdf, RooAbsData *data);
+    RooDataSet *rebuildCatData(RooAbsData *data, RooArgSet *obs);
 
     bool m_editRFV;
     int m_reBin;
+    bool m_rebuildPdf;
+
     unique_ptr<TFile> m_inputFile;
     RooStats::ModelConfig *m_mc;
     RooWorkspace *m_comb;

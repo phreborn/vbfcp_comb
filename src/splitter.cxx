@@ -25,6 +25,7 @@ using namespace RooFit;
 using namespace RooStats;
 
 TString splitter::WGTNAME = "_weight_";
+TString splitter::PDFPOSTFIX = "_deComposed";
 
 splitter::splitter(
     TString inputFileName,
@@ -76,6 +77,7 @@ splitter::splitter(
 
   m_editRFV = false;
   m_reBin = -1;
+  m_rebuildPdf = false;
 }
 
 void splitter::printSummary()
@@ -85,8 +87,9 @@ void splitter::printSummary()
   for (int i = 0; i < m_numChannels; i++)
   {
     m_cat->setBin(i);
-    RooAbsPdf *pdfi = m_pdf->getPdf(m_cat->getLabel());
-    RooDataSet *datai = (RooDataSet *)(m_dataList->At(i));
+    TString channelName = m_cat->getLabel();
+    RooAbsPdf *pdfi = m_pdf->getPdf(channelName);
+    RooDataSet *datai = (RooDataSet *)(m_dataList->FindObject(channelName));
     spdlog::info("\tIndex: {}, Pdf: {}, Data: {}, SumEntries: {}", i, pdfi->GetName(), datai->GetName(), datai->sumEntries());
   }
 
@@ -209,6 +212,9 @@ void splitter::makeWorkspace()
         subNuis.add(*v);
       }
     }
+
+    if (m_rebuildPdf)
+      pdfi = rebuildCatPdf(pdfi, datai);
     subPdfMap[channelName.Data()] = pdfi;
 
     /* Handle dataset */
@@ -221,9 +227,8 @@ void splitter::makeWorkspace()
       isBinned += (numEntries < m_reBin);
       if (isBinned)
       {
-        TString type = m_cat->getLabel();
-        subCat->setLabel(type, true);
-        subDataMap[channelName.Data()] = datai;
+        subCat->setLabel(channelName, true);
+        subDataMap[channelName.Data()] = rebuildCatData(datai, indivObs);
       }
       else
       {
@@ -253,7 +258,7 @@ void splitter::makeWorkspace()
       }
     }
     else
-      subDataMap[channelName.Data()] = datai;
+      subDataMap[channelName.Data()] = rebuildCatData(datai, indivObs);
   }
 
   if (m_editRFV)
@@ -290,11 +295,13 @@ void splitter::makeWorkspace()
                     RooFit::RecycleConflictNodes(),
                     RooFit::Silence());
 
-  subObs.add(*m_cat);
-  unique_ptr<RooDataSet> subData(new RooDataSet(m_data->GetName(), m_data->GetTitle(), subObs, RooFit::Index(*subCat), RooFit::Import(subDataMap), RooFit::WeightVar(WGTNAME)));
+  subObs.add(*subCat);
+  RooRealVar weightVar(WGTNAME, "", 1);
+  RooArgSet obsAndWgt(subObs, weightVar);
+  unique_ptr<RooDataSet> subData(new RooDataSet(m_data->GetName(), m_data->GetTitle(), obsAndWgt, RooFit::Index(*subCat), RooFit::Import(subDataMap), RooFit::WeightVar(WGTNAME)));
 
-  spdlog::info("numEntries: {}", subData->numEntries());
-  spdlog::info("sumEntries: {}", subData->sumEntries());
+  spdlog::debug("numEntries: {}", subData->numEntries());
+  spdlog::debug("sumEntries: {}", subData->sumEntries());
 
   subComb->import(*subData);
   subComb->importClassCode();
@@ -305,6 +312,7 @@ void splitter::makeWorkspace()
   subMc->SetProtoData(*subData);
   subMc->SetNuisanceParameters(subNuis);
   subMc->SetGlobalObservables(subGobs);
+  subMc->SetParametersOfInterest(subPoi);
   subMc->SetObservables(subObs);
   subComb->import(*subMc);
 
@@ -346,7 +354,7 @@ void splitter::buildSimPdf(RooAbsPdf *pdf, RooAbsData *data)
   m_keep.Add(pdf_new);
 
   RooArgSet obsAndWgt = *data->get();
-  RooRealVar weightVar("weightVar", "", 1);
+  RooRealVar weightVar(WGTNAME, "", 1);
   obsAndWgt.add(weightVar);
   RooDataSet *data_new = new RooDataSet(
       dataName + "_sim",
@@ -372,9 +380,9 @@ void splitter::histToDataset(RooDataHist *data)
   for (int ich = 0; ich < m_numChannels; ich++)
   {
     m_cat->setBin(ich);
-    TString channelname = m_cat->getLabel();
-    RooAbsPdf *pdfi = m_pdf->getPdf(m_cat->getLabel());
-    RooAbsData *datai = (RooAbsData *)(m_dataList->At(ich));
+    TString channelName = m_cat->getLabel();
+    RooAbsPdf *pdfi = m_pdf->getPdf(channelName);
+    RooAbsData *datai = (RooAbsData *)(m_dataList->FindObject(channelName));
     RooArgSet *obsi = pdfi->getObservables(datai);
 
     RooArgSet obsAndWgt(*obsi, weightVar);
@@ -390,7 +398,7 @@ void splitter::histToDataset(RooDataHist *data)
       data->add(obsAndWgt, dataWgt);
     }
     Observables.add(*obsi);
-    datasetMap[channelname.Data()] = data;
+    datasetMap[channelName.Data()] = data;
   }
 
   RooArgSet obsAndWgt(Observables, weightVar);
@@ -399,4 +407,45 @@ void splitter::histToDataset(RooDataHist *data)
   m_keep.Add(combData);
 
   m_data = combData;
+}
+
+RooAbsPdf *splitter::rebuildCatPdf(RooAbsPdf *pdfi, RooAbsData *datai)
+{
+  if (TString(pdfi->ClassName()) == "RooProdPdf")
+  {
+    /* strip those disconnected pdfs from minimization */
+    unique_ptr<RooArgSet> cPars(pdfi->getParameters(datai));
+    RooArgSet dPars = *cPars;
+    unique_ptr<RooArgSet> constraints(pdfi->getAllConstraints(*datai->get(), *cPars, true));
+    unique_ptr<RooArgSet> disConstraints(pdfi->getAllConstraints(*datai->get(), dPars, false));
+    disConstraints->remove(*constraints);
+
+    RooArgSet baseComponents;
+    auxUtil::getBasePdf(dynamic_cast<RooProdPdf *>(pdfi), baseComponents);
+    /* remove disconnected pdfs */
+    baseComponents.remove(*disConstraints);
+
+    TString newPdfName = TString(pdfi->GetName()) + "_deComposed";
+    pdfi = new RooProdPdf(newPdfName, newPdfName, baseComponents);
+    m_keep.Add(pdfi);
+  }
+  return pdfi;
+}
+
+RooDataSet *splitter::rebuildCatData(RooAbsData *datai, RooArgSet *indivObs)
+{
+  RooRealVar weight(WGTNAME, "", 1.);
+  RooArgSet obsAndWgt(*indivObs, weight);
+
+  RooDataSet *dataNew_i = new RooDataSet(TString(datai->GetName()) + PDFPOSTFIX, "", obsAndWgt, WeightVar(WGTNAME));
+
+  for (int j = 0, nEntries = datai->numEntries(); j < nEntries; ++j)
+  {
+    *indivObs = *datai->get(j);
+    double dataWgt = datai->weight();
+    dataNew_i->add(obsAndWgt, dataWgt);
+  }
+
+  m_keep.Add(dataNew_i);
+  return dataNew_i;
 }
