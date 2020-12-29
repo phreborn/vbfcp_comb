@@ -7,910 +7,396 @@
  *
  *        Version:  1.0
  *        Created:  05/19/2012 10:09:55 PM
- *       Revision:  none
+ *       Revision:  12/27/20 during pandemic
  *       Compiler:  gcc
  *
- *         Author:  haoshuang.ji (), haoshuang.ji@cern.ch
- *   Organization:
+ *         Author:  Haoshuang Ji, haoshuang.ji@cern.ch 
+ *                  Hongtao Yang, Hongtao.Yang@cern.ch
+ *   Organization:  University of Wisconsin
+ *                  Lawrence Berkeley National Lab
  *
  * =====================================================================================
  */
-#include <stdlib.h>
-#include <list>
+
 #include "splitter.h"
-#include "RooStats/HistFactory/ParamHistFunc.h"
-#include "TObjString.h"
+
+using namespace std;
+using namespace RooFit;
+using namespace RooStats;
+
+TString splitter::WGTNAME = "_weight_";
 
 splitter::splitter(
-		   std::string combinedFile,
-		   std::string splittedFile,
-		   std::string dataName
-		   )
+    TString inputFileName,
+    TString outputFileName,
+    TString wsName,
+    TString mcName,
+    TString dataName)
 {
-    // m_subComb = NULL;
+  m_outputFileName = outputFileName;
+  m_inputFile.reset(TFile::Open(inputFileName));
+  if (!m_inputFile.get())
+    auxUtil::alertAndAbort(Form("Input file %s does not exist", inputFileName.Data()));
+  m_comb = dynamic_cast<RooWorkspace *>(m_inputFile->Get(wsName));
+  if (!m_comb)
+    auxUtil::alertAndAbort(Form("Workspace %s does not exist in file %s", wsName.Data(), inputFileName.Data()));
+  m_mc = dynamic_cast<ModelConfig *>(m_comb->obj(mcName));
+  if (!m_mc)
+    auxUtil::alertAndAbort(Form("ModelConfig %s does not exist in file %s", mcName.Data(), inputFileName.Data()));
 
-    m_subComb = new RooWorkspace("combWS", "combWS");
+  if (m_mc->GetNuisanceParameters()->getSize() == 0)
+    spdlog::warn("There is no nuisance parameter defined in ModelConfig {} of file {}", mcName.Data(), inputFileName.Data());
+  if (m_mc->GetGlobalObservables()->getSize() == 0)
+    spdlog::warn("There is no global observable defined in ModelConfig {} of file {}", mcName.Data(), inputFileName.Data());
+  if (m_mc->GetParametersOfInterest()->getSize() == 0)
+    spdlog::warn("There is no parameter of interest defined in ModelConfig {} of file {}", mcName.Data(), inputFileName.Data());
 
-    replaceStr_ = "";
+  if (!m_mc->GetPdf())
+    auxUtil::alertAndAbort(Form("ModelConfig %s does not point to a valid PDF", mcName.Data()));
 
-    splittedFile_ = splittedFile;
-    TFile* f = new TFile(combinedFile.c_str());
-    TList* keys = f->GetListOfKeys();
-    TIter next(keys);
-    TKey* obj;
-    std::string className = "";
-    while ((obj = (TKey*)next())) {
-        className = obj->GetClassName();
-        if ( className.find("RooWorkspace")!=std::string::npos ) {
-            m_comb = (RooWorkspace*)obj->ReadObj();
-            std::list<TObject*> allObjs = m_comb->allGenericObjects();
-            for (std::list<TObject*>::iterator it = allObjs.begin(); it != allObjs.end(); it++) {
-                if ( (m_mc = dynamic_cast<RooStats::ModelConfig*>(*it)) &&
-                    std::string(m_mc->GetName()).find("only") == std::string::npos
-                    ) {
-                    break;
-                }
-            }
-            assert ( m_mc );
-            m_pdf = dynamic_cast<RooSimultaneous*>(m_mc->GetPdf()); assert (m_pdf);
-            // m_cat = dynamic_cast<RooAbsCategoryLValue*>(m_pdf->indexCat());
-            // m_cat = (RooAbsCategoryLValue*)&m_pdf->indexCat();
-            m_cat = (RooCategory*)&m_pdf->indexCat();
-            numChannels = m_cat->numBins(0);
+  if (!m_comb->data(dataName))
+    auxUtil::alertAndAbort(Form("Dataset %s does not exist in file %s", dataName.Data(), inputFileName.Data()));
 
-            m_nuis = m_mc->GetNuisanceParameters();
-            m_gobs = m_mc->GetGlobalObservables();
-            // m_poi = dynamic_cast<RooRealVar*>(m_mc->GetParametersOfInterest()->first()); assert (m_poi);
-            m_poi.add(*(m_mc->GetParametersOfInterest()));
-
-
-            if ( m_poi.getSize()==0 ) {
-                /* OK, they don't set pois, i have to do it myself */
-                RooArgSet allVars = m_comb->allVars();
-                std::unique_ptr<TIterator> iter(allVars.createIterator());
-                for ( RooRealVar* v = (RooRealVar*)iter->Next(); v!=0; v = (RooRealVar*)iter->Next() ) {
-                    if ( TString(v->GetName()).BeginsWith("mu_") ) {
-                        m_poi.add(*v);
-                    }
-                }
-            }
-
-            // m_data = dynamic_cast<RooDataSet*>(m_comb->data("combData"));
-            if ( dataName!="combData" ) {
-              std::cout << "\tUsing Pseudo Data: " << dataName << std::endl;
-              // assert ( false );
-            }
-            m_data = dynamic_cast<RooDataSet*>(m_comb->data(dataName.c_str()));
-            if ( !m_data ) {
-                m_data = dynamic_cast<RooDataSet*>(m_comb->data("obsData"));
-            }
-            assert ( m_data );
-            m_dataList = m_data->split( *m_cat, true );
-        }
-    }
-
-    /* roostats */
-    RooArgSet funcAndPdfs = m_comb->allFunctions();
-    std::unique_ptr<TIterator> it(funcAndPdfs.createIterator());
-    while ( RooAbsArg* v = (RooAbsArg*)it->Next() ) {
-
-      ParamHistFunc* par = dynamic_cast<ParamHistFunc*>(v);
-      if ( par ) {
-        // std::cout << "\t\tSet Normalized to be false: " << v->GetName() << std::endl;
-        // par->setNormalized(false);
-          // par->Print();
-        std::string parName = par->GetName();
-        if ( parName.find("mc_stat")!=std::string::npos ) {
-          continue;
-        }
-        RooArgList varList = par->paramList();
-        std::unique_ptr<TIterator> iter(varList.createIterator());
-        while ( RooRealVar* v = (RooRealVar*)iter->Next() ) {
-          // v->Print();
-          v->setMax(2);
-        }
-      }
-
-    }
-      // assert ( false );
-
-
-
-    // /* preset nuisance parameters values */
-    // if ( nominalSnapshot!="" ) {
-    //     std::cout << "\tINITIALIZE::Setting every nuisance parameters to nominal \n" << std::endl;
-    //     m_comb->loadSnapshot(nominalSnapshot.c_str());
-    // }
-    // else{
-    std::cout << "\tINITIALIZE::Setting every nuisance parameters to ucmles to make the fit faster...(may not have it, though) \n" << std::endl;
-    m_comb->loadSnapshot("ucmles");
-    // }
-}
-
-void splitter::grabAsimov(std::string combinedFile)
-{
-  if ( m_subComb ) {
-    TFile* f = new TFile(combinedFile.c_str());
-    if ( f ) {
-      RooWorkspace* w = dynamic_cast<RooWorkspace*>(f->Get("combWS"));
-      if ( !w ) { return; }
-      ModelConfig* mc = dynamic_cast<ModelConfig*>(w->obj("ModelConfig"));
-      /* if the ws name is combWS, this is a sign that the ws is made by myself */
-      if ( w && mc) {
-        RooDataSet* a0 = dynamic_cast<RooDataSet*>(w->data("asimovData_0"));
-        const RooArgSet* nuis = mc->GetGlobalObservables();
-        if ( a0 ) {
-          if ( !w->loadSnapshot("conditionalGlobs_0") ) { ; }
-          else{
-            m_subComb->import(*a0);
-            m_subComb->saveSnapshot("conditionalGlobs_0", *nuis, true);
-          }
-        }
-        RooDataSet* a1 = dynamic_cast<RooDataSet*>(w->data("asimovData_1"));
-        if ( a1 ) {
-          if ( !w->loadSnapshot("conditionalGlobs_1") ) { ; }
-          else{
-            m_subComb->import(*a1);
-            m_subComb->saveSnapshot("conditionalGlobs_1", *nuis, true);
-          }
-        }
-      }
-    }
+  m_pdf = dynamic_cast<RooSimultaneous *>(m_mc->GetPdf());
+  if (!m_pdf)
+  {
+    spdlog::warn("PDF in workspace {} of file {} is not a RooSimultaneous PDF. Will create one", wsName.Data(), inputFileName.Data());
+    buildSimPdf(m_mc->GetPdf(), m_comb->data(dataName));
   }
-}
+  m_cat = (RooCategory *)(&m_pdf->indexCat());
+  m_numChannels = m_cat->numBins(0);
 
-splitter::~splitter()
-{
-  if ( m_subComb ) {
-    m_subComb->loadSnapshot("ucmles");
-    std::cout<<"Writing the output file "<<splittedFile_.c_str()<<std::endl;
-    // asimovUtils::makePlots( *m_subPdf, *m_subData,  "/users/hji/test.pdf");
-    m_subComb->writeToFile(splittedFile_.c_str());
-    delete m_subComb; m_subComb = NULL;
+  m_data = dynamic_cast<RooDataSet *>(m_comb->data(dataName));
+  if (!m_data)
+  {
+    spdlog::warn("Dataset in workspace {} of file {} is RooDataHist. Convert it to RooDataSet...", wsName.Data(), inputFileName.Data());
+    histToDataset(dynamic_cast<RooDataHist *>(m_comb->data(dataName)));
   }
+  m_dataList = m_data->split(*m_cat, true);
+
+  m_editRFV = false;
+  m_reBin = -1;
 }
 
-void splitter::printSummary(bool verbose)
+void splitter::printSummary()
 {
-
-
-  std::cout << "\t~~~~~~~~Begin Summary~~~~~~~~" << std::endl;
-  std::cout << "\tThere are " << numChannels << " sub channels:" << std::endl;
-  for ( int i= 0; i < numChannels; i++ ) {
+  auxUtil::printTitle("Begin Summary", '~');
+  spdlog::info("There are {} categories:", m_numChannels);
+  for (int i = 0; i < m_numChannels; i++)
+  {
     m_cat->setBin(i);
-    RooAbsPdf* pdfi = m_pdf->getPdf(m_cat->getLabel());
-    RooDataSet* datai = ( RooDataSet* )( m_dataList->At( i ) );
-    std::cout << "\t\tIndex: " << i << ", Pdf: " << pdfi->GetName() << ", Data: " << datai->GetName()  << ", SumEntries: " << datai->sumEntries() << std::endl;
-    // std::cout << "\t\tIndex: " << i << ", Pdf: " << pdfi->GetName() << ", Data: " << pdfi->ClassName()  << ", SumEntries: " << datai->sumEntries() << std::endl;
+    RooAbsPdf *pdfi = m_pdf->getPdf(m_cat->getLabel());
+    RooDataSet *datai = (RooDataSet *)(m_dataList->At(i));
+    spdlog::info("\tIndex: {}, Pdf: {}, Data: {}, SumEntries: {}", i, pdfi->GetName(), datai->GetName(), datai->sumEntries());
   }
 
-  if(verbose){
-    std::unique_ptr<TIterator> fVarIter(m_comb->componentIterator());
-    for ( RooRealVar* v = (RooRealVar*)fVarIter->Next(); v!=0; v = (RooRealVar*)fVarIter->Next() ) {
-      if ( std::string(v->ClassName())=="RooStats::HistFactory::FlexibleInterpVar" ) {
-        FlexibleInterpVar* oldVar = dynamic_cast<FlexibleInterpVar*>(m_comb->obj(v->GetName()));
-        assert ( oldVar );
-        std::string varName = v->GetName();
-
-        std::cout << "\nSample name: " << varName << std::endl;
-        FlexibleInterpVarExt oldVarExt(*oldVar, "oldVarExtName");
-        oldVarExt.printUncerts();
-
-      }
-    }
-  }
-  std::cout<<"\t ########### POI ########### \t"<<std::endl;
+  auxUtil::printTitle("POI", '#');
   m_mc->GetParametersOfInterest()->Print("v");
 
-  std::cout<<"\t ########### Dataset ########### \t"<<std::endl;
-  std::list<RooAbsData*> allData=m_comb->allData();
-  for (std::list<RooAbsData*>::iterator it = allData.begin(); it != allData.end(); it++) {
+  auxUtil::printTitle("Dataset", '#');
+  std::list<RooAbsData *> allData = m_comb->allData();
+  for (std::list<RooAbsData *>::iterator it = allData.begin(); it != allData.end(); it++)
     (*it)->Print();
-  }
 
-  std::cout << "\t~~~~~~~~~End Summary~~~~~~~~~" << std::endl;
+  auxUtil::printTitle("End Summary", '~');
 }
 
-void splitter::fillIndice(std::string indice)
+void splitter::fillIndices(TString indices)
 {
-  if ( indice=="all" || indice=="ALL" || indice=="All" ) {
+  indices.ToLower();
+  if (indices == "all")
+  {
     int num = m_cat->numBins(0);
-    for ( int i= 0; i < num; i++ ) {
-      m_useIndice.push_back(i);
+    for (int i = 0; i < num; i++)
+    {
+      m_useIndices.push_back(i);
     }
     return;
   }
 
   /* 0-5,7-9 */
-  TObjArray* iArray = TString(indice.c_str()).Tokenize(",");
+  auxUtil::removeWhiteSpace(indices);
+  TObjArray *iArray = TString(indices).Tokenize(",");
   int iNum = iArray->GetEntries();
   TString iStr, jStr;
-  for ( int i= 0; i < iNum; i++ ) {
-    iStr = ((TObjString*)iArray->At(i))->GetString();
-    iStr.ReplaceAll(" ", "");
-    TObjArray* jArray = iStr.Tokenize("-");
+  for (int i = 0; i < iNum; i++)
+  {
+    iStr = ((TObjString *)iArray->At(i))->GetString();
+    TObjArray *jArray = iStr.Tokenize("-");
     int jNum = jArray->GetEntries();
-    if ( jNum==1 ) {
-      jStr = ((TObjString*)jArray->At(0))->GetString();
+    if (jNum == 1)
+    {
+      jStr = ((TObjString *)jArray->At(0))->GetString();
       jStr.ReplaceAll(" ", "");
-      std::cout << "Adding index: " << jStr.Atoi() << std::endl;
-      m_useIndice.push_back(jStr.Atoi());
-    } else if ( jNum==2 ) {
+      spdlog::info("Adding index: {}", jStr.Atoi());
+      m_useIndices.push_back(jStr.Atoi());
+    }
+    else if (jNum == 2)
+    {
       TString str1, str2;
-      str1 = ((TObjString*)jArray->At(0))->GetString();
-      str2 = ((TObjString*)jArray->At(1))->GetString();
+      str1 = ((TObjString *)jArray->At(0))->GetString();
+      str2 = ((TObjString *)jArray->At(1))->GetString();
       int int1 = str1.Atoi();
       int int2 = str2.Atoi();
-      assert ( int1<=int2 );
-      for ( int t= int1; t <= int2; t++ ) {
-        std::cout << "Adding index: " << t << std::endl;
-        m_useIndice.push_back(t);
+      assert(int1 <= int2);
+      for (int t = int1; t <= int2; t++)
+      {
+        spdlog::info("Adding index: {}", t);
+        m_useIndices.push_back(t);
       }
-    } else {
-      assert ( false );
+    }
+    else
+    {
+      auxUtil::alertAndAbort("Invalid syntax " + iStr);
     }
   }
 }
 
-void splitter::fillFixed(std::string toBeFixed)
+void splitter::makeWorkspace()
 {
-  TObjArray* iArray = TString(toBeFixed.c_str()).Tokenize(",");
-  int iNum = iArray->GetEntries();
-  TString iStr;
-  for ( int i= 0; i < iNum; i++ ) {
-    iStr = ((TObjString*)iArray->At(i))->GetString();
-    iStr.ReplaceAll(" ", "");
-    m_fixNuis.push_back(iStr.Data());
-  }
-}
-
-void splitter::makeWorkspace(double rMax_, int reBin, double mass, bool editRFV)
-{
-  useNumChannels = (int)m_useIndice.size();
-  if ( useNumChannels<=0 ) {
-    std::cout << "No sub-channel selected, Exit... " << std::endl;
+  const int subNumChannels = m_useIndices.size();
+  if (subNumChannels == 0)
+  {
+    spdlog::warn("No sub-channel selected, Exit... ");
     return;
   }
+  unique_ptr<RooWorkspace> subComb(new RooWorkspace(m_comb->GetName(), m_comb->GetTitle()));
+  unique_ptr<RooCategory> subCat(new RooCategory(m_cat->GetName(), m_cat->GetTitle()));
 
-  // m_subComb = new RooWorkspace("combWS", "combWS");
-  // m_subCat = new RooCategory("subCat", "subCat");
-  m_subCat = new RooCategory("combCat", "combCat");
-  std::string m_poiName = "poi";
-  std::string m_pdfName = "combPdf";
-  std::string m_dataName = "combData";
-  std::string m_obsName = "combObs";
-  std::string m_gObsName = "combGobs";
-  std::string m_nuisName = "combNuis";
+  RooArgSet subNuis, subGobs, subObs, subPoi;
+  std::map<std::string, RooAbsPdf *> subPdfMap;
+  std::map<std::string, RooDataSet *> subDataMap;
 
   int index = 0;
-  for ( int i= 0; i < useNumChannels; i++ ) {
-    index = m_useIndice[i];
-    std::cout << "\tsub-index --> " << index << std::endl;
-    m_cat->setBin( index );
-    RooAbsPdf* pdfi = m_pdf->getPdf( m_cat->getLabel() );
-    RooDataSet* datai = ( RooDataSet* )( m_dataList->At( i ) );
+  for (int i = 0; i < subNumChannels; i++)
+  {
+    index = m_useIndices[i];
+    spdlog::info("Sub-index --> {}", index);
+    m_cat->setBin(index);
+    TString channelName = m_cat->getLabel();
+    RooAbsPdf *pdfi = m_pdf->getPdf(channelName);
+    RooDataSet *datai = dynamic_cast<RooDataSet *>(m_dataList->FindObject(channelName));
     /* make category */
-    // TString type = Form( "subCat_%s", m_cat->getLabel() );
-    TString type = m_cat->getLabel();
-
-    std::cout << "\t\ttype --> " << type << std::endl;
-    m_subCat->defineType( type );
+    spdlog::info("\tChannel name --> {}", channelName.Data());
+    subCat->defineType(channelName);
     /* make observables */
-    RooArgSet* indivObs = pdfi->getObservables( *datai );
-    m_subObs.add( *indivObs );
+    RooArgSet *indivObs = pdfi->getObservables(*datai);
+    subObs.add(*indivObs);
     /* make nuisances */
-    RooArgSet* indivNuis = pdfi->getParameters( *indivObs );
-    std::unique_ptr<TIterator> iter( indivNuis->createIterator() );
+    RooArgSet *indivNuis = pdfi->getParameters(*indivObs);
+    std::unique_ptr<TIterator> iter(indivNuis->createIterator());
 
-    // indivNuis->Print();
-
-    for ( RooRealVar* v = ( RooRealVar* )iter->Next(); v != 0; v = ( RooRealVar* )iter->Next() )
+    for (RooRealVar *v = dynamic_cast<RooRealVar *>(iter->Next()); v != 0; v = dynamic_cast<RooRealVar *>(iter->Next()))
     {
-      bool isPoi = false;
-      std::unique_ptr<TIterator> iter2(m_poi.createIterator());
-      while ( RooRealVar* poi = (RooRealVar*)iter2->Next() ) {
-        if ( std::string(v->GetName())==std::string(poi->GetName()) ) {
-          // continue;
-          isPoi = true;
-          break;
-        }
+      RooRealVar *var = dynamic_cast<RooRealVar*>(m_mc->GetParametersOfInterest()->find(v->GetName()));
+      if (var)
+      {
+        subPoi.add(*var, true);
+        continue;
       }
-      if ( isPoi ) { continue; }
 
       /* in original global observables */
-      RooRealVar* obs = ( RooRealVar* )m_gobs->find( v->GetName() );
-      if ( obs )
+      var = dynamic_cast<RooRealVar*>(m_mc->GetGlobalObservables()->find(v->GetName()));
+      if (var)
       {
-        m_subGobs.add( *obs );
-        continue; // this one added as gobs
+        subGobs.add(*var);
+        continue;
       }
 
-      /* float any way */
-      if ( !( v->isConstant() ) )
+      /* Any other free parameters should be counted as nuisance parameters */
+      if (!(v->isConstant()))
       {
-        m_subNuis.add( *v );
+        subNuis.add(*v);
       }
     }
+    subPdfMap[channelName.Data()] = pdfi;
 
-    /* make pdf */
-    m_subPdfMap[type.Data()] = pdfi;
-    /* make data */
-    m_subDataMap[type.Data()] = datai;
+    /* Handle dataset */
+    if (m_reBin > 0)
+    {
+      int numEntries = datai->numEntries();
+      int sumEntries = datai->sumEntries();
+
+      bool isBinned = (numEntries != sumEntries);
+      isBinned += (numEntries < m_reBin);
+      if (isBinned)
+      {
+        TString type = m_cat->getLabel();
+        subCat->setLabel(type, true);
+        subDataMap[channelName.Data()] = datai;
+      }
+      else
+      {
+        TString dataiName = datai->GetName();
+        spdlog::info("Rebin {}", dataiName.Data());
+        datai->SetName((dataiName + "_old"));
+
+        RooRealVar weight(WGTNAME, "", 1.);
+        RooArgSet obsPlusW(*indivObs, weight);
+
+        RooRealVar *obsVar = dynamic_cast<RooRealVar *>(indivObs->first());
+        TH1 *hist = datai->createHistogram((dataiName + "_hist"), *obsVar, RooFit::Binning(m_reBin, obsVar->getMin(), obsVar->getMax()));
+        RooBinning rebin(m_reBin, obsVar->getMin(), obsVar->getMax());
+        obsVar->setBinning(rebin);
+
+        RooDataSet *dataiNew = new RooDataSet(dataiName, "", obsPlusW, WGTNAME);
+
+        for (int i = 1, n = hist->GetNbinsX(); i <= n; ++i)
+        {
+          obsVar->setVal(hist->GetXaxis()->GetBinCenter(i));
+          dataiNew->add(*indivObs, hist->GetBinContent(i));
+        }
+
+        subCat->setLabel(channelName, true);
+        subDataMap[channelName.Data()] = dataiNew;
+        m_keep.Add(dataiNew);
+      }
+    }
+    else
+      subDataMap[channelName.Data()] = datai;
   }
 
-  if(editRFV)
+  if (m_editRFV)
   {
-    std::cout << "\tEdit RooFormulaVar " << std::endl;
+    spdlog::info("Edit RooFormulaVar");
     /* take this opportunity to edit RooFormulaVar */
     std::unique_ptr<TIterator> fVarIter(m_comb->componentIterator());
-    for ( RooRealVar* v = (RooRealVar*)fVarIter->Next(); v!=0; v = (RooRealVar*)fVarIter->Next() ) {
-      if ( std::string(v->ClassName())=="RooFormulaVar" ) {
-        RooFormulaVar* oldVar = dynamic_cast<RooFormulaVar*>(m_comb->obj(v->GetName()));
-        assert ( oldVar );
-        std::string varName = v->GetName();
+    for (RooRealVar *v = (RooRealVar *)fVarIter->Next(); v != 0; v = (RooRealVar *)fVarIter->Next())
+    {
+      if (TString(v->ClassName()) == "RooFormulaVar")
+      {
+        RooFormulaVar *oldVar = dynamic_cast<RooFormulaVar *>(m_comb->obj(v->GetName()));
+        assert(oldVar);
+        TString varName = v->GetName();
 
         RooFormulaVarExt oldVarExt(*oldVar, "oldVarExtName");
 
         /* create a new one to hold the place */
-        RooFormulaVar* newVar = NULL;
-        oldVarExt.Rebuild(newVar, varName, false);
-        if ( newVar ) {
-          m_subComb->import(*newVar);
+        RooFormulaVar *newVar = NULL;
+        oldVarExt.Rebuild(newVar, varName.Data(), false);
+        if (newVar)
+        {
+          subComb->import(*newVar);
           newVar->Print();
         }
       }
     }
   }
 
-  m_subComb->import(*m_subCat, RooFit::Silence());
-  // m_subCat = dynamic_cast<RooCategory*>(m_subComb->obj(m_subCat->GetName()));
+  subComb->import(*subCat, RooFit::Silence());
 
-  m_subObs.add(*m_subCat);
-
-
-
-  std::string oldStr = "";
-  std::string newStr = "";
-  std::map<std::string, std::string> renameMap;
-
-  if ( replaceStr_!="" ) {
-    TString repStr = replaceStr_.c_str();
-    repStr = repStr.ReplaceAll(" ", "");
-    TObjArray* strArray = repStr.Tokenize(",");
-    int nPars = strArray->GetEntries();
-
-    TString subStr;
-    for ( int i= 0; i < nPars; i++ ) {
-      subStr = ((TObjString*)strArray->At(i))->GetString();
-      assert ( subStr.Contains("=") );
-      Ssiz_t index = subStr.Index("=");
-      TString oldStr = subStr(0, index);
-      TString newStr = subStr(index+1,subStr.Length());
-
-      std::cout << "\tReplace: " << oldStr << " to: " << newStr << std::endl;
-      RooRealVar* newVar = m_comb->var(newStr.Data());
-      assert ( newVar && newStr );
-      m_subComb->import(*newVar);
-      renameMap[oldStr.Data()] = newStr.Data();
-    }
-  }
-
-
-  /* remove some nuisance parameters */
-
-  /* THEORY_allFLAT: Gaussian->Flat */
-  /* THEORY_allCONST: all theory syst. const */
-  /* NPS_allCONST: all np const */
-  /* STATS_only: stat. only */
-  /* THEORY_signalCONST: all theory syst. on signal const */
-  /* lumiScale: scale the luminosity */
-  std::string nuisName = "";
-  int numFixNuisSize = (int)m_fixNuis.size();
-  if ( numFixNuisSize>0 ) {
-    if (
-        m_fixNuis[0]=="THEORY_allFLAT"
-        || m_fixNuis[0]=="THEORY_allCONST"
-        || m_fixNuis[0]=="NPS_allCONST"
-        || m_fixNuis[0]=="STATS_only"
-       )
-    {
-      /* THEORY_allFLAT */
-      RooArgSet newSet;
-      RooArgSet oldSet;
-      std::unique_ptr<TIterator> iter(m_subNuis.createIterator());
-      TString vName = "";
-      TString newVName = "";
-      TString pdfName = "";
-      TString newPdfName = "";
-      for ( RooRealVar* v = (RooRealVar*)iter->Next(); v!=0; v = (RooRealVar*)iter->Next() )
-      {
-        vName = v->GetName();
-
-        if ( m_fixNuis[0].find("THEORY")==std::string::npos ) {
-          if ( m_fixNuis[0]=="NPS_allCONST" ) {
-            // v->setVal(0);
-            v->setConstant(true);
-            oldSet.add(*v);
-          }
-          else if ( m_fixNuis[0]=="STATS_only" && !vName.BeginsWith("gamma_stat_") ) {
-            // v->setVal(0);
-            v->setConstant(true);
-            oldSet.add(*v);
-          }
-        } else if (
-            m_fixNuis[0].find("THEORY")!=std::string::npos &&
-            // (vName == "QCDscale_Higgs_ggH")
-
-            // (vName == "ATLAS_EM_ES_Z" ||  vName == "ATLAS_EM_MAT1" ||  vName == "ATLAS_EM_PS1"
-            //  // ||  vName == "ATLAS_Hgg_Mass_Extra"
-            //  || vName.Contains("EM_MAT_LOW")
-            //  || vName.Contains("EM_PS_BARR")
-            //  || vName.Contains("EM_rest")
-            // )
-            (vName.BeginsWith("QCDscale_Higgs") ||  vName.BeginsWith("pdf_Higgs"))
-                )
-                {
-
-                  if ( m_fixNuis[0]=="THEORY_allFLAT" ) {
-                    newVName = vName + "_DFD";
-                    /* assume it's pdf name!!! */
-                    pdfName = vName + "_Pdf";
-                    newPdfName = vName + "_DFD_Pdf";
-                    RooRealVar* newV = new RooRealVar(newVName.Data(), newVName.Data(), 0, -5, 5);
-                    // RooRealVar* newV0 = new RooRealVar((newVName+"_gobs").Data(), (newVName+"_gobs").Data(), v->getVal());
-                    RooRealVar* newV0 = new RooRealVar((newVName+"_gobs").Data(), (newVName+"_gobs").Data(), 0.);
-                    // RooRealVar* newV = new RooRealVar(newVName.Data(), newVName.Data(), 0, -1, 1);
-                    bool doDFD = true;
-                    if ( !doDFD ) {
-                      RooUniform* newPdf = new RooUniform(newPdfName.Data(), newPdfName.Data(), RooArgSet(*newV));
-                      m_subComb->import(*newV);
-                      m_subComb->import(*newPdf);
-                      std::cout << "\tImported: " << newPdfName << std::endl;
-                    } else {
-
-                      // double w = 1000.; double e = 0.1;
-                      RooRealVar DFD_e("DFD_e", "DFD_e", 1.);
-                      RooRealVar DFD_w("DFD_w", "DFD_w", 500);
-                      if ( !(m_subComb->var("DFD_e")) ) { m_subComb->import(DFD_e); }
-                      if ( !(m_subComb->var("DFD_w")) ) { m_subComb->import(DFD_w); }
-
-                      RooGenericPdf* flatPdf = new RooGenericPdf(newPdfName.Data(),
-                                                                 // "1/( ( 1+exp(@2*(@0-@1)) ) * ( 1+exp(-1*@2*(@0+@1)) ) )",
-                                                                 // RooArgList(*newV, DFD_e, DFD_w));
-                          "1/( ( 1+exp(@2*(@0-@3-@1)) ) * ( 1+exp(-1*@2*(@0-@3+@1)) ) )",
-                          RooArgList(*newV, DFD_e, DFD_w, *newV0));
-                      m_subComb->import(*newV);
-                      m_subComb->import(*newV0);
-                      m_subComb->import(*flatPdf);
-                    }
-
-
-                    oldSet.add(*v);
-                    newSet.add(*newV);
-
-                    /* replace the var */
-                    renameMap[vName.Data()] = newVName.Data();
-                    // renameMap[(vName+"_In").Data()] = (newVName+"_gobs").Data();
-                    renameMap[pdfName.Data()] = newPdfName.Data();
-                  }
-                  else if ( m_fixNuis[0]=="THEORY_allCONST" ) {
-                    TString varUnitName = vName + "_UNIT_";
-                    if ( !m_subComb->var(varUnitName.Data()) ) {
-                      m_subComb->factory((varUnitName+"[0]").Data());
-                    }
-                    oldSet.add(*v);
-                    /* replace the var */
-                    renameMap[vName.Data()] = varUnitName.Data();
-                  }
-                }
-      }
-      m_subNuis.remove(oldSet);
-      m_subNuis.add(newSet);
-
-      linkMap( renameMap, oldStr, newStr, "," );
-
-      std::cout << "\tChanging THEORY constraints from Gaussian to Flat/Fixed: " << std::endl;
-      std::cout << "\toldStr: " << oldStr << " ---> " << "newStr: " << newStr << std::endl;
-    }
-    else if (
-        m_fixNuis[0]=="THEORY_signalCONST"
-        || m_fixNuis[0]=="lumiScale"
-        )
-    {
-      /* THEORY related */
-      RooArgSet theoryNuis;
-      std::unique_ptr<TIterator> iter(m_subNuis.createIterator());
-      for ( RooRealVar* v = (RooRealVar*)iter->Next(); v!=0; v = (RooRealVar*)iter->Next() ) {
-        TString vName = v->GetName();
-        if ( vName.BeginsWith("pdf_")
-            || vName.BeginsWith("alpha_pdf_")
-            || vName.BeginsWith("QCDscale_") ) {
-          theoryNuis.add(*v);
-        }
-      }
-
-      RooRealVar* firstPOI = dynamic_cast<RooRealVar*>(m_poi.first());
-
-      RooArgSet allPdfs = m_comb->allPdfs();
-      /* iter0 */
-      std::unique_ptr<TIterator> iter0(allPdfs.createIterator());
-      while ( RooAbsPdf* v0 = (RooAbsPdf*)iter0->Next() ) {
-        if ( std::string(v0->ClassName())=="RooRealSumPdf"
-            || std::string(v0->ClassName())=="RooAddPdf" ) {
-          RooArgList funcList;
-          if ( std::string(v0->ClassName())=="RooRealSumPdf" ) {
-            RooRealSumPdf* sumPdf = dynamic_cast<RooRealSumPdf*>(v0);
-            // funcList = sumPdf->funcList();
-            funcList.add(sumPdf->funcList());
-          }
-          else
-          {
-            RooAddPdf* addPdf = dynamic_cast<RooAddPdf*>(v0);
-            // addPdf->Print();
-            funcList.add(addPdf->coefList());
-          }
-          /* iter1 */
-          std::unique_ptr<TIterator> iter1(funcList.createIterator());
-          for ( RooAbsArg* v1 = (RooAbsArg*)iter1->Next(); v1!=0; v1 = (RooAbsArg*)iter1->Next() ) {
-
-            if(m_fixNuis[0]=="THEORY_signalCONST"){
-              if ( v1->dependsOn(*firstPOI) ) { /* signal */
-                /* iter2 */
-                std::map<std::string, std::string> tmpMap;
-                std::string tmpOldStr = "";
-                std::string tmpNewStr = "";
-                std::unique_ptr<TIterator> iter2(theoryNuis.createIterator());
-                for ( RooRealVar* v2 = (RooRealVar*)iter2->Next(); v2!=0; v2 = (RooRealVar*)iter2->Next() ) {
-                  // std::string unitName = std::string(v2->GetName()) + "_UNIT_";
-                  // if ( !m_subComb->var(unitName.c_str()) ) {
-                  //     m_subComb->factory((unitName+"[0]").c_str());
-                  // }
-
-                  /* it's good to fix them at MLEs */
-                  std::string unitName = std::string(v2->GetName()) + "_MLE_";
-                  if ( !m_subComb->var(unitName.c_str()) ) {
-                    // m_subComb->factory((unitName+"[0]").c_str());
-                    m_subComb->factory(TString::Format("%s[%f]", unitName.c_str(), v2->getVal()).Data());
-                  }
-
-                  tmpMap[v2->GetName()] = unitName;
-                }
-                linkMap( tmpMap, tmpOldStr, tmpNewStr, "," );
-                std::cout << "\nfunction: " << v1->GetName() << std::endl;
-                std::cout << "\told: " << tmpOldStr << ", new: " << tmpNewStr << std::endl;
-                m_subComb->import(*v1,
-                                  RooFit::RenameVariable( tmpOldStr.c_str(), tmpNewStr.c_str() ),
-                                  RooFit::RecycleConflictNodes(),
-                                  RooFit::Silence() );
-              }
-              else{
-                std::cout << "\n\tfunction: " << v1->GetName() << " DOES not depend on mu " << std::endl;
-              }
-            }
-            else {
-              if (
-                  std::string(v1->ClassName())=="RooRealVar"
-                  || std::string(v1->ClassName())=="RooAddition"
-                  || std::string(v1->ClassName())=="RooProduct"
-                  || std::string(v1->ClassName())=="RooStats::HistFactory::RooBSpline"
-                 ) {
-                std::string prodName = std::string(v1->GetName());
-                if ( prodName.find("frac_")!=std::string::npos ) {
-                  continue;
-                }
-
-                RooAbsArg* v1Clone = (RooAbsArg*)v1->clone((std::string(prodName+"_lumiScale_old")).c_str());
-                if ( RooAbsArg* arg = m_subNuis.find(prodName.c_str()) ) {
-                  m_subNuis.remove(*arg);
-                  m_subNuis.add(*v1Clone);
-                }
-                RooArgSet prodSet;
-                prodSet.add(*v1Clone);
-                RooRealVar* scale = new RooRealVar("lumiScale", "lumiScale", 1, 0, 100);
-                scale->setConstant(true);
-                prodSet.add(*scale);
-
-                RooProduct* newProd = new RooProduct(prodName.c_str(), prodName.c_str(), prodSet);
-                /* import it first to hold the place */
-                m_subComb->import(*newProd, RooFit::RecycleConflictNodes(), RooFit::Silence() );
-                // std::cout << "\tNew Product " << prodName << " imported! " << std::endl;
-              } else{
-                std::cout << "\tclass: " << v1->ClassName() << ", name: " << v1->GetName() << std::endl;
-                assert ( false );
-              }
-            }
-          }
-        }
-      }
-    }
-    else if ( std::string(m_fixNuis[0]).find("*") != std::string::npos ) {
-      // std::cout << "\tUsing wild-card, should give only 1 parameter " << std::endl;
-      // assert ( numFixNuisSize==1 );
-      for ( int i= 0; i < numFixNuisSize; i++ ) {
-
-        RooArgSet* oldSet = dynamic_cast<RooArgSet*>(m_subNuis.selectByName(m_fixNuis[i].c_str()));
-        std::unique_ptr<TIterator> iter(oldSet->createIterator());
-        for ( RooRealVar* v = (RooRealVar*)iter->Next(); v!=0; v = (RooRealVar*)iter->Next() ) {
-          std::cout << "\t\tSetting " << v->GetName() << " to be constant " << std::endl;
-          v->setVal(1);
-          v->setConstant();
-        }
-        m_subNuis.remove(*oldSet);
-
-      }
-
-    }
-    else{
-
-      for ( int i= 0; i < numFixNuisSize; i++ ) {
-        /* temporary */
-        if ( m_fixNuis[i].find("@")!=std::string::npos ) {
-          TString tmpStr = m_fixNuis[i].c_str();
-          TObjArray* strArray = tmpStr.Tokenize("@");
-          int nPars = strArray->GetEntries();
-          assert ( nPars==2 );
-
-
-          TString pdfName = ((TObjString*)strArray->At(0))->GetString();
-          TString varName = ((TObjString*)strArray->At(1))->GetString();
-          RooRealVar* var = dynamic_cast<RooRealVar*>(m_subNuis.find(varName.Data()));
-          assert ( var );
-
-          RooAbsPdf* pdf = dynamic_cast<RooAbsPdf*>(m_comb->obj(pdfName.Data()));
-          assert ( pdf );
-
-          TString newPdfName = pdfName + "_flat";
-          RooUniform* newPdf = new RooUniform(newPdfName.Data(), newPdfName.Data(), RooArgSet(*var));
-          m_subComb->import(*newPdf);
-          renameMap[pdfName.Data()] = newPdfName.Data();
-          std::cout << "\tReplacing pdf: " << pdfName << " with " << newPdfName << std::endl;
-          continue;
-        }
-
-        RooRealVar* var = dynamic_cast<RooRealVar*>(m_subNuis.find(m_fixNuis[i].c_str()));
-        if ( var ) {
-
-          bool replaceWithFlat(false);
-          if ( replaceWithFlat ) {
-            /* assume it's pdf name!!! */
-            std::string vName = var->GetName();
-            std::string pdfName = vName + "_Pdf";
-            std::string newPdfName = vName + "_flat_Pdf";
-            RooUniform* newPdf = new RooUniform(newPdfName.c_str(), newPdfName.c_str(), RooArgSet(*var));
-            m_subComb->import(*newPdf);
-            renameMap[pdfName] = newPdfName;
-            std::cout << "\tReplacing pdf: " << pdfName << " with " << newPdfName << std::endl;
-          } else {
-            std::string unitName = std::string(var->GetName()) + "_ZERO_";
-            if ( !m_subComb->var(unitName.c_str()) ) {
-              // m_subComb->factory((unitName+"[0]").c_str());
-              m_subComb->factory(TString::Format("%s[%f]", unitName.c_str(), var->getVal()).Data());
-            }
-
-            renameMap[var->GetName()] = unitName;
-            m_subNuis.remove(*var);
-
-            // std::cout << "\tGoing to replace " << var->GetName() << " with 0 -> " << unitName << std::endl;
-            std::cout << "\tGoing to replace " << var->GetName() << " with " << var->getVal() << " -> " << unitName << std::endl;
-
-          }
-        }
-      }
-
-    }
-  }
-
-
-
-  linkMap( renameMap, oldStr, newStr, "," );
-  std::cout << "\told: " << oldStr << ", new: " << newStr << std::endl;
-  // assert ( false );
-
-
-  /* make pdf */
-  m_subPdf = new RooSimultaneous(
-      m_pdfName.c_str(),
-      m_pdfName.c_str(),
-      m_subPdfMap,
-      *m_subCat
-      );
-  m_subComb->import( *m_subPdf,
-                    RooFit::RenameVariable( oldStr.c_str(), newStr.c_str() ),
+  unique_ptr<RooSimultaneous> subPdf(new RooSimultaneous(m_pdf->GetName(), m_pdf->GetTitle(), subPdfMap, *subCat));
+  subComb->import(*subPdf,
                     RooFit::RecycleConflictNodes(),
-                    RooFit::Silence() );
-  m_subPdf = dynamic_cast<RooSimultaneous*>(m_subComb->pdf(m_subPdf->GetName()));
+                    RooFit::Silence());
 
+  subObs.add(*m_cat);
+  unique_ptr<RooDataSet> subData(new RooDataSet(m_data->GetName(), m_data->GetTitle(), subObs, RooFit::Index(*subCat), RooFit::Import(subDataMap), RooFit::WeightVar(WGTNAME)));
 
-  /* make data */
-  // int method = 1;
+  spdlog::info("numEntries: {}", subData->numEntries());
+  spdlog::info("sumEntries: {}", subData->sumEntries());
 
-  if ( reBin<0 ) {
-    /* method 0 */
-    RooRealVar weight( "_weight_", "", 1. );
-    m_subObsAndWgt.add( m_subObs );
-    m_subObsAndWgt.add( weight );
-    m_subData = new RooDataSet( m_dataName.c_str(), m_dataName.c_str(), m_subObsAndWgt, "_weight_" );
+  subComb->import(*subData);
+  subComb->importClassCode();
 
-    for ( int i = 0; i < useNumChannels; ++i )
+  unique_ptr<ModelConfig> subMc(new ModelConfig(m_mc->GetName(), subComb.get()));
+  subMc->SetWorkspace(*subComb);
+  subMc->SetPdf(*subPdf);
+  subMc->SetProtoData(*subData);
+  subMc->SetNuisanceParameters(subNuis);
+  subMc->SetGlobalObservables(subGobs);
+  subMc->SetObservables(subObs);
+  subComb->import(*subMc);
+
+  /* Copy snapshots */
+  for (auto snapshotName : m_snapshots)
+  {
+    if (m_comb->loadSnapshot(snapshotName))
     {
-      index = m_useIndice[i];
-      m_cat->setBin( index );
-      RooDataSet* datai = ( RooDataSet* )( m_dataList->At( index ) );
-      // TString type = Form( "subCat_%s", m_cat->getLabel() );
-      TString type = m_cat->getLabel();
-      m_subCat->setLabel( type, true ); // print error
-      for ( int j = 0, nEntries = datai->numEntries(); j < nEntries; ++j )
-      {
-        // std::cout << "\tEntry: " << j << std::endl;
-        m_subObs = *datai->get( j );
-        // m_subObs.Print("v");
-
-        double dataWgt = datai->weight();
-
-        m_subData->add( m_subObs, dataWgt );
-      }
+      RooArgSet *snapshot = const_cast<RooArgSet*>(m_comb->getSnapshot(snapshotName));
+      subComb->saveSnapshot(snapshotName, *snapshot);
     }
   }
-  else
-  {
-    RooRealVar* weightVar = new RooRealVar( "_weight_", "", 1. );
-    std::map<std::string, RooDataSet*> m_dataMap;
-    RooArgSet m_obsAndWgt;
+  m_inputFile->Close();
 
-    std::unique_ptr<TIterator> iter(m_subObs.createIterator());
-    for ( RooRealVar* v = (RooRealVar*)iter->Next(); v!=0; v = (RooRealVar*)iter->Next() ) {
-      if ( std::string(v->ClassName())!=std::string("RooRealVar") ) { continue; }
-      m_obsAndWgt.add(*v);
-    }
+  unique_ptr<TFile> outputFile(TFile::Open(m_outputFileName, "recreate"));
+  subComb->Write();
+  outputFile->Close();
 
-    m_obsAndWgt.add( *weightVar );
-
-    for ( int i= 0; i < useNumChannels; i++ ) {
-      index = m_useIndice[i];
-      m_cat->setBin(index);
-      RooAbsPdf* pdfi = m_pdf->getPdf(m_cat->getLabel());
-
-      RooDataSet* datai = ( RooDataSet* )( m_dataList->At( index ) );
-
-      int numEntries = datai->numEntries();
-      int sumEntries = datai->sumEntries();
-
-      // bool isBinned = (numEntries!=sumEntries);
-      bool isBinned = (numEntries!=sumEntries);
-      isBinned += (numEntries<reBin);
-      if(isBinned)
-      {
-        TString type = m_cat->getLabel();
-        m_subCat->setLabel( type, true );
-        m_dataMap[type.Data()] = datai;
-      }
-      else
-      {
-        std::string dataiName = datai->GetName();
-        std::cout << "\tRebin " << dataiName << std::endl;
-        datai->SetName((dataiName+"_old").c_str());
-        RooArgList obs (*pdfi->getObservables(*datai));
-
-        RooArgSet obsPlusW;
-        obsPlusW.add( obs );
-        obsPlusW.add( *weightVar );
-
-        int nBins = reBin;
-        RooRealVar* obsVar = (RooRealVar*)obs.at(0);
-        TH1* hist = datai->createHistogram((dataiName+"_hist").c_str(), *obsVar, RooFit::Binning(nBins, obsVar->getMin(), obsVar->getMax()));
-        RooBinning rebin(nBins, obsVar->getMin(), obsVar->getMax());
-        obsVar->setBinning(rebin);
-
-        RooDataSet* dataiNew = new RooDataSet( dataiName.c_str(), "", obsPlusW, weightVar->GetName() );
-
-        for ( int i = 1, n = hist->GetNbinsX(); i <= n; ++i )
-        {
-          // std::cout << "bin content: " << hist->GetBinContent(i) << std::endl;
-          obsVar->setVal( hist->GetXaxis()->GetBinCenter( i ) );
-          dataiNew->add( obs, hist->GetBinContent( i ) );
-        }
-
-        TString type = m_cat->getLabel();
-        m_subCat->setLabel( type, true );
-        m_dataMap[type.Data()] = dataiNew;
-      }
-    }
-
-
-    m_subData = new RooDataSet(
-        m_dataName.c_str(),
-        m_dataName.c_str(),
-        m_obsAndWgt,
-        RooFit::Index( *m_subCat ),
-        RooFit::Import( m_dataMap ) ,
-        RooFit::WeightVar( *weightVar ) /* actually just pass a name */
-        );
-
-    std::cout << "numEntries: " << m_subData->numEntries() << std::endl;
-    std::cout << "sumEntries: " << m_subData->sumEntries() << std::endl;
-  }
-
-
-  m_subComb->import( *m_subData );
-  m_subComb->importClassCode();
-
-  /* should use those already in combined workspace */
-  findArgSetIn( m_subComb, &m_subObs );
-  findArgSetIn( m_subComb, &m_subGobs );
-  findArgSetIn( m_subComb, &m_subNuis );
-  // findArgSetIn( m_subComb, &m_subPoi );
-
-  std::unique_ptr<TIterator> iter(m_poi.createIterator());
-  while ( RooRealVar* v = (RooRealVar*)iter->Next() ) {
-    RooRealVar* var = m_subComb->var(v->GetName());
-    if ( var ) {
-      m_subPoi.add(*var);
-      if ( rMax_>0 ) { v->setMax(rMax_); }
-    }
-  }
-
-  m_subComb->defineSet( m_obsName.c_str(), m_subObs, true );
-  m_subComb->defineSet( m_gObsName.c_str(), m_subGobs, true );
-  m_subComb->defineSet( m_nuisName.c_str(), m_subNuis, true );
-  m_subComb->defineSet( "poi", m_subPoi, true );
-
-  m_subMc = new RooStats::ModelConfig( "ModelConfig", m_subComb );
-  m_subMc->SetWorkspace(*m_subComb);
-  m_subMc->SetPdf( *m_subComb->pdf( m_pdfName.c_str() ) );
-  m_subMc->SetProtoData( *m_subComb->data( m_dataName.c_str() ) );
-  if(m_subComb->set(m_poiName.c_str()))
-    m_subMc->SetParametersOfInterest( *m_subComb->set( "poi" ) );
-  m_subMc->SetNuisanceParameters( *m_subComb->set( m_nuisName.c_str() ) );
-  m_subMc->SetGlobalObservables( *m_subComb->set( m_gObsName.c_str() ) );
-  m_subMc->SetObservables( *m_subComb->set( m_obsName.c_str() ) );
-  m_subComb->import( *m_subMc );
-
-  {
-    m_subComb->saveSnapshot( "nominalGlobs", *m_subMc->GetGlobalObservables() );
-  }
+  spdlog::info("Output file {} saved", m_outputFileName.Data());
 }
 
-void splitter::findArgSetIn( RooWorkspace* w, RooArgSet* set )
+void splitter::buildSimPdf(RooAbsPdf *pdf, RooAbsData *data)
 {
-  std::string setName = set->GetName();
-  set->setName( "old" );
-  RooArgSet* inSet = ( RooArgSet* )set->clone( setName.c_str() );
-  std::unique_ptr<TIterator> iter( set->createIterator() );
+  TString channelName = pdf->GetName();
+  RooCategory cat(channelName + "_single", channelName + "_single");
+  cat.defineType(channelName);
 
-  for ( RooAbsArg* v = ( RooAbsArg* )iter->Next(); v != 0; v = ( RooAbsArg* )iter->Next() )
-  {
-    // std::cout << "name: " << v->GetName() << std::endl;
-    RooAbsArg* inV = ( RooAbsArg* )w->obj( v->GetName() );
-    if ( !inV ) {
-      std::cout << "\tvariable: " << v->GetName() << " not found..." << std::endl;
-    }
-    assert( inV );
-    inSet->add( *inV, kTRUE );
-  }
+  std::map<std::string, RooAbsPdf *> pdfMap;
+  std::map<std::string, RooAbsData *> dataMap;
+  /* make pdf */
+  pdfMap[channelName.Data()] = pdf;
+  /* make data */
+  dataMap[channelName.Data()] = data;
 
-  set = inSet;
+  TString pdfName = pdf->GetName();
+  TString dataName = data->GetName();
+
+  RooSimultaneous *pdf_new = new RooSimultaneous(pdfName + "_sim", pdfName + "_sim", pdfMap, cat);
+  m_keep.Add(pdf_new);
+
+  RooArgSet obsAndWgt = *data->get();
+  RooRealVar weightVar("weightVar", "", 1);
+  obsAndWgt.add(weightVar);
+  RooDataSet *data_new = new RooDataSet(
+      dataName + "_sim",
+      dataName + "_sim",
+      obsAndWgt,
+      RooFit::Index(cat),
+      RooFit::Link(dataMap),
+      RooFit::WeightVar(weightVar) /* actually just pass a name */
+  );
+  m_keep.Add(data_new);
+
+  m_pdf = pdf_new;
+  m_data = data_new;
 }
 
-void splitter::getParaAndVals(
-    std::string parseStr,
-    std::vector<std::string>& paras,
-    std::vector<double>& vals)
+void splitter::histToDataset(RooDataHist *data)
 {
-  std::string::size_type eqidx = 0, colidx = 0, colidx2;
-  do {
-    eqidx   = parseStr.find("=", colidx);
-    colidx2 = parseStr.find(",", colidx+1);
-    if (eqidx == std::string::npos || (colidx2 != std::string::npos && colidx2 < eqidx)) {
-      throw std::invalid_argument("Error: the argument is wrong~");
+  std::map<std::string, RooDataSet *> datasetMap;
+
+  RooArgSet Observables;
+  RooRealVar weightVar(WGTNAME, "", 1);
+
+  for (int ich = 0; ich < m_numChannels; ich++)
+  {
+    m_cat->setBin(ich);
+    TString channelname = m_cat->getLabel();
+    RooAbsPdf *pdfi = m_pdf->getPdf(m_cat->getLabel());
+    RooAbsData *datai = (RooAbsData *)(m_dataList->At(ich));
+    RooArgSet *obsi = pdfi->getObservables(datai);
+
+    RooArgSet obsAndWgt(*obsi, weightVar);
+
+    TString dataName = datai->GetName();
+    RooDataSet *data = new RooDataSet(dataName + "_convert", dataName + "_convert", obsAndWgt, WeightVar(weightVar));
+    m_keep.Add(data);
+
+    for (int ievt = 0; ievt < datai->numEntries(); ++ievt)
+    {
+      *obsi = *datai->get(ievt);
+      double dataWgt = datai->weight();
+      data->add(obsAndWgt, dataWgt);
     }
-    std::string poiName = parseStr.substr(colidx, eqidx);
-    std::string poiVal  = parseStr.substr(eqidx+1, (colidx2 == std::string::npos ? std::string::npos : colidx2 - eqidx - 1));
-    double value = strtod(poiVal.c_str(),NULL);
+    Observables.add(*obsi);
+    datasetMap[channelname.Data()] = data;
+  }
 
-    paras.push_back(poiName);
-    vals.push_back(value);
+  RooArgSet obsAndWgt(Observables, weightVar);
 
-    parseStr = parseStr.substr(colidx2+1, std::string::npos);
+  RooDataSet *combData = new RooDataSet(data->GetName(), data->GetTitle(), obsAndWgt, Index(*m_cat), Import(datasetMap), WeightVar(weightVar));
+  m_keep.Add(combData);
 
-  } while (colidx2 != std::string::npos);
+  m_data = combData;
 }

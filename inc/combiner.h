@@ -3,9 +3,9 @@
  *
  *       Filename:  combiner.h
  *
- *    Description:
+ *    Description:  Combine workspace
  *
- *        Version:  1.0
+ *        Version:  1.1
  *        Created:  05/17/2012 02:49:27 PM
  *       Revision:  12/27/20 during pandemic
  *       Compiler:  gcc

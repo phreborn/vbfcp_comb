@@ -3,7 +3,7 @@
  *
  *       Filename:  editor.h
  *
- *    Description:  Edit the workspace
+ *    Description:  Edit workspace
  *
  *        Version:  1.1
  *        Created:  07/19/12 17:32:58

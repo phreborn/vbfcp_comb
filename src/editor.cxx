@@ -2,11 +2,11 @@
  * =====================================================================================
  * *       Filename:  editor.cxx
  *
- *    Description:  Orgnize the workspace
+ *    Description:  Edit workspace
  *
- *        Version:  1.0
+ *        Version:  1.1
  *        Created:  07/19/12 17:33:20
- *       Revision:  12/27/20
+ *       Revision:  12/27/20 during pandemic
  *       Compiler:  gcc
  *
  *         Author:  Haoshuang Ji, haoshuang.ji@cern.ch 
