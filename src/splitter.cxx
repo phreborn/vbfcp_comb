@@ -20,6 +20,8 @@
 
 #include "splitter.h"
 
+#include "RooFormulaVarExt.h"
+
 using namespace std;
 using namespace RooFit;
 using namespace RooStats;

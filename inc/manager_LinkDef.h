@@ -1,5 +1,4 @@
 /* Add your custom classes in this file */
-/* Remember also to modify interface/rooCommon.h */
 #ifdef __CINT__
 
 
@@ -10,6 +9,5 @@
 #pragma link C++ nestedclass;
 
 #pragma link C++ class RooFormulaVarExt+;
-#pragma link C++ class FlexibleInterpVarExt+;
 
 #endif
