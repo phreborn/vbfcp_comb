@@ -72,7 +72,7 @@ splitter::splitter(
   m_data = dynamic_cast<RooDataSet *>(m_comb->data(dataName));
   if (!m_data)
   {
-    spdlog::warn("Dataset in workspace {} of file {} is RooDataHist. Convert it to RooDataSet...", wsName.Data(), inputFileName.Data());
+    spdlog::warn("Dataset {} in workspace {} of file {} is RooDataHist. Convert it to RooDataSet...", dataName.Data(), wsName.Data(), inputFileName.Data());
     histToDataset(dynamic_cast<RooDataHist *>(m_comb->data(dataName)));
   }
   m_dataList = m_data->split(*m_cat, true);
@@ -378,13 +378,14 @@ void splitter::histToDataset(RooDataHist *data)
 
   RooArgSet Observables;
   RooRealVar weightVar(WGTNAME, "", 1);
+  auto dataList = data->split(*m_cat, true);
 
   for (int ich = 0; ich < m_numChannels; ich++)
   {
     m_cat->setBin(ich);
     TString channelName = m_cat->getLabel();
     RooAbsPdf *pdfi = m_pdf->getPdf(channelName);
-    RooAbsData *datai = (RooAbsData *)(m_dataList->FindObject(channelName));
+    RooAbsData *datai = (RooAbsData *)(dataList->FindObject(channelName));
     RooArgSet *obsi = pdfi->getObservables(datai);
 
     RooArgSet obsAndWgt(*obsi, weightVar);
