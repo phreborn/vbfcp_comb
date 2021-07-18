@@ -88,6 +88,7 @@ private:
   RooCategory *m_cat;
   RooSimultaneous *m_pdf;
   std::unique_ptr<RooWorkspace> m_nW;
+  std::unique_ptr<ModelConfig> m_nMc;
   int m_total;
   auxUtil::TOwnedList m_keep;
 };

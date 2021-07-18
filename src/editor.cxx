@@ -32,15 +32,10 @@ editor::editor(TString configFileName)
 
 bool editor::run()
 {
-  // cout<<__PRETTY_FUNCTION__<<endl;
-  TFile *f = TFile::Open(m_inFile);
-  RooWorkspace *w = (RooWorkspace *)(f->Get(m_wsName));
-  RooStats::ModelConfig *mc = (RooStats::ModelConfig *)(w->obj(m_mcName));
+  unique_ptr<TFile> f(TFile::Open(m_inFile));
+  RooWorkspace *w = auxUtil::getWorkspaceFromFile(f.get(), m_wsName);
+  RooStats::ModelConfig *mc = auxUtil::getModelConfigFromWorkspace(w, m_mcName);
   m_pdf = dynamic_cast<RooSimultaneous *>(mc->GetPdf());
-
-  /* make new workspace to hold them */
-  m_nW.reset(new RooWorkspace(m_wsName));
-  unique_ptr<ModelConfig> nMc(new ModelConfig(m_mcName, m_nW.get()));
 
   // Implement objects
   int nItems = (int)m_actionItems.size();
@@ -139,7 +134,7 @@ bool editor::run()
              RooFit::RenameVariable(oldStr, newStr),
              RooFit::RecycleConflictNodes(), RooFit::Silence());
   RooAbsPdf *nPdf = m_nW->pdf((mc->GetPdf())->GetName());
-  nMc->SetPdf(*nPdf);
+  m_nMc->SetPdf(*nPdf);
 
   /* import data */
   list<RooAbsData *> dataList = w->allData();
@@ -167,7 +162,7 @@ bool editor::run()
     var->setConstant(false);
     newPOI.add(*var);
   }
-  nMc->SetParametersOfInterest(newPOI);
+  m_nMc->SetParametersOfInterest(newPOI);
 
   // Set nuisance parameters, global observables, and observables
   RooArgSet nuis;
@@ -250,16 +245,16 @@ bool editor::run()
     }
   }
 
-  nMc->SetNuisanceParameters(nuis);
-  nMc->SetGlobalObservables(gobs);
-  nMc->SetObservables(mobs);
+  m_nMc->SetNuisanceParameters(nuis);
+  m_nMc->SetGlobalObservables(gobs);
+  m_nMc->SetObservables(mobs);
 
-  m_nW->import(*nMc);
+  m_nW->import(*m_nMc);
   m_nW->importClassCode();
 
   // Copy snapshots
   RooArgSet everything_new, everything_old;
-  auxUtil::collectEverything(nMc.get(), &everything_new);
+  auxUtil::collectEverything(m_nMc.get(), &everything_new);
   RooArgSet *everything_new_snapshot = dynamic_cast<RooArgSet *>(everything_new.snapshot());
   auxUtil::collectEverything(mc, &everything_old);
 
@@ -304,11 +299,12 @@ bool editor::run()
 
   // Performing fits
   if (_asimovHandler->genAsimov())
-    _asimovHandler->generateAsimov(nMc.get(), m_dsName);
+    _asimovHandler->generateAsimov(m_nMc.get(), m_dsName);
 
   unique_ptr<TFile> fout(TFile::Open(m_outFile, "recreate"));
   m_nW->Write();
   fout->Close();
+  f->Close();
   spdlog::info("Written to file: {}", m_outFile.Data());
 
   return true;
@@ -340,6 +336,10 @@ void editor::readConfigXml(TString filen)
   m_isStrict = auxUtil::to_bool(auxUtil::getAttributeValue(rootNode, "Strict", true, "true"));              // Strict mode
   // cout<<"Root node read"<<endl;
 
+  // make new workspace at the beginning
+  m_nW.reset(new RooWorkspace(m_wsName));
+  m_nMc.reset(new ModelConfig(m_mcName, m_nW.get()));
+  
   /* root node children */
   while (node != 0)
   {
@@ -353,6 +353,18 @@ void editor::readConfigXml(TString filen)
         TString constrPdfName = auxUtil::getObjName(m_actionItems.back());
         TString NPName = auxUtil::getAttributeValue(node, "NP");
         TString GOName = auxUtil::getAttributeValue(node, "GO");
+        TString fileName = auxUtil::getAttributeValue(node, "FileName", true, "");
+        // If the pdf is saved in another file, then import it to current workspace
+        if (fileName != "")
+        {
+          unique_ptr<TFile> fTemp(TFile::Open(fileName));
+          // Workspace name is mandatory
+          TString wsTempName = auxUtil::getAttributeValue(node, "WorkspaceName");
+          RooWorkspace *wsTemp = auxUtil::getWorkspaceFromFile(fTemp.get(), wsTempName);
+          RooAbsPdf *pdfTemp = auxUtil::getPdfFromWorkspace(wsTemp, constrPdfName);
+          m_nW->import(*pdfTemp);
+          fTemp->Close();
+        }
         m_constraintPdf[constrPdfName] = make_pair(NPName, GOName);
       }
     }

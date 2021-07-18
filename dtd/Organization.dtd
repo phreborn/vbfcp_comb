@@ -17,6 +17,8 @@
 <!ELEMENT Item (Name)*>
 <!ATTLIST Item
         Name              CDATA            #REQUIRED
+        FileName          CDATA            #IMPLIED
+        WorkspaceName     CDATA            #IMPLIED
         Type              CDATA            #IMPLIED
         NP                CDATA            #IMPLIED
         GO                CDATA            #IMPLIED
