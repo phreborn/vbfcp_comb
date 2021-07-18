@@ -83,7 +83,7 @@ int main(int argc, char **argv)
   spdlog::set_pattern("[%Y-%m-%d %H:%M:%S] [thread %t] [%^%l%$] \t %v");
 
   int oc;
-  while ((oc = getopt_long(argc, argv, ":w:x:f:o:i:v:m:s:t:p:c:r:n:h", longopts, NULL)) != -1)
+  while ((oc = getopt_long(argc, argv, ":w:x:f:o:i:v:m:s:t:p:c:n:h", longopts, NULL)) != -1)
   {
     switch (oc)
     {
@@ -126,10 +126,6 @@ int main(int argc, char **argv)
       fitUtil::_constOpt = auxUtil::to_bool(optarg);
       spdlog::info("Set constant optimization to {}", fitUtil::_constOpt);
       break;
-    case 'r':
-      editRFV_ = auxUtil::to_bool(optarg);
-      spdlog::info("Set editing RooFormulaVar to {}", editRFV_);
-      break;
     case 'n':
       numThreads_ = atoi(optarg);
       spdlog::info("Set number of threads to {}", numThreads_);
@@ -139,12 +135,12 @@ int main(int argc, char **argv)
       spdlog::info("Set workspace name to {}", wsName_.Data());
       break;
     case 302:
-      wsName_ = optarg;
+      mcName_ = optarg;
       spdlog::info("Set ModelConfig name to {}", mcName_.Data());
       break;
     case 303:
       dataName_ = optarg;
-      spdlog::info("Set dataset name to {}", mcName_.Data());
+      spdlog::info("Set dataset name to {}", dataName_.Data());
       break;            
     case 304:
       editRFV_ = atoi(optarg);
