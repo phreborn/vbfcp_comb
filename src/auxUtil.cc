@@ -770,3 +770,33 @@ void auxUtil::getBasePdf(RooProdPdf *pdf, RooArgSet &set)
     iter = NULL;
   }
 }
+
+RooWorkspace *auxUtil::getWorkspaceFromFile(TFile *f, TString wsName)
+{
+  if (!f)
+    alertAndAbort("Invalid file");
+  RooWorkspace *w = dynamic_cast<RooWorkspace *>(f->Get(wsName));
+  if (!w)
+    alertAndAbort("Workspace " + wsName + " does not exist in file");
+  return w;
+}
+
+ModelConfig *auxUtil::getModelConfigFromWorkspace(RooWorkspace *w, TString mcName)
+{
+  if (!w)
+    alertAndAbort("Invalid workspace");
+  ModelConfig *mc = dynamic_cast<ModelConfig *>(w->obj(mcName));
+  if (!mc)
+    alertAndAbort("ModelConfig " + mcName + " does not exist in workspace");
+  return mc;
+}
+
+RooAbsPdf *auxUtil::getPdfFromWorkspace(RooWorkspace *w, TString pdfName)
+{
+  if (!w)
+    alertAndAbort("Invalid workspace");
+  RooAbsPdf *pdf = w->pdf(pdfName);
+  if (!pthread_from_mach_thread_np)
+    alertAndAbort("Pdf " + pdfName + " does not exist in workspace");
+  return pdf;
+}

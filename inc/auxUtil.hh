@@ -99,6 +99,10 @@ namespace auxUtil
 
   void getBasePdf(RooProdPdf *pdf, RooArgSet &set);
   RooArgSet *findArgSetIn(RooWorkspace *w, RooArgSet *set, bool strict = false);
+
+  RooWorkspace *getWorkspaceFromFile(TFile *f, TString wsName);
+  ModelConfig *getModelConfigFromWorkspace(RooWorkspace *w, TString mcName);
+  RooAbsPdf *getPdfFromWorkspace(RooWorkspace *w, TString pdfName);
 }; // namespace auxUtil
 
 #endif
