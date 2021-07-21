@@ -796,7 +796,7 @@ RooAbsPdf *auxUtil::getPdfFromWorkspace(RooWorkspace *w, TString pdfName)
   if (!w)
     alertAndAbort("Invalid workspace");
   RooAbsPdf *pdf = w->pdf(pdfName);
-  if (!pthread_from_mach_thread_np)
+  if (!pdf)
     alertAndAbort("Pdf " + pdfName + " does not exist in workspace");
   return pdf;
 }
