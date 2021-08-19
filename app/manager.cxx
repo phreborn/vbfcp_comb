@@ -160,16 +160,16 @@ int main(int argc, char **argv)
       break;
     case 'h':
       printHelp(argv[0]);
-      return 0;
+      return 1;
     case ':': /* missing option argument */
       spdlog::error("{}: option `-{}' requires an argument", argv[0], optopt);
       printHelp(argv[0]);
-      return 0;
+      return 1;
     case '?':
     default:
       spdlog::error("{}: option `-{}' is invalid: ignored\n", argv[0], optopt);
       printHelp(argv[0]);
-      return 0;
+      return 1;
     }
   }
 
@@ -232,5 +232,5 @@ int main(int argc, char **argv)
   double t_real_ = timer.RealTime() / 60.;
   spdlog::info("Done in {} min (cpu), {} min (real)", t_cpu_, t_real_);
 
-  return 1;
+  return 0;
 }
