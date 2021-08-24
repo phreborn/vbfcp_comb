@@ -25,7 +25,8 @@ if [ -d ${outputDir}/RooFitExtensions ]; then
     popd
 fi
 
-export RooFitExtensions_DIR=${outputDir}/RooFitExtensions
-
 mkdir -vp ${outputDir}/lib/
 cp ${outputDir}/RooFitExtensions/lib/* ${outputDir}/lib/
+
+mkdir -vp ${outputDir}/cmake/
+cp ${outputDir}/RooFitExtensions/RooFitExtensionsConfig.cmake* ${outputDir}/cmake

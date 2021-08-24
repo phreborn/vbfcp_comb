@@ -26,7 +26,7 @@ find_package( ROOT REQUIRED COMPONENTS RIO RooFitCore RooFit HistFactory RooStat
 include(${ROOT_USE_FILE})
 
 # require RooFitExtensions
-list(APPEND CMAKE_PREFIX_PATH $ENV{RooFitExtensions_DIR})
+list(APPEND CMAKE_PREFIX_PATH $ENV{PWD}/cmake)
 find_package(RooFitExtensions REQUIRED CONFIG)
 include_directories(${RooFitExtensions_INCLUDE_DIRS})
 link_directories(${RooFitExtensions_LIBRARY_DIRS})
