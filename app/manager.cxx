@@ -224,6 +224,7 @@ int main(int argc, char **argv)
   }  
   else
   {
+    printHelp(argv[0]);
     auxUtil::alertAndAbort("Unknown command " + what_);
   }
 
