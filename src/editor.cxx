@@ -33,9 +33,9 @@ editor::editor(TString configFileName)
 bool editor::run()
 {
   unique_ptr<TFile> f(TFile::Open(m_inFile));
-  RooWorkspace *w = auxUtil::getWorkspaceFromFile(f.get(), m_wsName);
-  RooStats::ModelConfig *mc = auxUtil::getModelConfigFromWorkspace(w, m_mcName);
-  m_pdf = dynamic_cast<RooSimultaneous *>(mc->GetPdf());
+  m_oW = auxUtil::getWorkspaceFromFile(f.get(), m_wsName);
+  m_oMc = auxUtil::getModelConfigFromWorkspace(m_oW, m_mcName);
+  m_pdf = dynamic_cast<RooSimultaneous *>(m_oMc->GetPdf());
 
   // Implement objects
   int nItems = (int)m_actionItems.size();
@@ -70,13 +70,11 @@ bool editor::run()
     }
     join();
 
-    RooSimultaneous *newPdf = new RooSimultaneous(
+    m_pdf = new RooSimultaneous(
         (TString(m_pdf->GetName()) + "__addConstr"),
         (TString(m_pdf->GetName()) + "__addConstr"),
         m_pdfMap,
         *m_cat);
-
-    mc->SetPdf(*newPdf);
   }
 
   // Read rename map
@@ -103,7 +101,7 @@ bool editor::run()
     Ssiz_t len = iStr.Length();
     TString oldObjName = iStr(0, firstE);
     TString newObjName = iStr(firstE + 1, len);
-    if (not w->arg(oldObjName))
+    if (not m_oW->arg(oldObjName))
     {
       if (m_isStrict)
         auxUtil::alertAndAbort("Object " + oldObjName + " (-> " + newObjName + ") does not exist in the old workspace"); // If it does not exist in the old workspace, that's probably okay
@@ -130,14 +128,14 @@ bool editor::run()
   auxUtil::linkMap(renameMap, oldStr, newStr, ",");
 
   /* import pdf */
-  m_nW->import(*(mc->GetPdf()),
+  m_nW->import(*m_pdf,
              RooFit::RenameVariable(oldStr, newStr),
-             RooFit::RecycleConflictNodes(), RooFit::Silence());
-  RooAbsPdf *nPdf = m_nW->pdf((mc->GetPdf())->GetName());
+             RooFit::RecycleConflictNodes());
+  RooAbsPdf *nPdf = m_nW->pdf(m_pdf->GetName());
   m_nMc->SetPdf(*nPdf);
 
   /* import data */
-  list<RooAbsData *> dataList = w->allData();
+  list<RooAbsData *> dataList = m_oW->allData();
   for (list<RooAbsData *>::iterator it = dataList.begin(); it != dataList.end(); ++it)
     m_nW->import(**it);
 
@@ -168,9 +166,9 @@ bool editor::run()
   RooArgSet nuis;
   RooArgSet gobs;
   RooArgSet mobs;
-  if (mc->GetNuisanceParameters())
+  if (m_oMc->GetNuisanceParameters())
   {
-    unique_ptr<TIterator> iterN(mc->GetNuisanceParameters()->createIterator());
+    unique_ptr<TIterator> iterN(m_oMc->GetNuisanceParameters()->createIterator());
     for (RooRealVar *v = (RooRealVar *)iterN->Next(); v != 0; v = (RooRealVar *)iterN->Next())
     {
       RooRealVar *var = m_nW->var(v->GetName());
@@ -188,9 +186,9 @@ bool editor::run()
     }
   }
 
-  if (mc->GetGlobalObservables())
+  if (m_oMc->GetGlobalObservables())
   {
-    unique_ptr<TIterator> iterG(mc->GetGlobalObservables()->createIterator());
+    unique_ptr<TIterator> iterG(m_oMc->GetGlobalObservables()->createIterator());
     for (RooRealVar *v = (RooRealVar *)iterG->Next(); v != 0; v = (RooRealVar *)iterG->Next())
     {
       RooRealVar *var = m_nW->var(v->GetName());
@@ -208,9 +206,9 @@ bool editor::run()
     }
   }
 
-  if (mc->GetObservables())
+  if (m_oMc->GetObservables())
   {
-    unique_ptr<TIterator> iterM(mc->GetObservables()->createIterator());
+    unique_ptr<TIterator> iterM(m_oMc->GetObservables()->createIterator());
     for (RooAbsArg *v = (RooAbsArg *)iterM->Next(); v != 0; v = (RooAbsArg *)iterM->Next())
     {
       RooAbsArg *var = dynamic_cast<RooAbsArg *>(m_nW->obj(v->GetName()));
@@ -256,39 +254,39 @@ bool editor::run()
   RooArgSet everything_new, everything_old;
   auxUtil::collectEverything(m_nMc.get(), &everything_new);
   RooArgSet *everything_new_snapshot = dynamic_cast<RooArgSet *>(everything_new.snapshot());
-  auxUtil::collectEverything(mc, &everything_old);
+  auxUtil::collectEverything(m_oMc, &everything_old);
 
   // Nuisance parameter snapshot
   for (auto snapshot : m_snapshotNP)
   {
-    if (not w->loadSnapshot(snapshot))
+    if (not m_oW->loadSnapshot(snapshot))
       spdlog::warn("nuisance parameter snapshot {} does not exist in the old workspace", snapshot.Data());
-    nuis = *mc->GetNuisanceParameters();
+    nuis = *m_oMc->GetNuisanceParameters();
     m_nW->saveSnapshot(snapshot, nuis);
   }
 
   // Global observable snapshot
   for (auto snapshot : m_snapshotGO)
   {
-    if (not w->loadSnapshot(snapshot))
+    if (not m_oW->loadSnapshot(snapshot))
       spdlog::warn("global observable snapshot {} does not exist in the old workspace", snapshot.Data());
-    gobs = *mc->GetGlobalObservables();
+    gobs = *m_oMc->GetGlobalObservables();
     m_nW->saveSnapshot(snapshot, gobs);
   }
 
   // POI snapshot
   for (auto snapshot : m_snapshotPOI)
   {
-    if (not w->loadSnapshot(snapshot))
+    if (not m_oW->loadSnapshot(snapshot))
       spdlog::warn("POI snapshot {} does not exist in the old workspace", snapshot.Data());
-    newPOI = *mc->GetParametersOfInterest();
+    newPOI = *m_oMc->GetParametersOfInterest();
     m_nW->saveSnapshot(snapshot, newPOI);
   }
 
   // Everything snapshot
   for (auto snapshot : m_snapshotAll)
   {
-    if (not w->loadSnapshot(snapshot))
+    if (not m_oW->loadSnapshot(snapshot))
       spdlog::warn("Everything snapshot {} does not exist in the old workspace", snapshot.Data());
 
     everything_new = everything_old;
@@ -518,21 +516,27 @@ void editor::remakeCategories()
 
     spdlog::info("Creating new PDF for category {}", catName.Data());
     RooAbsPdf *pdfi = dynamic_cast<RooAbsPdf *>(m_pdf->getPdf(catName));
+    unique_ptr<RooArgSet> pdfiParams(pdfi->getParameters(*m_oMc->GetObservables()));
+
     RooArgSet baseComponents;
     if (typeid(*pdfi) == typeid(RooProdPdf))
     {
       auxUtil::getBasePdf((RooProdPdf *)pdfi, baseComponents);
-      for (map<TString, pair<TString, TString>>::iterator it = m_constraintPdf.begin(); it != m_constraintPdf.end(); ++it)
-      {
-        RooAbsPdf *pdf_tmp = m_nW->pdf((it->first));
-        if (!pdf_tmp)
-          auxUtil::alertAndAbort("PDF " + it->first + " does not exist in the new workspace");
-        baseComponents.add(*pdf_tmp);
-      }
     }
     else
     {
       baseComponents.add(*pdfi);
+    }
+
+    // Adding additional constraint pdf
+    for (map<TString, pair<TString, TString>>::iterator it = m_constraintPdf.begin(); it != m_constraintPdf.end(); ++it)
+    {
+      RooAbsPdf *pdf_tmp = m_nW->pdf((it->first));
+      if (!pdf_tmp)
+        auxUtil::alertAndAbort("PDF " + it->first + " does not exist in the new workspace");
+      // Check whether the current category depends on the constraint pdf
+      if(pdf_tmp->dependsOnValue(*pdfiParams))
+        baseComponents.add(*pdf_tmp);
     }
     TString newPdfName = TString(pdfi->GetName()) + "__addConstr";
 

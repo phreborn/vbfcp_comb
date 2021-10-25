@@ -87,6 +87,8 @@ private:
   std::map<std::string, RooAbsPdf*> m_pdfMap;
   RooCategory *m_cat;
   RooSimultaneous *m_pdf;
+  RooWorkspace *m_oW;      // Old workspace
+  ModelConfig *m_oMc;      // ModelConfig in old workspace
   std::unique_ptr<RooWorkspace> m_nW;
   std::unique_ptr<ModelConfig> m_nMc;
   int m_total;
