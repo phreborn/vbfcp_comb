@@ -9,5 +9,6 @@
 #pragma link C++ nestedclass;
 
 #pragma link C++ class RooFormulaVarExt+;
+#pragma link C++ class ResponseFunction+;
 
 #endif

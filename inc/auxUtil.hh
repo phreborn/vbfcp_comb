@@ -7,7 +7,6 @@
 
 #include "spdlog/spdlog.h"
 
-using namespace std;
 using namespace RooFit;
 using namespace RooStats;
 
@@ -51,11 +50,11 @@ namespace auxUtil
   void printTime();
   void printTitle(TString titleText, TString separator = "-", int width = 10);
   void printLine(TString separator = "-", int width = 10);
-  vector<TString> splitString(const TString &theOpt, const char separator);
-  void removeDuplicatedString(vector<TString> &strArr);
-  void removeString(vector<TString> &strArr, TString target);
+  std::vector<TString> splitString(const TString &theOpt, const char separator);
+  void removeDuplicatedString(std::vector<TString> &strArr);
+  void removeString(std::vector<TString> &strArr, TString target);
   void removeWhiteSpace(TString &item);
-  vector<TString> diffSet(vector<TString> A, vector<TString> B);
+  std::vector<TString> diffSet(std::vector<TString> A, std::vector<TString> B);
   int parseXMLFile(TDOMParser *xmlparser, TString inputFile);
   TString getAttributeValue(TXMLNode *rootNode, TString attributeKey, bool allowEmpty = false, TString defaultStr = "");
 
@@ -64,7 +63,7 @@ namespace auxUtil
   TString getObjName(TString inputName);
 
   void defineSet(RooWorkspace *w, RooArgSet *set, TString setName);
-  void defineSet(RooWorkspace *w, vector<TString> set, TString setName);
+  void defineSet(RooWorkspace *w, std::vector<TString> set, TString setName);
   TString implementObj(RooWorkspace *w, TString expr, bool checkExistBeforeImp = false);
   void collectEverything(ModelConfig *mc, RooArgSet *set);
 
@@ -80,7 +79,7 @@ namespace auxUtil
   void setValAndFix(RooRealVar *var, double value);
   int stripSign(TString &expr);
 
-  vector<TString> decomposeStr(TString function, const char separation = ',', int bracketType = 0);
+  std::vector<TString> decomposeStr(TString function, const char separation = ',', int bracketType = 0);
   bool to_bool(TString str);
   TXMLNode *findNode(TXMLNode *rootNode, TString nodeName);
   TXMLAttr *findAttribute(TXMLNode *rootNode, TString attributeKey);
@@ -91,7 +90,7 @@ namespace auxUtil
   TStyle *ATLASStyle();
   void setATLASStyle();
   int getNDOF(RooAbsPdf *pdf, RooRealVar *x, bool exclSyst = true);
-  pair<double, int> calcChi2(TH1 *hdata, TH1 *hpdf, double blindMin = std::numeric_limits<double>::min(), double blindMax = std::numeric_limits<double>::max(), double threshold = 3);
+  std::pair<double, int> calcChi2(TH1 *hdata, TH1 *hpdf, double blindMin = std::numeric_limits<double>::min(), double blindMax = std::numeric_limits<double>::max(), double threshold = 3);
 
   void copyAttributes(const RooAbsArg &from, RooAbsArg &to);
   RooAbsPdf *factorizePdf(const RooArgSet &observables, RooAbsPdf &pdf, RooArgList &constraints);
@@ -103,6 +102,8 @@ namespace auxUtil
   RooWorkspace *getWorkspaceFromFile(TFile *f, TString wsName);
   ModelConfig *getModelConfigFromWorkspace(RooWorkspace *w, TString mcName);
   RooAbsPdf *getPdfFromWorkspace(RooWorkspace *w, TString pdfName);
+
+  RooRealVar *checkVarExist(RooWorkspace *w, TString varName, RooAbsPdf *pdf = NULL, bool verbose = false);
 }; // namespace auxUtil
 
 #endif

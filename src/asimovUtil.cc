@@ -22,7 +22,7 @@ void asimovUtil::generateAsimov(ModelConfig *mc, TString dataName)
 
   for (int iAsimov = 0; iAsimov < nAsimov; iAsimov++)
   {
-    unique_ptr<RooArgSet> originalSnapshot(dynamic_cast<RooArgSet *>(everything.snapshot()));
+    std::unique_ptr<RooArgSet> originalSnapshot(dynamic_cast<RooArgSet *>(everything.snapshot()));
     TString fixedVar = "";
     auxUtil::printTitle("Operation " + _asimovNames[iAsimov], "+");
     _asimovSetups[iAsimov].ReplaceAll(" ", "");
@@ -34,10 +34,10 @@ void asimovUtil::generateAsimov(ModelConfig *mc, TString dataName)
     // Configuring variables
     else
     {
-      vector<TString> varList = auxUtil::splitString(_asimovSetups[iAsimov], ',');
+      std::vector<TString> varList = auxUtil::splitString(_asimovSetups[iAsimov], ',');
       bool validSetup = true;
       TString badSetup = "";
-      for (vector<TString>::iterator var = varList.begin(); var != varList.end(); ++var)
+      for (std::vector<TString>::iterator var = varList.begin(); var != varList.end(); ++var)
       {
         if (!var->Contains("="))
         {
@@ -70,7 +70,7 @@ void asimovUtil::generateAsimov(ModelConfig *mc, TString dataName)
         }
         else
         {
-          vector<TString> varSetup = auxUtil::splitString(varRange, '_');
+          std::vector<TString> varSetup = auxUtil::splitString(varRange, '_');
           if (varSetup.size() != 3 || !varSetup[0].IsFloat() || !varSetup[1].IsFloat() || !varSetup[2].IsFloat())
           {
             validSetup = false;
@@ -90,9 +90,9 @@ void asimovUtil::generateAsimov(ModelConfig *mc, TString dataName)
       }
     }
     spdlog::info("Action list ({})", _asimovProfiles[iAsimov].Data());
-    vector<TString> actionList = auxUtil::splitString(_asimovProfiles[iAsimov], ':');
+    std::vector<TString> actionList = auxUtil::splitString(_asimovProfiles[iAsimov], ':');
 
-    for (vector<TString>::iterator act = actionList.begin(); act != actionList.end(); ++act)
+    for (std::vector<TString>::iterator act = actionList.begin(); act != actionList.end(); ++act)
     {
       TString action = *act;
       // Do fit
@@ -123,9 +123,9 @@ void asimovUtil::generateAsimov(ModelConfig *mc, TString dataName)
       // Float fixed nuisance parameters
       else if (action == FLOAT)
       {
-        vector<TString> fixedVarList = auxUtil::splitString(fixedVar, ',');
+        std::vector<TString> fixedVarList = auxUtil::splitString(fixedVar, ',');
         const RooArgSet *poi = mc->GetParametersOfInterest();
-        for (vector<TString>::iterator fixed = fixedVarList.begin(); fixed != fixedVarList.end(); ++fixed)
+        for (std::vector<TString>::iterator fixed = fixedVarList.begin(); fixed != fixedVarList.end(); ++fixed)
         {
           if (poi->find(*fixed))
             continue;
@@ -139,7 +139,7 @@ void asimovUtil::generateAsimov(ModelConfig *mc, TString dataName)
       else if (action == GENASIMOV)
       {
         spdlog::info("Generating Asimov dataset {}", _asimovNames[iAsimov].Data());
-        unique_ptr<RooAbsData> asimovData(AsymptoticCalculator::GenerateAsimovData(*mc->GetPdf(), *mc->GetObservables()));
+        std::unique_ptr<RooAbsData> asimovData(AsymptoticCalculator::GenerateAsimovData(*mc->GetPdf(), *mc->GetObservables()));
         // Need to perform injection here.
         w->import(*asimovData, Rename(_asimovNames[iAsimov]));
       }
@@ -148,7 +148,7 @@ void asimovUtil::generateAsimov(ModelConfig *mc, TString dataName)
       {
         RooArgSet *constraints = mc->GetPdf()->getAllConstraints(*mc->GetObservables(), *const_cast<RooArgSet *>(mc->GetNuisanceParameters()));
         RooArgSet nuisSyst;
-        unique_ptr<TIterator> iter(constraints->createIterator());
+        std::unique_ptr<TIterator> iter(constraints->createIterator());
         RooAbsPdf *parg = NULL;
         while ((parg = dynamic_cast<RooAbsPdf *>(iter->Next())))
         {
@@ -164,7 +164,7 @@ void asimovUtil::generateAsimov(ModelConfig *mc, TString dataName)
       // Fix all the constrained nuisance parameters
       else if (action == FIXALL)
       {
-        unique_ptr<TIterator> iter(mc->GetNuisanceParameters()->createIterator());
+        std::unique_ptr<TIterator> iter(mc->GetNuisanceParameters()->createIterator());
         RooRealVar *parg = NULL;
         while ((parg = dynamic_cast<RooRealVar *>(iter->Next())))
         {
@@ -204,10 +204,8 @@ void asimovUtil::generateAsimov(ModelConfig *mc, TString dataName)
           _Snapshots.push_back(_SnapshotsPOI[iAsimov]);
         }
       }
-      else if (find(_Snapshots.begin(), _Snapshots.end(), action) != _Snapshots.end())
-        w->loadSnapshot(action);
       else
-        spdlog::warn("Unknown action: {}", action.Data());
+        w->loadSnapshot(action);
     }
   }
 }

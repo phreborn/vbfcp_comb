@@ -34,7 +34,7 @@ void auxUtil::Reset(RooArgSet *original, RooArgSet *snapshot)
 {
   *original = *snapshot;
   // Still need to recover the ranges for variables
-  unique_ptr<TIterator> iter(original->createIterator());
+  std::unique_ptr<TIterator> iter(original->createIterator());
   RooRealVar *parg = NULL;
   while ((parg = dynamic_cast<RooRealVar *>(iter->Next())))
   {
@@ -54,11 +54,11 @@ int auxUtil::parseXMLFile(TDOMParser *xmlparser, TString inputFile)
   return parseError;
 }
 
-vector<TString> auxUtil::splitString(const TString &theOpt, const char separator)
+std::vector<TString> auxUtil::splitString(const TString &theOpt, const char separator)
 {
   // splits the option string at 'separator' and fills the list
   // 'splitV' with the primitive strings
-  vector<TString> splitV;
+  std::vector<TString> splitV;
   if (theOpt == "")
     return splitV; // If the string is empty, the vector should be empty as well
 
@@ -86,7 +86,7 @@ vector<TString> auxUtil::splitString(const TString &theOpt, const char separator
 TString auxUtil::generateExpr(TString head, RooArgSet *set, bool closeExpr)
 {
   TString exprStr = head;
-  unique_ptr<TIterator> iter(set->createIterator());
+  std::unique_ptr<TIterator> iter(set->createIterator());
   RooAbsArg *parg = NULL;
   while ((parg = dynamic_cast<RooAbsArg *>(iter->Next())))
   {
@@ -99,7 +99,7 @@ TString auxUtil::generateExpr(TString head, RooArgSet *set, bool closeExpr)
 
 void auxUtil::defineSet(RooWorkspace *w, RooArgSet *set, TString setName)
 {
-  unique_ptr<TIterator> iter(set->createIterator());
+  std::unique_ptr<TIterator> iter(set->createIterator());
   RooRealVar *parg = NULL;
   RooArgSet nameSet;
   while ((parg = dynamic_cast<RooRealVar *>(iter->Next())))
@@ -132,10 +132,10 @@ RooArgSet *auxUtil::findArgSetIn(RooWorkspace *w, RooArgSet *set, bool strict)
     return outSet;
 }
 
-void auxUtil::defineSet(RooWorkspace *w, vector<TString> set, TString setName)
+void auxUtil::defineSet(RooWorkspace *w, std::vector<TString> set, TString setName)
 {
   RooArgSet nameSet;
-  for (vector<TString>::iterator it = set.begin(); it != set.end(); ++it)
+  for (std::vector<TString>::iterator it = set.begin(); it != set.end(); ++it)
   {
     if (w->var(*it))
       nameSet.add(*w->var(*it));
@@ -254,7 +254,7 @@ void auxUtil::removeWhiteSpace(TString &item)
   item = s.c_str();
 }
 
-vector<TString> auxUtil::decomposeStr(TString function, const char separation, const int bracketType)
+std::vector<TString> auxUtil::decomposeStr(TString function, const char separation, const int bracketType)
 {
   char first, last;
   if (bracketType == ROUND)
@@ -269,13 +269,13 @@ vector<TString> auxUtil::decomposeStr(TString function, const char separation, c
   }
   else
   {
-    alertAndAbort("Unknown bracket type " + to_string(bracketType));
+    alertAndAbort("Unknown bracket type " + std::to_string(bracketType));
   }
 
   if (function.CountChar(first) > 1 || function.CountChar(last) > 1)
     alertAndAbort("Invalid expression " + function + ". Please check your input config");
 
-  vector<TString> itemList = splitString(function(function.First(first) + 1, function.Last(last) - function.First(first) - 1), separation);
+  std::vector<TString> itemList = splitString(function(function.First(first) + 1, function.Last(last) - function.First(first) - 1), separation);
   /* Include also the object name */
   itemList.push_back(function(0, function.First(first)));
   return itemList;
@@ -321,7 +321,7 @@ TXMLAttr *auxUtil::findAttribute(TXMLNode *rootNode, TString attributeKey)
 
 bool auxUtil::checkExist(TString nameList)
 {
-  vector<TString> fileNames = auxUtil::splitString(nameList, ',');
+  std::vector<TString> fileNames = auxUtil::splitString(nameList, ',');
   for (auto name : fileNames)
   {
     if (FILE *file = fopen(name, "r"))
@@ -332,11 +332,11 @@ bool auxUtil::checkExist(TString nameList)
   return true;
 }
 
-vector<TString> auxUtil::diffSet(vector<TString> A, vector<TString> B)
+std::vector<TString> auxUtil::diffSet(std::vector<TString> A, std::vector<TString> B)
 {
   sort(A.begin(), A.end());
   sort(B.begin(), B.end());
-  vector<TString> results;
+  std::vector<TString> results;
   std::set_difference(A.begin(), A.end(),
                       B.begin(), B.end(),
                       std::back_inserter(results));
@@ -445,8 +445,7 @@ TStyle *auxUtil::ATLASStyle()
 
 void auxUtil::setATLASStyle()
 {
-  std::cout << "\nApplying ATLAS style settings...\n"
-            << std::endl;
+  spdlog::info("Applying ATLAS style settings...");
   ATLASStyle();
   gROOT->SetStyle("ATLAS");
   gROOT->ForceStyle();
@@ -455,8 +454,8 @@ void auxUtil::setATLASStyle()
 int auxUtil::getNDOF(RooAbsPdf *pdf, RooRealVar *x, bool exclSyst)
 {
   RooArgSet *params = pdf->getVariables();
-  unique_ptr<RooAbsPdf> nuispdf(RooStats::MakeNuisancePdf(*pdf, RooArgSet(*x), "nuisancePdf"));
-  unique_ptr<TIterator> iter(params->createIterator());
+  std::unique_ptr<RooAbsPdf> nuispdf(RooStats::MakeNuisancePdf(*pdf, RooArgSet(*x), "nuisancePdf"));
+  std::unique_ptr<TIterator> iter(params->createIterator());
   RooRealVar *var = NULL;
   int counter = 0;
   while ((var = (RooRealVar *)iter->Next()))
@@ -466,7 +465,7 @@ int auxUtil::getNDOF(RooAbsPdf *pdf, RooRealVar *x, bool exclSyst)
   return counter;
 }
 
-pair<double, int> auxUtil::calcChi2(TH1 *hdata, TH1 *hpdf, double blindMin, double blindMax, double threshold)
+std::pair<double, int> auxUtil::calcChi2(TH1 *hdata, TH1 *hpdf, double blindMin, double blindMax, double threshold)
 {
   if (hdata->GetNbinsX() != hpdf->GetNbinsX())
     auxUtil::alertAndAbort("Number of bins do not match between data and pdf histograms used for chi2 calculation");
@@ -509,22 +508,22 @@ pair<double, int> auxUtil::calcChi2(TH1 *hdata, TH1 *hpdf, double blindMin, doub
       error2_data_chi2 = 0;
     }
   }
-  return make_pair(chi2, nbin_chi2);
+  return std::make_pair(chi2, nbin_chi2);
 }
 
 void auxUtil::printTime()
 {
   time_t result = time(nullptr);
-  cout << asctime(localtime(&result));
+  spdlog::info(asctime(localtime(&result)));
 }
 
-void auxUtil::removeDuplicatedString(vector<TString> &strArr)
+void auxUtil::removeDuplicatedString(std::vector<TString> &strArr)
 {
   sort(strArr.begin(), strArr.end());
   strArr.erase(unique(strArr.begin(), strArr.end()), strArr.end());
 }
 
-void auxUtil::removeString(vector<TString> &strArr, TString target)
+void auxUtil::removeString(std::vector<TString> &strArr, TString target)
 {
   strArr.erase(remove(strArr.begin(), strArr.end(), target), strArr.end());
 }
@@ -799,4 +798,27 @@ RooAbsPdf *auxUtil::getPdfFromWorkspace(RooWorkspace *w, TString pdfName)
   if (!pdf)
     alertAndAbort("Pdf " + pdfName + " does not exist in workspace");
   return pdf;
+}
+
+RooRealVar *auxUtil::checkVarExist(RooWorkspace *w, TString varName, RooAbsPdf *pdf, bool verbose)
+{
+  if (!w)
+    alertAndAbort("Input workspace does not exist for auxUtil::checkVarExist");
+
+  RooRealVar *var = w->var(varName);
+  // If the variable does not exist
+  if (!var)
+  {
+    if (verbose)
+      spdlog::warn("Variable {} does not exist in workspace {}", varName.Data(), w->GetName());
+    return NULL;
+  }
+  // If the variable exist, but the provided pdf does not depend on it
+  if (pdf != NULL && !pdf->dependsOn(*var))
+  {
+    if(verbose)
+      spdlog::warn("Variable {} exists in workspace {} but is not part of provided PDF {}", varName.Data(), w->GetName(), pdf->GetName());
+    return NULL;
+  }
+  return var;
 }

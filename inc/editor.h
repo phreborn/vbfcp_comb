@@ -7,11 +7,11 @@
  *
  *        Version:  1.1
  *        Created:  07/19/12 17:32:58
- *       Revision:  12/27/20 during pandemic
+ *       Revision:  10/25/21 during pandemic
  *       Compiler:  gcc
  *
  *         Author:  Haoshuang Ji, haoshuang.ji@cern.ch
- *                  Hongtao Yang, Hongtao.Yang@cern.ch
+ *                  Hongtao Yang (杨洪洮), Hongtao.Yang@cern.ch
  *   Organization:  University of Wisconsin
  *                  Lawrence Berkeley National Lab
  *                  
@@ -34,28 +34,11 @@ public:
   ~editor() {}
   bool run();
   void readConfigXml( TString configFileName );
-  /* Multi-threading */
-  void setNumThreads(unsigned num) { 
-    m_numThreads = num;
-    if (m_numThreads > std::thread::hardware_concurrency())
-    {
-      m_numThreads = std::thread::hardware_concurrency();
-      spdlog::warn("Reducing number of threads to {} to match hardware concurrency", m_numThreads);
-    }
-  }
 
 private:
   void implementFlexibleInterpVar(RooWorkspace *w, TString actionStr);
   void implementMultiVarGaussian(RooWorkspace *w, TString actionStr);
-  void remakeCategories();
-  void join()
-  {
-    for (auto &thread : m_thread_ptrs)
-    {
-      if (thread->joinable())
-        thread->join();
-    }
-  }
+  void remakeCategories(RooWorkspace *w);
 
   unique_ptr<asimovUtil> _asimovHandler;
   vector<TString> m_actionItems;
@@ -79,20 +62,10 @@ private:
   TString m_inFile;		// Input file name
   TString m_outFile;	// Output file name
 
-  /* Multi-threading */
-  int m_numThreads;
-  std::vector<std::unique_ptr<std::thread>> m_thread_ptrs;
-  std::mutex m_mutex;
-  std::atomic<int> m_idx;
-  std::map<std::string, RooAbsPdf*> m_pdfMap;
-  RooCategory *m_cat;
-  RooSimultaneous *m_pdf;
-  RooWorkspace *m_oW;      // Old workspace
-  ModelConfig *m_oMc;      // ModelConfig in old workspace
-  std::unique_ptr<RooWorkspace> m_nW;
-  std::unique_ptr<ModelConfig> m_nMc;
-  int m_total;
-  auxUtil::TOwnedList m_keep;
+  RooWorkspace *m_oW;                 // Old workspace
+  ModelConfig *m_oMc;                 // ModelConfig in old workspace
+  std::unique_ptr<RooWorkspace> m_nW; // New workspace
+  std::unique_ptr<ModelConfig> m_nMc; // New ModelConfig
 };
 
 #endif
