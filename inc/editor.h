@@ -40,14 +40,14 @@ private:
   void implementMultiVarGaussian(RooWorkspace *w, TString actionStr);
   void remakeCategories(RooWorkspace *w);
 
-  unique_ptr<asimovUtil> _asimovHandler;
-  vector<TString> m_actionItems;
-  vector<TString> m_actionTypes;
+  std::unique_ptr<asimovUtil> _asimovHandler;
+  std::vector<TString> m_actionItems;
+  std::vector<TString> m_actionTypes;
   TString m_modelName; 
-  vector<TString> m_poiNames;
-  vector<TString> m_snapshotNP, m_snapshotGO, m_snapshotPOI, m_snapshotAll;
+  std::vector<TString> m_poiNames;
+  std::vector<TString> m_snapshotNP, m_snapshotGO, m_snapshotPOI, m_snapshotAll;
   TString m_mapStr;
-  map<TString, pair<TString, TString> > m_constraintPdf;
+  std::map<TString, std::pair<TString, TString> > m_constraintPdf;
   bool m_isStrict;
 
   // Item type names

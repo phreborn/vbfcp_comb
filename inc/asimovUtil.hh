@@ -8,16 +8,15 @@
 #include "auxUtil.hh"
 #include "fitUtil.hh"
 
-using namespace std;
 using namespace RooFit;
 using namespace RooStats;
 
 class asimovUtil
 {
 private:
-  vector<TString> _asimovNames, _asimovSetups, _asimovProfiles;
-  vector<TString> _SnapshotsAll, _SnapshotsNuis, _SnapshotsGlob, _SnapshotsPOI, _Snapshots;
-  vector<TString> _dataToFit;
+  std::vector<TString> _asimovNames, _asimovSetups, _asimovProfiles;
+  std::vector<TString> _SnapshotsAll, _SnapshotsNuis, _SnapshotsGlob, _SnapshotsPOI, _Snapshots;
+  std::vector<TString> _dataToFit;
   TString _rangeName;
   // action items
   static const TString RAW;

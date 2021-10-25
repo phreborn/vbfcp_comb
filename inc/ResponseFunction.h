@@ -14,6 +14,7 @@
 
 #include <TIterator.h>
 #include <RooListProxy.h>
+#include <RooAbsReal.h>
 #include <vector>
 #include <ostream>
 

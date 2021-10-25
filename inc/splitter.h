@@ -55,7 +55,7 @@ private:
     int m_reBin;
     bool m_rebuildPdf;
 
-    unique_ptr<TFile> m_inputFile;
+    std::unique_ptr<TFile> m_inputFile;
     RooStats::ModelConfig *m_mc;
     RooWorkspace *m_comb;
     RooCategory *m_cat;
@@ -67,8 +67,8 @@ private:
     TList *m_dataList;
     int m_numChannels;
 
-    vector<int> m_useIndices;
-    vector<TString> m_snapshots;
+    std::vector<int> m_useIndices;
+    std::vector<TString> m_snapshots;
     
     TString m_outputFileName;
 

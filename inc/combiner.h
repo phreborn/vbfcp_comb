@@ -125,7 +125,7 @@ private:
   std::unique_ptr<RooArgSet> m_nuis;
   std::unique_ptr<RooArgSet> m_glob;
   std::unique_ptr<RooArgSet> m_obs;
-  map<string, RooDataSet *> m_dataMap;
+  std::map<std::string, RooDataSet *> m_dataMap;
   std::unique_ptr<RooSimultaneous> m_combPdf;
   std::unique_ptr<RooCategory> m_combCat;
 
@@ -134,7 +134,7 @@ private:
   std::unique_ptr<TFile> m_inputFile;
 
   /* Asimov handler */
-  unique_ptr<asimovUtil> m_asimovHandler;
+  std::unique_ptr<asimovUtil> m_asimovHandler;
 
   bool m_strictMode;
 

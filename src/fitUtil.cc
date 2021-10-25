@@ -2,7 +2,7 @@
 
 // Default values for the minimizer
 int fitUtil::_minimizerStrategy = 1;
-string fitUtil::_minimizerAlgo = "Minuit2";
+std::string fitUtil::_minimizerAlgo = "Minuit2";
 double fitUtil::_minimizerTolerance = 1e-3;
 bool fitUtil::_nllOffset = true;
 int fitUtil::_printLevel = 2;
@@ -15,17 +15,17 @@ int fitUtil::profileToData(ModelConfig *mc, RooAbsData *data, TString rangeName)
 
   RooWorkspace *w = mc->GetWS();
   RooArgSet funcs = w->allPdfs();
-  unique_ptr<TIterator> iter(funcs.createIterator());
+  std::unique_ptr<TIterator> iter(funcs.createIterator());
   for (RooAbsPdf *v = (RooAbsPdf *)iter->Next(); v != 0; v = (RooAbsPdf *)iter->Next())
   {
-    string name = v->GetName();
+    std::string name = v->GetName();
     if (v->IsA() == RooRealSumPdf::Class() && name.find("binned") != std::string::npos)
     { // The binned attribute will only be set if there is "binned" in the PDF name
       spdlog::info("Set binned likelihood for: {}", v->GetName());
       v->setAttribute("BinnedLikelihood", true);
     }
   }
-  unique_ptr<RooAbsReal> nll;
+  std::unique_ptr<RooAbsReal> nll;
   if (rangeName != "")
   {
     spdlog::info("Performing ranged fit in range {}", rangeName.Data());
