@@ -37,7 +37,7 @@ bool editor::run()
   // Implement objects
   auxUtil::printTitle("Step 1: create new objects");
   // Everything first goes into a temporary workspace
-  std::unique_ptr<RooWorkspace> wTemp(new RooWorkspace(m_wsName));
+  std::unique_ptr<RooWorkspace> wTemp(new RooWorkspace("__temp__"));
   int nItems = (int)m_actionItems.size();
   for (int i = 0; i < nItems; i++)
   {
@@ -125,6 +125,7 @@ bool editor::run()
   else
   {
     m_nW = std::move(wTemp);
+    m_nW->SetName(m_wsName);
   }
 
   // Start preparing ModelConfig
