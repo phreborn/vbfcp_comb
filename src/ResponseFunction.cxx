@@ -304,7 +304,7 @@ Double_t ResponseFunction::evaluate() const
       }
       else if (x <= -boundary)
       {
-        total *= std::pow(1 - ((RooAbsReal *)(_lowList.at(i)))->getVal() / _nominal.at(i), param->getVal());
+        total *= std::pow(1 + ((RooAbsReal *)(_lowList.at(i)))->getVal() / _nominal.at(i), -param->getVal());
       }
       else if (x != 0)
       {
