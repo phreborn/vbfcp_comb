@@ -10,7 +10,7 @@ combPois=['mu', 'mu_VBF_RW', 'mu_VBF_SM', 'mu_ggH', 'mu_ggH_SM', 'ATLAS_epsilon'
 yyPois=['mu', 'mu_VBF_RW', 'mu_VBF_SM', 'mu_ggH', 'mu_ggH_SM', 'dummy', 'dummy']
 ttPois=['dummy', 'dummy', 'dummy', 'dummy', 'dummy', 'ATLAS_epsilon', 'ATLAS_epsilon_rejected']
 
-combOutRootFile="./workspace/combined.root"
+combOutRootFile="workspace/combined_{dtilde}.root"
 
 yyInRootFile="workspace/hgg_param.root"
 yyInRootFile="inWS/gamgam/vbf_cp_{dtilde}.root"

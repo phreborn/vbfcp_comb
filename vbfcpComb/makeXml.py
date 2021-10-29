@@ -11,6 +11,7 @@ parser.add_argument('-d', '--dtilde', type=str, default='SM')
 result = parser.parse_args()
 
 dirpath=sys.path[0]+'/'
+combOutRootFile=dirpath+combOutRootFile.replace('{dtilde}', result.dtilde)
 yyInRootFile=dirpath+yyInRootFile.replace('{dtilde}', result.dtilde)
 ttInRootFile=dirpath+ttInRootFile.replace('{dtilde}', result.dtilde)
 outXml=dirpath+outXml.replace('{dtilde}', result.dtilde)
@@ -37,11 +38,53 @@ class Syst:
 #sys = Syst('jer', 0.1, -0.2)
 #sys.displaySyst()
 
+class Combination:
+  'combination head'
+  combCount = 0
+
+  def __init__(self, pois, ws='combWS', mc='ModelConfig', data='combData', outfile='./workspace/combined.root'):
+    self.ws = ws
+    self.mc = mc
+    self.data = data
+    self.outfile = outfile
+    self.pois = pois
+    Combination.combCount += 1
+
+  def getHeadXmlLines(self):
+    tmpXmlLines = []
+    tmpXmlLines.append('<Combination WorkspaceName = "%s" ModelConfigName = "%s" DataName = "%s" OutputFile="%s">'%(self.ws, self.mc, self.data, self.outfile))
+    tmpXmlLines.append('  <POIList Combined = "%s[1~1]"/>'%('[1~1],'.join(self.pois)))
+
+    self.xmlLines = tmpXmlLines
+    return self.xmlLines
+
+  def getEndXmlLine(self):
+    endline = '</Combination>'
+    return endline
+
+class Asimov:
+  'configure actions to generate Asimov data'
+  asimovCount = 0
+
+  def __init__(self, name, setup, act, snapshot):
+    self.name = name
+    self.setup = setup
+    self.act = act
+    self.snapshot = snapshot
+    Asimov.asimovCount += 1
+
+  def getXmlLines(self):
+    tmpXmlLines = []
+    tmpXmlLines.append('  <Asimov Name="%s" Setup="%s" Action="%s" SnapshotAll="%s"/>'%(self.name, self.setup, self.act, self.snapshot))
+
+    self.xmlLines = tmpXmlLines
+    return self.xmlLines
+
 class Channel:
   'individual channel class to be combined'
   channelCount = 0
 
-  def __init__(self, name, pois, inFile, chlist='channelList', ws='combWS', mc='ModelConfig', data='combData', iscomb=False):
+  def __init__(self, name, pois, inFile, chlist='channelList', ws='combWS', mc='ModelConfig', data='combData'):
     self.name = name
     self.pois = pois
     self.inFile = inFile
@@ -50,23 +93,17 @@ class Channel:
     self.mc = mc
     self.data = data
     self.xmlLines = []
-    self.iscomb = iscomb
     Channel.channelCount += 1
 
   def getXmlLines(self, *renameNPs):
     tmpXmlLines = []
-    if self.iscomb: tmpXmlLines.append('  <Channel Name="%s" IsCombined="true" Mass="125.09">'%self.name)
-    else: tmpXmlLines.append('  <Channel Name="%s">'%self.name)
-    tmpXmlLines.append('    <File Name="%s"/>'%self.inFile)
-    tmpXmlLines.append('    <Workspace Name="%s"/>'%self.ws)
-    tmpXmlLines.append('    <ModelConfig Name="%s"/>'%self.mc)
-    tmpXmlLines.append('    <ModelData Name="%s"/>'%self.data)
-    tmpXmlLines.append('    <ModelPOI Name="%s"/>'%(', '.join(self.pois)))
-    if not self.iscomb:
-      tmpXmlLines.append('    <RenameMap>')
-      for np in renameNPs: tmpXmlLines.append('      '+np)
-      tmpXmlLines.append('      <Syst OldName= "%s" NewName= "Cat_%s"/>'%(self.chlist, chlistName[self.name]))
-      tmpXmlLines.append('    </RenameMap>')
+    tmpXmlLines.append('  <Channel Name="%s" InputFile = "%s" WorkspaceName = "%s" ModelConfigName = "%s" DataName = "%s">'%(self.name, self.inFile, self.ws, self.mc, self.data))
+    tmpXmlLines.append('    <POIList Input="%s"/>'%(', '.join(self.pois)))
+    tmpXmlLines.append('    <RenameMap>')
+    for np in renameNPs: tmpXmlLines.append('      '+np)
+    #tmpXmlLines.append('')
+    #tmpXmlLines.append('      <Syst OldName= "%s" NewName= "Cat_%s"/>'%(self.chlist, chlistName[self.name]))
+    tmpXmlLines.append('    </RenameMap>')
     tmpXmlLines.append('  </Channel>')
 
     self.xmlLines = tmpXmlLines
@@ -89,20 +126,20 @@ sysList.sort()
 print "systematic list length:",len(sysList),"\n"
 
 ##### creat xml lines #####
-combChannel = Channel('combined', combPois, combOutRootFile, iscomb=True)
+combination = Combination(combPois, outfile = combOutRootFile)
 
 yyRenameList=[]
 atlasPrefix="ATLAS_"
-#for sys in sysList:
-#  yyRenameList.append(strReplaceNPName_yy(atlasPrefix+sys))
+for sys in sysList:
+  yyRenameList.append(strReplaceNPName_yy(atlasPrefix+sys))
 
 gamChannel=Channel('diphoton', yyPois, yyInRootFile, data='asimovData_SB_SM')
 
 tauChannel = Channel('ditau', ttPois, ttInRootFile, 'channelCat', ws='combined', data='obsData')
 
 with open(outXml, 'w') as f:
-  f.write('<!DOCTYPE Combination  SYSTEM \'Combination.dtd\'>\n<Combination>')
-  for line in combChannel.getXmlLines():
+  f.write('<!DOCTYPE Combination  SYSTEM \'Combination.dtd\'>')
+  for line in combination.getHeadXmlLines():
     f.write('\n'+line)
     print line
   f.write('\n')
@@ -113,4 +150,4 @@ with open(outXml, 'w') as f:
   for line in tauChannel.getXmlLines():
     print line
     f.write('\n'+line)
-  f.write('\n</Combination>')
+  f.write('\n'+combination.getEndXmlLine())
