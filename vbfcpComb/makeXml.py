@@ -112,7 +112,11 @@ class Channel:
 CONSTRPREFIX="constr__"
 GLOBPREFIX="RNDM__"
 def strReplaceNPName_yy(nui):
-  return '<Syst OldName = "%s%s(%s, %s%s)" NewName = "%s" />'%(CONSTRPREFIX,nui,nui,GLOBPREFIX,nui,nui)
+  return '<Syst OldName = "%s%s(%s, %s%s)" NewName = "%s" />'%(CONSTRPREFIX,nui,nui,GLOBPREFIX,nui,nui+'_gam')
+
+def strReplaceNPName_tt(nui):
+  if 'gamma_stat_' in nui: return '<Syst OldName = "%s" NewName = "%s" />'%(nui,nui+'_tau')
+  return '<Syst OldName = "%s(%s, %s)" NewName = "%s" />'%('alpha_'+nui+'Constraint',nui,'nom_alpha_'+nui,nui+'_tau')
 
 
 ##### reading systematic list #####
@@ -125,6 +129,16 @@ sysList=list(set(sysList))
 sysList.sort()
 print "systematic list length:",len(sysList),"\n"
 
+ttsysList=[]
+with open(path_ttSysList,'r') as f:
+  for line in f.readlines():
+    if 'norm_' in line: continue
+    if 'gamma_' in line: continue
+    ttsysList.append(line.replace('\n',''))
+ttsysList=list(set(ttsysList))
+ttsysList.sort()
+print "systematic list length:",len(ttsysList),"\n"
+
 ##### creat xml lines #####
 combination = Combination(combPois, outfile = combOutRootFile)
 
@@ -133,9 +147,13 @@ atlasPrefix="ATLAS_"
 for sys in sysList:
   yyRenameList.append(strReplaceNPName_yy(atlasPrefix+sys))
 
-gamChannel=Channel('diphoton', yyPois, yyInRootFile, data='asimovData_SB_SM')
+ttRenameList=[]
+for sys in ttsysList:
+  ttRenameList.append(strReplaceNPName_tt(sys))
 
-tauChannel = Channel('ditau', ttPois, ttInRootFile, 'channelCat', ws='combined', data='obsData')
+gamChannel = Channel('diphoton', yyPois, yyInRootFile, data=yydata)
+
+tauChannel = Channel('ditau', ttPois, ttInRootFile, 'channelCat', ws='combined', data=ttdata)
 
 with open(outXml, 'w') as f:
   f.write('<!DOCTYPE Combination  SYSTEM \'Combination.dtd\'>')
@@ -147,7 +165,8 @@ with open(outXml, 'w') as f:
     f.write('\n'+line)
     print line
   f.write('\n')
-  for line in tauChannel.getXmlLines():
+#  for line in tauChannel.getXmlLines():
+  for line in tauChannel.getXmlLines(*ttRenameList):
     print line
     f.write('\n'+line)
   f.write('\n'+combination.getEndXmlLine())

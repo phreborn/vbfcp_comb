@@ -30,4 +30,9 @@ void readTauWS(){
     TString nuisName = arg->GetName();
     globlist<<nuisName<<endl;
   }
+
+  list<RooAbsData*> dataList(ws->allData());
+  for(auto data : dataList){
+     cout<<data->GetName()<<endl;
+  }
 }

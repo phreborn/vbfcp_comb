@@ -1,0 +1,39 @@
+combined->obj("ModelConfig")->Print("v")
+	RooSimultaneous::simPdf
+combined->obj("VBFCP_yearAll_chanhh_catvbf_regsig_selMVA_model")->Print("v")
+	RooRealSumPdf::
+combined->obj("L_x_VBFH125dtildeX_VBFCP_yearAll_chanhh_catvbf_regsig_selMVA_overallSyst_x_HistSyst")->Print("v")
+	funcList
+combined->obj("VBFH125dtildeX_VBFCP_yearAll_chanhh_catvbf_regsig_selMVA_overallSyst_x_HistSyst")->Print("v")
+	RooProduct
+combined->obj("VBFH125dtildeX_VBFCP_yearAll_chanhh_catvbf_regsig_selMVA_overallNorm_x_sigma_epsilon")->Print("v")
+	RooProduct::*_epsilon
+combined->obj("VBFH125dtildeX_VBFCP_yearAll_chanhh_catvbf_regsig_selMVA_epsilon")->Print("v")
+	RooStats::HistFactory::FlexibleInterpVar::
+
+
+combined->obj("ModelConfig")->Print("v")
+	RooSimultaneous::simPdf
+combined->obj("${category}_model")->Print("v")
+	RooRealSumPdf::
+combined->obj("L_x_${proc}_${category}_overallSyst_x_HistSyst")->Print("v")
+	funcList
+combined->obj("${proc}_${category}_overallSyst_x_HistSyst")->Print("v")
+	RooProduct
+combined->obj("${proc}_${category}_overallNorm_x_sigma_epsilon")->Print("v")
+	RooProduct::*_epsilon
+combined->obj("${proc}_${category}_epsilon")->Print("v")
+	RooStats::HistFactory::FlexibleInterpVar::
+
+
+simPdf=Prod(model_${category})
+
+$model_{category}=Prod(alpha*constr(i))*Prod(gamma*constr(j))*(RooRealSumPdf::${category}_model)
+
+${category}_model=Sum(binWidth_obs_x_${category}_${i_proc}*L_x_${proc}_${category}_overallSyst_x_HistSyst)
+
+L_x_${proc}_${category}_overallSyst_x_HistSyst=1*${proc}_${category}_overallSyst_x_HistSyst
+
+${proc}_${category}_overallSyst_x_HistSyst=(PiecewiseInterpolation::${proc}_${category}_Hist_alpha) * ${proc}_${category}_overallNorm_x_sigma_epsilon
+
+${proc}_${category}_overallNorm_x_sigma_epsilon=ATLAS_epsilon_rejected * ${proc}_${category}_epsilon

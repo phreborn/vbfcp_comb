@@ -1,11 +1,9 @@
 #!/bin/bash
 
-#cat=AllCats
-#cat=Inject
-#cat=LL
-cat=TEST
-#for suffix in statOnly allSys ssSys jetSys photonSys theorySys;do
-for suffix in statOnly;do
+cat=Tau
+cat=Gam
+cat=Comb
+for suffix in statOnly allSys;do
   outnll=autonll/dNLL_${cat}_${suffix}.log
   > ${outnll}
   tmpall=tmpall

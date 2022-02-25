@@ -1,0 +1,16 @@
+1)copy the to-be-combined workspaces into inWS/
+- source prepareInWS.sh 
+
+next steps need to set configurations in ./config.py first
+2)preparing list of syst in both channels:
+- python sysList_yy.py => yy_sysList.txt
+- root -b -q readTauWS.cxx => tautau_globList.txt tautau_npList.txt
+
+3)create combination xml files:
+- python makeXml.py -d ${dpoint} (use makeXml.sh for all tilde_d points)
+
+4)create combined workspaces in condor mode:
+- use genCombWS.sh
+
+5)fit the combined workspaces in condor mode:
+- use genHepsub.sh
