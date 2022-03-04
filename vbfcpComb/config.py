@@ -14,9 +14,11 @@ ttPois=['dummy', 'dummy', 'dummy', 'dummy', 'dummy', 'ATLAS_epsilon', 'ATLAS_eps
 combOutRootFile="workspace/combined_{dtilde}.root"
 
 yyInRootFile="inWS/gamgam/Expected/vbf_cp_{dtilde}.root"
-ttInRootFile="inWS/tautau/{dtilde}/125.root"
 yydata='asimovData_SB_SM'
+ttInRootFile="inWS/tautau/{dtilde}/125.root"
 ttdata='asimovData'
+ttInRootFile="inWS/tautau/{dtilde}/125_Asi.root"
+ttdata='asimovData_SM'
 
 yyInRootFile="inWS/gamgam/Observed/vbf_cp_{dtilde}.root"
 ttInRootFile="inWS/tautau/{dtilde}/125.root"

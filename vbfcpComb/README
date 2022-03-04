@@ -1,6 +1,10 @@
 1)copy the to-be-combined workspaces into inWS/
 - source prepareInWS.sh 
 
+1a)to produce alternative Asimov datas
+- for tau channel, use genAsiTau.sh
+- for gam channel, use genAsiGam.sh
+
 next steps need to set configurations in ./config.py first
 2)preparing list of syst in both channels:
 - python sysList_yy.py => yy_sysList.txt

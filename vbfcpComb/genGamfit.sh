@@ -1,19 +1,16 @@
 #!/bin/bash
 
-tagCfg=Tau
+tagCfg=Gam
 
-fix_stat=ATLAS_*,gamma_stat_*,Lumi*,Theo*,Z*,*_fake_*
-set_poi="ATLAS_epsilon_rejected=1_-5_5,ATLAS_epsilon=0,ATLAS_norm_HH_vbf_Fake=1_0_100,ATLAS_norm_LL_vbf_Top=1_0_100,ATLAS_norm_LL_vbf_Zll=1_0_100,ATLAS_norm_vbf_Ztt=1_0_100"
+fix_stat=ATLAS_*
+set_poi="mu=1,mu_ggH_SM=0,mu_VBF_SM=0,mu_ggH=1,mu_VBF_RW=1_0_5"
 
-ws=combined
+expobs=Expected
 
-dataset=obsData
-wsfname=125
-dataset=asimovData
-wsfname=125_plus190722
-wsfname=125
+ws=combWS
+
 dataset=asimovData_SM
-wsfname=125_Asi
+wsfname=_onfly
 
 outfrlt=fitOutputs
 
@@ -30,7 +27,7 @@ allJobs=jobsSub.sh
 for d in ${dtilde}
 do
   dgam=$(dTran ${d})
-  jobName=taufit_${dgam}; echo ${jobName}
+  jobName=gamfit_${dgam}; echo ${jobName}
   if [ ! -d ${dir}/hepsub_${jobName} ]; then mkdir ${dir}/hepsub_${jobName}; fi
   executable=${dir}/exe_${jobName}.sh
   > ${executable}
@@ -41,8 +38,8 @@ do
   echo "source setup_lxplus.sh" >> ${executable}
   echo "cd /scratchfs/atlas/huirun/atlaswork/VBF_CP/WSBuilder/workspaceCombiner/vbfcpComb" >> ${executable}
   echo "" >> ${executable}
-  echo "quickFit -f inWS/tautau/${dgam}/${wsfname}.root -w ${ws} -d ${dataset} -p ${set_poi} -n ${fix_stat} -o ${outfrlt}/${tagCfg}_statOnly/out_${dgam}.root --savefitresult 1 --saveWS 1" >> ${executable}
-  echo "quickFit -f inWS/tautau/${dgam}/${wsfname}.root -w ${ws} -d ${dataset} -p ${set_poi} -o ${outfrlt}/${tagCfg}_allSys/out_${dgam}.root --savefitresult 1 --saveWS 1" >> ${executable}
+  echo "quickFit -f inWS/gamgam/${expobs}/vbf_cp_${dgam}${wsfname}.root -w ${ws} -d ${dataset} -p ${set_poi} -n ${fix_stat} -o ${outfrlt}/${tagCfg}_statOnly/out_${dgam}.root --savefitresult 1 --saveWS 1" >> ${executable}
+  echo "quickFit -f inWS/gamgam/${expobs}/vbf_cp_${dgam}${wsfname}.root -w ${ws} -d ${dataset} -p ${set_poi} -o ${outfrlt}/${tagCfg}_allSys/out_${dgam}.root --savefitresult 1 --saveWS 1" >> ${executable}
 
   chmod +x ${executable}
 

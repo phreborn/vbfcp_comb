@@ -8,8 +8,8 @@ set_poi="mu=1,mu_VBF_RW=1_0_5,mu_VBF_SM=0,mu_ggH=1,mu_ggH_SM=0,ATLAS_epsilon_rej
 ws=combWS
 dataset=combData
 
-if [ ! -d out${tagCfg}_statOnly ];then mkdir out${tagCfg}_statOnly;fi
-if [ ! -d out${tagCfg}_allSys ];then mkdir out${tagCfg}_allSys;fi
+if [ ! -d fitOutputs/${tagCfg}_statOnly ];then mkdir fitOutputs/${tagCfg}_statOnly;fi
+if [ ! -d fitOutputs/${tagCfg}_allSys ];then mkdir fitOutputs/${tagCfg}_allSys;fi
 
 source rename.sh
 
@@ -40,8 +40,8 @@ do
   echo "source setup_lxplus.sh" >> ${executable}
   echo "cd /scratchfs/atlas/huirun/atlaswork/VBF_CP/WSBuilder/workspaceCombiner/vbfcpComb" >> ${executable}
   echo "" >> ${executable}
-  echo "quickFit -f workspace/combined_${dgam}.root -w ${ws} -d ${dataset} -p ${set_poi} -n ${fix_stat} -o out${tagCfg}_statOnly/out_${dgam}.root --savefitresult 1 --saveWS 1" >> ${executable}
-  echo "quickFit -f workspace/combined_${dgam}.root -w ${ws} -d ${dataset} -p ${set_poi} -o out${tagCfg}_allSys/out_${dgam}.root --savefitresult 1 --saveWS 1" >> ${executable}
+  echo "quickFit -f workspace/combined_${dgam}.root -w ${ws} -d ${dataset} -p ${set_poi} -n ${fix_stat} -o fitOutputs/${tagCfg}_statOnly/out_${dgam}.root --savefitresult 1 --saveWS 1" >> ${executable}
+  echo "quickFit -f workspace/combined_${dgam}.root -w ${ws} -d ${dataset} -p ${set_poi} -o fitOutputs/${tagCfg}_allSys/out_${dgam}.root --savefitresult 1 --saveWS 1" >> ${executable}
 #    if [ ${decompSys} -eq 1 ];then
 #      echo "quickFit -f WS${preCfg}/vbf_cp_${dList[${num}]}/vbf_cp_${dList[${num}]}.root -w combWS -d ${dataset} -p mu=1,mu_VBF_SM=0,mu_ggH=1,mu_ggH_SM=0,mu_VBF_RW=1_0_5 -n ATLAS_PH*,ATLAS_EG*,*PRW*,*pdf*,*aS*,*qcd*,*shower*,*BIAS*,*lumi*,*HIGGS_MASS*,*rest_Higgs*,*mcstat* -o out${preCfg}_jetSys/out_${dList[${num}]}.root --savefitresult 1 --saveWS 1" >> ${executable}
 #      echo "quickFit -f WS${preCfg}/vbf_cp_${dList[${num}]}/vbf_cp_${dList[${num}]}.root -w combWS -d ${dataset} -p mu=1,mu_VBF_SM=0,mu_ggH=1,mu_ggH_SM=0,mu_VBF_RW=1_0_5 -n ATLAS_JET*,*PRW*,*pdf*,*aS*,*qcd*,*shower*,*BIAS*,*lumi*,*HIGGS_MASS*,*rest_Higgs*,*mcstat* -o out${preCfg}_photonSys/out_${dList[${num}]}.root --savefitresult 1 --saveWS 1" >> ${executable}

@@ -35,17 +35,32 @@ limR = 0.2
 outName = "comb"
 sysSet='allSys'
 
-dirname = "autonll/"
+outdir = "./"
 
+dirname = "Expected/"
 inNLL = dirname + "dNLL_Comb_"+sysSet+".log"
-#gr1 = TGraph(inNLL, '%lg %lg')
 gr1 = getNLLcurve(inNLL)
 
-inNLL = dirname + "dNLL_Tau_"+sysSet+".log"
+dirname = "Observed/"
+inNLL = dirname + "dNLL_Comb_"+sysSet+".log"
+#gr1 = TGraph(inNLL, '%lg %lg')
 gr2 = getNLLcurve(inNLL)
 
+dirname = "Expected/"
 inNLL = dirname + "dNLL_Gam_"+sysSet+".log"
 gr3 = getNLLcurve(inNLL)
+
+dirname = "Observed/"
+inNLL = dirname + "dNLL_Gam_"+sysSet+".log"
+gr4 = getNLLcurve(inNLL)
+
+dirname = "Expected/"
+inNLL = dirname + "dNLL_Tau_"+sysSet+".log"
+gr5 = getNLLcurve(inNLL)
+
+dirname = "Observed/"
+inNLL = dirname + "dNLL_Tau_"+sysSet+".log"
+gr6 = getNLLcurve(inNLL)
 
 c = TCanvas('c', '', 200, 10, 700, 560)
 
@@ -55,19 +70,37 @@ gr1.GetYaxis().SetTitle("2#times#DeltaNLL")
 gr1.GetXaxis().SetTitle("#tilde{d}")
 gr1.SetTitle("Negative Log Likelihood")
 
-gr1.SetMarkerSize(0.9)
-gr1.SetLineWidth(1)
+gr1.SetLineStyle(kDashed);
+gr1.SetLineColorAlpha(kBlack, 0.7);
+gr1.SetMarkerSize(0)
+gr1.SetLineWidth(2)
 gr1.Draw("")
 
-gr2.SetLineColor(kBlue);
 gr2.SetMarkerSize(0.9);
-gr2.SetLineWidth(1);
+gr2.SetLineWidth(2);
 gr2.Draw("C same");
 
-gr3.SetLineColor(kGreen);
+gr3.SetLineStyle(kDashed);
+gr3.SetLineColorAlpha(kGreen, 0.7);
 gr3.SetMarkerSize(0.9);
-gr3.SetLineWidth(1);
+gr3.SetLineWidth(2);
 gr3.Draw("C same");
+
+gr4.SetLineColor(kGreen);
+gr4.SetMarkerSize(0.9);
+gr4.SetLineWidth(2);
+gr4.Draw("C same");
+
+gr5.SetLineStyle(kDashed);
+gr5.SetLineColorAlpha(kBlue, 0.7);
+gr5.SetMarkerSize(0.9);
+gr5.SetLineWidth(2);
+gr5.Draw("C same");
+
+gr6.SetLineColor(kBlue);
+gr6.SetMarkerSize(0.9);
+gr6.SetLineWidth(2);
+gr6.Draw("C same");
 
 #gr4.SetLineColor(kViolet);
 #gr4.SetMarkerSize(0.9);
@@ -75,10 +108,12 @@ gr3.Draw("C same");
 #gr4.Draw("C same");
 
 lg=TLegend(0.4, 0.62, 0.75, 0.92)
-lg.AddEntry(gr1, "combined", "lp")
-lg.AddEntry(gr2, "#tau#tau", "l");
-lg.AddEntry(gr3, "#gamma#gamma", "l");
-#lg.AddEntry(gr4, "TT", "l")
+lg.AddEntry(gr1, "combined exp", "lp")
+lg.AddEntry(gr2, "combined obs", "lp")
+lg.AddEntry(gr3, "#gamma#gamma exp", "l");
+lg.AddEntry(gr4, "#gamma#gamma obs", "l");
+lg.AddEntry(gr5, "#tau#tau exp", "l");
+lg.AddEntry(gr6, "#tau#tau obs", "l");
 
 lg.SetFillStyle(0);
 lg.SetBorderSize(0);
@@ -95,5 +130,5 @@ h95.SetLineStyle(kDashed);
 h95.SetLineColor(kBlue-2);
 h95.Draw("same hist");
 
-c.SaveAs(dirname+"/python_nll_"+outName+"_"+sysSet+".png")
-c.SaveAs(dirname+"/python_nll_"+outName+"_"+sysSet+".pdf")
+c.SaveAs(outdir+"/python_nll_"+outName+"_"+sysSet+".png")
+c.SaveAs(outdir+"/python_nll_"+outName+"_"+sysSet+".pdf")

@@ -1,0 +1,6 @@
+<!DOCTYPE Asimov  SYSTEM 'asimovUtil.dtd'>  
+<Asimov InputFile="inWS/tautau/m00/125.root" OutputFile="inWS/tautau/m00/125_Asi.root" >
+  <Action Name="Prepare" Setup="" Action="nominalNuis:nominalGlobs"/>
+  <Action Name="Fit" Setup="ATLAS_epsilon_rejected=0,ATLAS_epsilon=1" Action="fit:matchglob:savesnapshot" SnapshotNuis="conditionalNuis_1" SnapshotGlob="conditionalGlobs_1"/>
+  <Action Name="asimovData_SM" Setup="ATLAS_epsilon_rejected=0,ATLAS_epsilon=1" Action="genasimov:nominalGlobs"/>
+</Asimov>
