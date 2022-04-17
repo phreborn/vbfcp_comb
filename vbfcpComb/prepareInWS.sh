@@ -13,9 +13,11 @@ do
 
   # observed
   cp ../../xmlAnaWSBuilder/run/WSAllCats/vbf_cp_${dgam}/*root inWS/gamgam/Observed/
-  cp /scratchfs/atlas/huirun/atlaswork/VBF_CP/TauWS/130719_MVA_comb_data/${d}/combined/125.root ${taudir}
+  #cp /scratchfs/atlas/huirun/atlaswork/VBF_CP/TauWS/130719_MVA_comb_data/${d}/combined/125.root ${taudir}
+  cp /scratchfs/atlas/huirun/atlaswork/VBF_CP/TauWS/copy220330/130719_MVA_comb_data/${d}/combined/125_plus190722.root ${taudir}
 
   ## expected
-  #cp ../../xmlAnaWSBuilder/run/Expected/WSAllCats/vbf_cp_${dgam}/*root inWS/gamgam/Expected/
+  ##cp ../../xmlAnaWSBuilder/run/WSAllCats_unblindAsi/vbf_cp_${dgam}/*root inWS/gamgam/Expected/
+  #cp ../../xmlAnaWSBuilder/run/WSAllCats/vbf_cp_${dgam}/*root inWS/gamgam/Expected/
   #cp /scratchfs/atlas/huirun/atlaswork/VBF_CP/TauWS/130719_MVA_comb_data/${d}/combined/125_plus190722.root ${taudir}
 done

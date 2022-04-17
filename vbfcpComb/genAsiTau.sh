@@ -2,6 +2,7 @@
 
 rundir=$(pwd)
 
+dtilde=SM
 source rename.sh
 
 xmldir=asimovTauXml

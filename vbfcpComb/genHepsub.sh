@@ -2,8 +2,8 @@
 
 tagCfg=Comb
 
-fix_stat=ATLAS_*_gam,ATLAS_*_tau,gamma_stat_*,Lumi*_tau,Theo*tau,Z*_tau,*_fake_*
-set_poi="mu=1,mu_VBF_RW=1_0_5,mu_VBF_SM=0,mu_ggH=1,mu_ggH_SM=0,ATLAS_epsilon_rejected=1_-5_5,ATLAS_epsilon=0,ATLAS_norm_HH_vbf_Fake_ditau=1_0_100,ATLAS_norm_LL_vbf_Top_ditau=1_0_100,ATLAS_norm_LL_vbf_Zll_ditau=1_0_100,ATLAS_norm_vbf_Ztt_ditau=1_0_100"
+fix_stat=ATLAS_*_gam,ATLAS_*_tau,gamma_stat_*,Lumi*_tau,Theo*tau,Z*_tau,*_fake_*,ATLAS_SM_*
+set_poi="mu=1,mu_VBF_RW=1_0_5,mu_VBF_SM=0,mu_ggH=1,mu_ggH_SM=0,mu_spur=1,mu_spur_SM=0,ATLAS_epsilon_rejected=1_-5_5,ATLAS_epsilon=0"
 
 ws=combWS
 dataset=combData

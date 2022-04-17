@@ -1,6 +1,0 @@
-<!DOCTYPE Asimov  SYSTEM 'asimovUtil.dtd'>  
-<Asimov InputFile="inWS/gamgam/Observed/vbf_cp_m00.root" OutputFile="inWS/gamgam/Expected/vbf_cp_m00_:MU:.root" >
-  <Action Name="Prepare" Setup="" Action="nominalNuis:nominalGlobs"/>
-  <Action Name="Fit" Setup="mu=1,mu_ggH=0,mu_VBF_RW=0,mu_ggH_SM=1,mu_VBF_SM=:MUVAL:" Action="fit:matchglob:savesnapshot" SnapshotNuis="conditionalNuis_1" SnapshotGlob="conditionalGlobs_1"/>
-  <Action Name="asimovData_SM" Setup="mu=1,mu_ggH=0,mu_VBF_RW=0,mu_ggH_SM=1,mu_VBF_SM=:MUVAL:" Action="genasimov:nominalGlobs"/>
-</Asimov>

@@ -6,6 +6,7 @@ expobs=Observed
 cat=Tau
 cat=Gam
 cat=Comb
+cat=Comb_Asi
 for suffix in statOnly allSys;do
   outnll=${expobs}/dNLL_${cat}_${suffix}.log
   > ${outnll}

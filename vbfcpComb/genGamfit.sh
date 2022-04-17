@@ -2,15 +2,18 @@
 
 tagCfg=Gam
 
+globmatch=0
+
 fix_stat=ATLAS_*
-set_poi="mu=1,mu_ggH_SM=0,mu_VBF_SM=0,mu_ggH=1,mu_VBF_RW=1_0_5"
+set_poi="mu=1,mu_spur_SM=0,mu_ggH_SM=0,mu_VBF_SM=0,mu_spur=1,mu_ggH=1,mu_VBF_RW=1_0_5"
 
 expobs=Expected
 
 ws=combWS
 
-dataset=asimovData_SM
-wsfname=_onfly
+dataset=asimovData_SM_Mu1
+dataset=asimovData_SB_SM
+wsfname=
 
 outfrlt=fitOutputs
 
@@ -23,6 +26,12 @@ dir=condor
 
 allJobs=jobsSub.sh
 > ${allJobs}
+
+snapshot=
+if [ ${globmatch} -eq 1 ];then
+  snapshot="-s Glob_SM_Mu1"
+  dataset=asimovData_SM_Mu1
+fi
 
 for d in ${dtilde}
 do
@@ -38,8 +47,8 @@ do
   echo "source setup_lxplus.sh" >> ${executable}
   echo "cd /scratchfs/atlas/huirun/atlaswork/VBF_CP/WSBuilder/workspaceCombiner/vbfcpComb" >> ${executable}
   echo "" >> ${executable}
-  echo "quickFit -f inWS/gamgam/${expobs}/vbf_cp_${dgam}${wsfname}.root -w ${ws} -d ${dataset} -p ${set_poi} -n ${fix_stat} -o ${outfrlt}/${tagCfg}_statOnly/out_${dgam}.root --savefitresult 1 --saveWS 1" >> ${executable}
-  echo "quickFit -f inWS/gamgam/${expobs}/vbf_cp_${dgam}${wsfname}.root -w ${ws} -d ${dataset} -p ${set_poi} -o ${outfrlt}/${tagCfg}_allSys/out_${dgam}.root --savefitresult 1 --saveWS 1" >> ${executable}
+  echo "quickFit -f inWS/gamgam/${expobs}/vbf_cp_${dgam}${wsfname}.root -w ${ws} -d ${dataset} ${snapshot} -p ${set_poi} -n ${fix_stat} -o ${outfrlt}/${tagCfg}_statOnly/out_${dgam}.root --savefitresult 1 --saveWS 1" >> ${executable}
+  echo "quickFit -f inWS/gamgam/${expobs}/vbf_cp_${dgam}${wsfname}.root -w ${ws} -d ${dataset} ${snapshot} -p ${set_poi} -o ${outfrlt}/${tagCfg}_allSys/out_${dgam}.root --savefitresult 1 --saveWS 1" >> ${executable}
 
   chmod +x ${executable}
 

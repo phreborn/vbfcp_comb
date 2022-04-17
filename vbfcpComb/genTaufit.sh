@@ -2,8 +2,14 @@
 
 tagCfg=Tau
 
+globmatch=1
+
 fix_stat=ATLAS_*,gamma_stat_*,Lumi*,Theo*,Z*,*_fake_*
 set_poi="ATLAS_epsilon_rejected=1_-5_5,ATLAS_epsilon=0,ATLAS_norm_HH_vbf_Fake=1_0_100,ATLAS_norm_LL_vbf_Top=1_0_100,ATLAS_norm_LL_vbf_Zll=1_0_100,ATLAS_norm_vbf_Ztt=1_0_100"
+
+fix_stat=ATLAS_B*,ATLAS_E*,ATLAS_F*,ATLAS_J*,ATLAS_M*,ATLAS_P*,ATLAS_T*,gamma_stat_*,Lumi*,Theo*,Z*,*_fake_*,ATLAS_norm_*
+fix_stat=ATLAS_B*,ATLAS_E*,ATLAS_F*,ATLAS_J*,ATLAS_M*,ATLAS_P*,ATLAS_T*,gamma_stat_*,Lumi*,Theo*,Z*,*_fake_*
+set_poi="ATLAS_epsilon_rejected=1_-5_5,ATLAS_epsilon=0"
 
 ws=combined
 
@@ -12,7 +18,13 @@ wsfname=125
 dataset=asimovData
 wsfname=125_plus190722
 wsfname=125
-dataset=asimovData_SM
+dataset=asimovData_SM_prefit
+wsfname=125_Asi
+dataset=asimovData_SM_MuFloat
+wsfname=125_Asi
+#dataset=asimovData_SM_Mu1
+#wsfname=125_pullGobs
+dataset=asimovData_SM_Mu1
 wsfname=125_Asi
 
 outfrlt=fitOutputs
@@ -26,6 +38,11 @@ dir=condor
 
 allJobs=jobsSub.sh
 > ${allJobs}
+
+snapshot=
+if [ ${globmatch} -eq 1 ];then
+  snapshot="-s Glob_SM_Mu1"
+fi
 
 for d in ${dtilde}
 do
@@ -41,8 +58,8 @@ do
   echo "source setup_lxplus.sh" >> ${executable}
   echo "cd /scratchfs/atlas/huirun/atlaswork/VBF_CP/WSBuilder/workspaceCombiner/vbfcpComb" >> ${executable}
   echo "" >> ${executable}
-  echo "quickFit -f inWS/tautau/${dgam}/${wsfname}.root -w ${ws} -d ${dataset} -p ${set_poi} -n ${fix_stat} -o ${outfrlt}/${tagCfg}_statOnly/out_${dgam}.root --savefitresult 1 --saveWS 1" >> ${executable}
-  echo "quickFit -f inWS/tautau/${dgam}/${wsfname}.root -w ${ws} -d ${dataset} -p ${set_poi} -o ${outfrlt}/${tagCfg}_allSys/out_${dgam}.root --savefitresult 1 --saveWS 1" >> ${executable}
+  echo "quickFit -f inWS/tautau/${dgam}/${wsfname}.root -w ${ws} -d ${dataset} ${snapshot} -p ${set_poi} -n ${fix_stat} -o ${outfrlt}/${tagCfg}_statOnly/out_${dgam}.root --savefitresult 1 --saveWS 1" >> ${executable}
+  echo "quickFit -f inWS/tautau/${dgam}/${wsfname}.root -w ${ws} -d ${dataset} ${snapshot} -p ${set_poi} -o ${outfrlt}/${tagCfg}_allSys/out_${dgam}.root --savefitresult 1 --saveWS 1" >> ${executable}
 
   chmod +x ${executable}
 

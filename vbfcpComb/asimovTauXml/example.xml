@@ -1,6 +1,6 @@
 <!DOCTYPE Asimov  SYSTEM 'asimovUtil.dtd'>  
 <Asimov InputFile="inWS/tautau/m00/125.root" OutputFile="inWS/tautau/m00/125_Asi.root" >
-  <Action Name="Prepare" Setup="" Action="nominalNuis:nominalGlobs"/>
-  <Action Name="Fit" Setup="ATLAS_epsilon_rejected=0,ATLAS_epsilon=1" Action="fit:matchglob:savesnapshot" SnapshotNuis="conditionalNuis_1" SnapshotGlob="conditionalGlobs_1"/>
-  <Action Name="asimovData_SM" Setup="ATLAS_epsilon_rejected=0,ATLAS_epsilon=1" Action="genasimov:nominalGlobs"/>
+  <Action Name="asimovData_SM_prefit" Setup="ATLAS_epsilon_rejected=0,ATLAS_epsilon=1" Action="fixsyst:genasimov:savesnapshot:float" SnapshotNuis="Nuis_SM_prefit" SnapshotGlob="Glob_SM_prefit"/>
+  <Action Name="asimovData_SM_MuFloat" Setup="ATLAS_epsilon_rejected=0,ATLAS_epsilon=1_-5_5" Action="float:fit:genasimov:savesnapshot" SnapshotNuis="Nuis_SM_MuFloat" SnapshotGlob="Glob_SM_MuFloat"/>
+  <Action Name="asimovData_SM_Mu1" Setup="ATLAS_epsilon_rejected=0,ATLAS_epsilon=1" Action="genasimov:matchglob:savesnapshot:reset:raw" SnapshotNuis="Nuis_SM_Mu1" SnapshotGlob="Glob_SM_Mu1"/>
 </Asimov>
