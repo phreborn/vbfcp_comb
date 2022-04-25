@@ -18,25 +18,32 @@ ttInRootFile="inWS/tautau/{dtilde}/125_lumi_split.root"
 ttdata='obsData'
 
 outXml="combXml/comb_{dtilde}.xml"
+outXml="combXml/example.xml"
 
 chlistName = {
 'diphoton':'hgg',
 'ditau':'htt',
 }
 
-ttMaps={'ATLAS_Forward_JVT':'ATLAS_fJVT',
-'ATLAS_JVT':'ATLAS_JVT',
-#'Theo_sig_alphaS':'TheorySig_QCDalphaS',
+ttMaps={
+#'':'TheorySig_QCDalphaS',
 'Theo_sig_pdf_1':'TheorySig_PDF_1',
 'Theo_sig_pdf_4':'TheorySig_PDF_4',
 'Theo_sig_pdf_16':'TheorySig_PDF_16',
 'ATLAS_LUMI_CORR':'ATLAS_LUMI_CORR',
 'ATLAS_LUMI_UNCORR_1516':'ATLAS_LUMI_UNCORR_1516',
+'ATLAS_EG_RESOLUTION_ALL':'ATLAS_EG_RESOLUTION_ALL',
+'ATLAS_EG_SCALE_ALLCORR':'ATLAS_EG_SCALE_ALL',
+'Theo_ggH_shower':'TheorySig_shower_ggF',
+'Theo_VBFH_shower':'TheorySig_shower_VBF',
+'Theo_ggH_sig_qcd_1':'TheorySig_QCDscale_ggF_res',
+'Theo_ggH_sig_qcd_2':'TheorySig_QCDscale_ggF_mig01',
+'Theo_ggH_sig_qcd_3':'TheorySig_QCDscale_ggF_mig12',
+'Theo_ggH_sig_qcd_6':'TheorySig_QCDscale_ggF_pTH60',
+'Theo_ggH_sig_qcd_7':'TheorySig_QCDscale_ggF_pTH120',
 }
 
-yyMaps={'ATLAS_JET_JvtEfficiency':'ATLAS_JVT',
-'ATLAS_JET_fJvtEfficiency':'ATLAS_fJVT',
-#'QCDalphaS':'TheorySig_QCDalphaS',
+yyMaps={
 'ATLAS_pdf_1':'TheorySig_PDF_1',
 'ATLAS_pdf_2':'TheorySig_PDF_2',
 'ATLAS_pdf_3':'TheorySig_PDF_3',
@@ -70,12 +77,22 @@ yyMaps={'ATLAS_JET_JvtEfficiency':'ATLAS_JVT',
 'ATLAS_LUMI_CORR':'ATLAS_LUMI_CORR',
 'ATLAS_LUMI_UNCORR_1516':'ATLAS_LUMI_UNCORR_1516',
 'ATLAS_LUMI_UNCORR_1718':'ATLAS_LUMI_UNCORR_1718',
+'QCDalphaS':'TheorySig_QCDalphaS',
 'BR_HiggsDecayWidthTHU_hbb':'TheorySig_BR_HiggsDecayWidthTHU_hbb',
 'BR_HiggsDecayWidthTHU_hgg':'TheorySig_BR_HiggsDecayWidthTHU_hgg',
 'BR_HiggsDecayWidthTHU_hVV':'TheorySig_BR_HiggsDecayWidthTHU_hVV',
 'BR_HiggsDecayWidthTHU_hyy':'TheorySig_BR_HiggsDecayWidthTHU_hyy',
 'BR_param_mB':'TheorySig_BR_param_mB',
 'BR_param_mC':'TheorySig_BR_param_mC',
+'ATLAS_EG_RESOLUTION_ALL':'ATLAS_EG_RESOLUTION_ALL',
+'ATLAS_EG_SCALE_ALL':'ATLAS_EG_SCALE_ALL',
+'ATLAS_shower_ggF':'TheorySig_shower_ggF',
+'ATLAS_shower_VBF':'TheorySig_shower_VBF',
+'ATLAS_qcd2_ggF':'TheorySig_QCDscale_ggF_res',
+'ATLAS_qcd3_ggF':'TheorySig_QCDscale_ggF_mig01',
+'ATLAS_qcd4_ggF':'TheorySig_QCDscale_ggF_mig12',
+'ATLAS_qcd6_ggF':'TheorySig_QCDscale_ggF_pTH60',
+'ATLAS_qcd7_ggF':'TheorySig_QCDscale_ggF_pTH120',
 }
 
-elseConstr=['ATLAS_LUMI', 'BR_HiggsDecay', 'BR_param']
+elseConstr=['ATLAS_LUMI', 'BR_HiggsDecay', 'BR_param', 'QCDalphaS']

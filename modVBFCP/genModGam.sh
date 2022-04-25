@@ -25,7 +25,7 @@ do
   xmlfile=${xmldir}/mod_${dgam}.xml
 
   jobName=modgam_${dgam}; echo ${jobName}
-  hepout=${condor}/hep_sub_${jobName}
+  hepout=${condor}/hepsub_${jobName}
   if [ ! -d ${hepout} ]; then mkdir ${hepout}; fi
   singexec=${condor}/singexe_${jobName}.sh
   > ${singexec}

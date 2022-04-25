@@ -5,12 +5,12 @@ rundir=$(pwd)
 dtilde=SM
 source rename.sh
 
-xmldir=combXml
+xmldir=asimovXml
 
 for d in ${dtilde}
 do
   dgam=$(dTran ${d})
-  xmlfile=${xmldir}/comb_${dgam}.xml
+  xmlfile=${xmldir}/asi_${dgam}.xml
   cat ${xmldir}/example.xml > ${xmlfile}
   sed -i "s/m00/${dgam}/g" ${xmlfile}
 done
@@ -22,9 +22,9 @@ condor=condor
 for d in ${dtilde}
 do
   dgam=$(dTran ${d})
-  xmlfile=${xmldir}/comb_${dgam}.xml
+  xmlfile=${xmldir}/asi_${dgam}.xml
 
-  jobName=comb_${dgam}; echo ${jobName}
+  jobName=asi_${dgam}; echo ${jobName}
   hepout=${condor}/hepsub_${jobName}
   if [ ! -d ${hepout} ]; then mkdir ${hepout}; fi
   singexec=${condor}/singexe_${jobName}.sh
@@ -36,11 +36,10 @@ do
   echo "" >> ${singexec}
   echo "cd /scratchfs/atlas/huirun/atlaswork/VBF_CP/WSBuilder/workspaceCombiner/modVBFCP" >> ${singexec}
   echo "singularity exec --env=\"LD_LIBRARY_PATH=/usr/local/venv/lib\" /cvmfs/unpacked.cern.ch/gitlab-registry.cern.ch/atlas_higgs_combination/software/hcomb-docker/analyzer:2-2 ${executable}" >> ${singexec}
-#  echo "singularity exec -B ${rundir}:${rundir} /cvmfs/unpacked.cern.ch/gitlab-registry.cern.ch/atlas_higgs_combination/software/hcomb-docker/analyzer:2-2 ${executable}" >> ${singexec}
 
   echo "#!/bin/bash" >> ${executable}
   echo "" >> ${executable}
-  echo "manager -w combine -x ${xmlfile}" >> ${executable}
+  echo "quickAsimov -x ${xmlfile} -w combWS -m ModelConfig -d combData" >> ${executable}
 
   chmod +x ${executable}
   chmod +x ${singexec}
