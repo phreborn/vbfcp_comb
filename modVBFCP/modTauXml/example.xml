@@ -1,0 +1,92 @@
+<!DOCTYPE Organization  SYSTEM 'Organization.dtd'>
+<Organization InFile="inWS/tautau/m00/125_lumi_split.root" OutFile="inWS/tautau/m00/125_lumi_split_mod.root"
+	      ModelName="Htautau"
+              POINames="ATLAS_epsilon_rejected,ATLAS_epsilon,
+              mu_Htau,mu_BR_tautau_mod,mu_BR_WW_mod,
+              mu_VBF,mu_otherH"
+              WorkspaceName="combined"
+              DataName="obsData">
+
+  <Item Name="zero[0]"/>
+  <Item Name="one[1]"/>
+
+  <Item Name="mu_Htau[1]"/>
+  <Item Name="mu_BR_tautau_mod[1]"/>
+  <Item Name="mu_BR_WW_mod[1]"/>
+  <Item Name="mu_VBF[1]"/>
+  <Item Name="mu_otherH[1]"/>
+
+  <Item Name="kappa_value_BR_param_alphaS_WW[1.0063]"/>
+  <Item Name="kappa_value_BR_param_mB_WW[0.9901]"/>
+  <Item Name="kappa_value_BR_param_mC_WW[0.9985]"/>
+  <Item Name="kappa_value_BR_HiggsDecayWidthTHU_hbb_WW[0.9971]"/>
+  <Item Name="kappa_value_BR_HiggsDecayWidthTHU_hgg_WW[0.9974]"/>
+  <Item Name="kappa_value_BR_HiggsDecayWidthTHU_hVV_WW[1.0038]"/>
+
+  <Item Name="kappa_value_BR_param_alphaS_tautau[1.0063]"/>
+  <Item Name="kappa_value_BR_param_mB_tautau[0.9901]"/>
+  <Item Name="kappa_value_BR_param_mC_tautau[0.9985]"/>
+  <Item Name="kappa_value_BR_HiggsDecayWidthTHU_hbb_tautau[0.9971]"/>
+  <Item Name="kappa_value_BR_HiggsDecayWidthTHU_htautau_tautau[1.0047]"/>
+  <Item Name="kappa_value_BR_HiggsDecayWidthTHU_hgg_tautau[0.9974]"/>
+  <Item Name="kappa_value_BR_HiggsDecayWidthTHU_hVV_tautau[0.9988]"/>
+
+  <!-- Introducing nuisance parameter names -->
+
+  <Item Name="QCDalphaS[0,-5,5]"/>
+  <Item Name="BR_param_mB[0,-5,5]"/>
+  <Item Name="BR_param_mC[0,-5,5]"/>
+  <Item Name="BR_HiggsDecayWidthTHU_hbb[0,-5,5]"/>
+  <Item Name="BR_HiggsDecayWidthTHU_hgg[0,-5,5]"/>
+  <Item Name="BR_HiggsDecayWidthTHU_hVV[0,-5,5]"/>
+  <Item Name="BR_HiggsDecayWidthTHU_htautau[0,-5,5]"/>
+
+  <!-- Introducing global observables -->
+  <Item Name="QCDalphaS_In[0]"/>
+  <Item Name="BR_param_mB_In[0]"/>
+  <Item Name="BR_param_mC_In[0]"/>
+  <Item Name="BR_HiggsDecayWidthTHU_hbb_In[0]"/>
+  <Item Name="BR_HiggsDecayWidthTHU_hgg_In[0]"/>
+  <Item Name="BR_HiggsDecayWidthTHU_hVV_In[0]"/>
+  <Item Name="BR_HiggsDecayWidthTHU_htautau_In[0]"/>
+
+  <!-- Introducing constraint terms -->
+  <Item Name="RooGaussian::QCDalphaS_Pdf(QCDalphaS,QCDalphaS_In,1)" Type="constraint" NP="QCDalphaS" GO="QCDalphaS_In"/>
+  <Item Name="RooGaussian::BR_param_mB_Pdf(BR_param_mB,BR_param_mB_In,1)" Type="constraint" NP="BR_param_mB" GO="BR_param_mB_In"/>
+  <Item Name="RooGaussian::BR_param_mC_Pdf(BR_param_mC,BR_param_mC_In,1)" Type="constraint" NP="BR_param_mC" GO="BR_param_mC_In"/>
+  <Item Name="RooGaussian::BR_HiggsDecayWidthTHU_hbb_Pdf(BR_HiggsDecayWidthTHU_hbb,BR_HiggsDecayWidthTHU_hbb_In,1)" Type="constraint" NP="BR_HiggsDecayWidthTHU_hbb" GO="BR_HiggsDecayWidthTHU_hbb_In"/>
+  <Item Name="RooGaussian::BR_HiggsDecayWidthTHU_hgg_Pdf(BR_HiggsDecayWidthTHU_hgg,BR_HiggsDecayWidthTHU_hgg_In,1)" Type="constraint" NP="BR_HiggsDecayWidthTHU_hgg" GO="BR_HiggsDecayWidthTHU_hgg_In"/>
+  <Item Name="RooGaussian::BR_HiggsDecayWidthTHU_hVV_Pdf(BR_HiggsDecayWidthTHU_hVV,BR_HiggsDecayWidthTHU_hVV_In,1)" Type="constraint" NP="BR_HiggsDecayWidthTHU_hVV" GO="BR_HiggsDecayWidthTHU_hVV_In"/>
+  <Item Name="RooGaussian::BR_HiggsDecayWidthTHU_htautau_Pdf(BR_HiggsDecayWidthTHU_htautau,BR_HiggsDecayWidthTHU_htautau_In,1)" Type="constraint" NP="BR_HiggsDecayWidthTHU_htautau" GO="BR_HiggsDecayWidthTHU_htautau_In"/>
+
+  <!-- Introducing response terms -->
+  <Item Name="expr::expected_BR_param_alphaS_WW('pow(@0,@1)',kappa_value_BR_param_alphaS_WW,QCDalphaS)"/>
+  <Item Name="expr::expected_BR_param_mB_WW('pow(@0,@1)',kappa_value_BR_param_mB_WW,BR_param_mB)"/>
+  <Item Name="expr::expected_BR_param_mC_WW('pow(@0,@1)',kappa_value_BR_param_mC_WW,BR_param_mC)"/>
+  <Item Name="expr::expected_BR_HiggsDecayWidthTHU_hbb_WW('pow(@0,@1)',kappa_value_BR_HiggsDecayWidthTHU_hbb_WW,BR_HiggsDecayWidthTHU_hbb)"/>
+  <Item Name="expr::expected_BR_HiggsDecayWidthTHU_hgg_WW('pow(@0,@1)',kappa_value_BR_HiggsDecayWidthTHU_hgg_WW,BR_HiggsDecayWidthTHU_hgg)"/>
+  <Item Name="expr::expected_BR_HiggsDecayWidthTHU_hVV_WW('pow(@0,@1)',kappa_value_BR_HiggsDecayWidthTHU_hVV_WW,BR_HiggsDecayWidthTHU_hVV)"/>
+
+  <Item Name="prod::mu_BR_WW_composite(expected_BR_param_alphaS_WW,expected_BR_param_mB_WW,expected_BR_param_mC_WW,expected_BR_HiggsDecayWidthTHU_hbb_WW,expected_BR_HiggsDecayWidthTHU_hgg_WW,expected_BR_HiggsDecayWidthTHU_hVV_WW,mu_BR_WW_mod)"/>
+
+  <Item Name="expr::expected_BR_param_alphaS_tautau('pow(@0,@1)',kappa_value_BR_param_alphaS_tautau,QCDalphaS)"/>
+  <Item Name="expr::expected_BR_param_mB_tautau('pow(@0,@1)',kappa_value_BR_param_mB_tautau,BR_param_mB)"/>
+  <Item Name="expr::expected_BR_param_mC_tautau('pow(@0,@1)',kappa_value_BR_param_mC_tautau,BR_param_mC)"/>
+  <Item Name="expr::expected_BR_HiggsDecayWidthTHU_hbb_tautau('pow(@0,@1)',kappa_value_BR_HiggsDecayWidthTHU_hbb_tautau,BR_HiggsDecayWidthTHU_hbb)"/>
+  <Item Name="expr::expected_BR_HiggsDecayWidthTHU_hgg_tautau('pow(@0,@1)',kappa_value_BR_HiggsDecayWidthTHU_hgg_tautau,BR_HiggsDecayWidthTHU_hgg)"/>
+  <Item Name="expr::expected_BR_HiggsDecayWidthTHU_hVV_tautau('pow(@0,@1)',kappa_value_BR_HiggsDecayWidthTHU_hVV_tautau,BR_HiggsDecayWidthTHU_hVV)"/>
+  <Item Name="expr::expected_BR_HiggsDecayWidthTHU_htautau_tautau('pow(@0,@1)',kappa_value_BR_HiggsDecayWidthTHU_htautau_tautau,BR_HiggsDecayWidthTHU_htautau)"/>
+
+  <Item Name="prod::mu_BR_tautau_composite(expected_BR_param_alphaS_tautau,expected_BR_param_mB_tautau,expected_BR_param_mC_tautau,expected_BR_HiggsDecayWidthTHU_hbb_tautau,expected_BR_HiggsDecayWidthTHU_htautau_tautau,expected_BR_HiggsDecayWidthTHU_hgg_tautau,expected_BR_HiggsDecayWidthTHU_hVV_tautau,mu_BR_tautau_mod)"/>
+
+  <Map Name= "EDIT::NEWPDF(OLDPDF,
+    mu=mu_Htau,
+    mu_BR_WW=mu_BR_WW_composite,
+    mu_BR_tautau=mu_BR_tautau_composite,
+    alpha_ATLAS_BR_tautau=zero,
+    alpha_ATLAS_BR_tautauConstraint=one,
+    alpha_Theo_alphas_Higgs_ggH_total=QCDalphaS,
+    alpha_Theo_alphas_Higgs_ggH_totalConstraint=one,
+       	       )" />
+</Organization>
+

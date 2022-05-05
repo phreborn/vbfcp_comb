@@ -132,11 +132,11 @@ def strReplaceNPName_tt(nui):
       #return '<Syst OldName = "%s(%s, %s)" NewName = "%s" />'%(nui+'_Pdf',nui,nui+'_In',nui+'_HTau')
   if nui in ttMaps.keys():
     nuinew = ttMaps[nui]
-    return '<Syst OldName = "%s(%s, %s)" NewName = "%s" />'%('alpha_'+nui+'Constraint',nui,'nom_alpha_'+nui,nuinew)
+    return '<Syst OldName = "%s(%s, %s)" NewName = "%s" />'%(''+nui+'Constraint',nui,'nom_'+nui,nuinew)
     #return '<Syst OldName = "%s(%s, %s)" NewName = "%s" />'%('alpha_'+nui+'Constraint',nui,'nom_alpha_'+nui,nui+'_HTau')
   else:
     if 'gamma_stat_' in nui: return '<Syst OldName = "%s" NewName = "%s" />'%(nui,nui+'_HTau')
-    return '<Syst OldName = "%s(%s, %s)" NewName = "%s" />'%('alpha_'+nui+'Constraint',nui,'nom_alpha_'+nui,nui+'_HTau')
+    return '<Syst OldName = "%s(%s, %s)" NewName = "%s" />'%(''+nui+'Constraint',nui,'nom_'+nui,nui+'_HTau')
 
 
 ##### reading systematic list #####

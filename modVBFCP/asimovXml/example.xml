@@ -1,5 +1,5 @@
 <!DOCTYPE Asimov  SYSTEM 'asimovUtil.dtd'>  
 <Asimov InputFile="workspaces/combined_m00.root" OutputFile="workspaces/combined_m00_Asi.root" >
-  <Action Name="asimovData_SM_MuFloat" Setup="mu=1,mu_BR_yy=1,mu_spur=0,mu_ggH=0,mu_VBF_RW=0,mu_spur_SM=1,mu_ggH_SM=1,mu_VBF_SM=1_0_5,ATLAS_epsilon_rejected=0,ATLAS_epsilon=1_-5_5" Action="float:fit:genasimov:savesnapshot" SnapshotNuis="Nuis_SM_MuFloat" SnapshotGlob="Glob_SM_MuFloat"/>
-  <Action Name="asimovData_SM_Mu1" Setup="mu=1,mu_BR_yy=1,mu_spur=0,mu_ggH=0,mu_VBF_RW=0,mu_spur_SM=1,mu_ggH_SM=1,mu_VBF_SM=1,ATLAS_epsilon_rejected=0,ATLAS_epsilon=1" Action="genasimov:matchglob:savesnapshot:reset:raw" SnapshotNuis="Nuis_SM_Mu1" SnapshotGlob="Glob_SM_Mu1"/>
+  <Action Name="asimovData_SM_MuFloat" Setup="mu=1,mu_BR_yy=1,mu_spur=0,mu_ggH=0,mu_VBF_RW=0,mu_spur_SM=1,mu_ggH_SM=1,mu_VBF_SM=1_0_5,ATLAS_epsilon_rejected=0,ATLAS_epsilon=1_-5_5,mu_Htau=1,mu_BR_tautau_mod=1,mu_BR_WW_mod=1,mu_VBF=1,mu_otherH=1" Action="float:fit:genasimov:savesnapshot" SnapshotNuis="Nuis_SM_MuFloat" SnapshotGlob="Glob_SM_MuFloat"/>
+  <Action Name="asimovData_SM_Mu1" Setup="mu=1,mu_BR_yy=1,mu_spur=0,mu_ggH=0,mu_VBF_RW=0,mu_spur_SM=1,mu_ggH_SM=1,mu_VBF_SM=1,ATLAS_epsilon_rejected=0,ATLAS_epsilon=1,mu_Htau=1,mu_BR_tautau_mod=1,mu_BR_WW_mod=1,mu_VBF=1,mu_otherH=1" Action="genasimov:matchglob:savesnapshot:reset:raw" SnapshotNuis="Nuis_SM_Mu1" SnapshotGlob="Glob_SM_Mu1"/>
 </Asimov>

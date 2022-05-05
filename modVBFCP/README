@@ -4,11 +4,11 @@
 2a)to modify gam WS for combination
 - use genModGam.sh
 2b)to modify tau WS for combination
--
+- use genModTau.sh
 
 3)preparing list of syst in both channels:
 - root -b -q readGamWS.cxx => yy_nuisList.txt (notice to remove p1_*, nbkg_*)
-- root -b -q readTauWS.cxx => tautau_nuisList.txt 
+- root -b -q readTauWS.cxx => tautau_nuisList.txt (notice to remove ATLAS_norm_*)
 
 next steps need to set configurations in ./config.py first
 4)create combination xml files:

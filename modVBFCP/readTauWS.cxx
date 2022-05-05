@@ -1,7 +1,7 @@
 #include <iostream>
 
 void readTauWS(){
-  TFile *f = new TFile("inWS/tautau/m00/125_lumi_split.root", "read");
+  TFile *f = new TFile("inWS/tautau/m00/125_lumi_split_mod.root", "read");
   RooWorkspace *ws = (RooWorkspace*) f->Get("combined");
   RooStats::ModelConfig *mc = dynamic_cast<RooStats::ModelConfig *>(ws->obj("ModelConfig"));
 

@@ -6,15 +6,15 @@ path_cfgCats="../../../nom_WS/cats.cfg"
 path_yySysList="yy_nuisList.txt"
 path_ttSysList="tautau_nuisList.txt"
 
-combPois=['mu', 'mu_BR_yy', 'mu_VBF_RW', 'mu_VBF_SM', 'mu_ggH', 'mu_ggH_SM', 'mu_spur', 'mu_spur_SM', 'ATLAS_epsilon', 'ATLAS_epsilon_rejected']
-yyPois=['mu', 'mu_BR_yy', 'mu_VBF_RW', 'mu_VBF_SM', 'mu_ggH', 'mu_ggH_SM', 'mu_spur', 'mu_spur_SM', 'dummy', 'dummy']
-ttPois=['dummy', 'dummy', 'dummy', 'dummy', 'dummy', 'dummy', 'dummy', 'dummy', 'ATLAS_epsilon', 'ATLAS_epsilon_rejected']
+combPois=['mu', 'mu_BR_yy', 'mu_VBF_RW', 'mu_VBF_SM', 'mu_ggH', 'mu_ggH_SM', 'mu_spur', 'mu_spur_SM', 'ATLAS_epsilon', 'ATLAS_epsilon_rejected', 'mu_Htau', 'mu_BR_tautau_mod', 'mu_BR_WW_mod', 'mu_VBF', 'mu_otherH']
+yyPois=['mu', 'mu_BR_yy', 'mu_VBF_RW', 'mu_VBF_SM', 'mu_ggH', 'mu_ggH_SM', 'mu_spur', 'mu_spur_SM', 'dummy', 'dummy', 'dummy', 'dummy', 'dummy', 'dummy', 'dummy']
+ttPois=['dummy', 'dummy', 'dummy', 'dummy', 'dummy', 'dummy', 'dummy', 'dummy', 'ATLAS_epsilon', 'ATLAS_epsilon_rejected', 'mu_Htau', 'mu_BR_tautau_mod', 'mu_BR_WW_mod', 'mu_VBF', 'mu_otherH']
 
 combOutRootFile="workspaces/combined_{dtilde}.root"
 
 yyInRootFile="inWS/gamgam/Observed/vbf_cp_{dtilde}_mod.root"
 yydata='combData'
-ttInRootFile="inWS/tautau/{dtilde}/125_lumi_split.root"
+ttInRootFile="inWS/tautau/{dtilde}/125_lumi_split_mod.root"
 ttdata='obsData'
 
 outXml="combXml/comb_{dtilde}.xml"
@@ -26,21 +26,27 @@ chlistName = {
 }
 
 ttMaps={
-#'':'TheorySig_QCDalphaS',
-'Theo_sig_pdf_1':'TheorySig_PDF_1',
-'Theo_sig_pdf_4':'TheorySig_PDF_4',
-'Theo_sig_pdf_16':'TheorySig_PDF_16',
+'alpha_Theo_sig_pdf_1':'TheorySig_PDF_1',
+'alpha_Theo_sig_pdf_4':'TheorySig_PDF_4',
+'alpha_Theo_sig_pdf_16':'TheorySig_PDF_16',
 'ATLAS_LUMI_CORR':'ATLAS_LUMI_CORR',
 'ATLAS_LUMI_UNCORR_1516':'ATLAS_LUMI_UNCORR_1516',
-'ATLAS_EG_RESOLUTION_ALL':'ATLAS_EG_RESOLUTION_ALL',
-'ATLAS_EG_SCALE_ALLCORR':'ATLAS_EG_SCALE_ALL',
-'Theo_ggH_shower':'TheorySig_shower_ggF',
-'Theo_VBFH_shower':'TheorySig_shower_VBF',
-'Theo_ggH_sig_qcd_1':'TheorySig_QCDscale_ggF_res',
-'Theo_ggH_sig_qcd_2':'TheorySig_QCDscale_ggF_mig01',
-'Theo_ggH_sig_qcd_3':'TheorySig_QCDscale_ggF_mig12',
-'Theo_ggH_sig_qcd_6':'TheorySig_QCDscale_ggF_pTH60',
-'Theo_ggH_sig_qcd_7':'TheorySig_QCDscale_ggF_pTH120',
+'QCDalphaS':'TheorySig_QCDalphaS',
+'BR_HiggsDecayWidthTHU_hbb':'TheorySig_BR_HiggsDecayWidthTHU_hbb',
+'BR_HiggsDecayWidthTHU_hgg':'TheorySig_BR_HiggsDecayWidthTHU_hgg',
+'BR_HiggsDecayWidthTHU_hVV':'TheorySig_BR_HiggsDecayWidthTHU_hVV',
+'BR_HiggsDecayWidthTHU_htautau':'TheorySig_BR_HiggsDecayWidthTHU_htautau',
+'BR_param_mB':'TheorySig_BR_param_mB',
+'BR_param_mC':'TheorySig_BR_param_mC',
+'alpha_ATLAS_EG_RESOLUTION_ALL':'ATLAS_EG_RESOLUTION_ALL',
+'alpha_ATLAS_EG_SCALE_ALLCORR':'ATLAS_EG_SCALE_ALL',
+'alpha_Theo_ggH_shower':'TheorySig_shower_ggF',
+'alpha_Theo_VBFH_shower':'TheorySig_shower_VBF',
+'alpha_Theo_ggH_sig_qcd_1':'TheorySig_QCDscale_ggF_res',
+'alpha_Theo_ggH_sig_qcd_2':'TheorySig_QCDscale_ggF_mig01',
+'alpha_Theo_ggH_sig_qcd_3':'TheorySig_QCDscale_ggF_mig12',
+'alpha_Theo_ggH_sig_qcd_6':'TheorySig_QCDscale_ggF_pTH60',
+'alpha_Theo_ggH_sig_qcd_7':'TheorySig_QCDscale_ggF_pTH120',
 }
 
 yyMaps={

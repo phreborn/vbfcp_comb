@@ -4,8 +4,9 @@ expected=1
 
 channel=Comb
 
-pois="mu=1,mu_BR_yy=1,mu_spur_SM=0,mu_ggH_SM=0,mu_VBF_SM=0,mu_spur=1,mu_ggH=1,mu_VBF_RW=1_0_5,ATLAS_epsilon=0,ATLAS_epsilon_rejected=1_-5_5"
+pois="mu=1,mu_BR_yy=1,mu_spur_SM=0,mu_ggH_SM=0,mu_VBF_SM=0,mu_spur=1,mu_ggH=1,mu_VBF_RW=1_0_5,ATLAS_epsilon=0,ATLAS_epsilon_rejected=1_-5_5,mu_Htau=1,mu_BR_tautau_mod=1,mu_BR_WW_mod=1,mu_VBF=1,mu_otherH=1"
 fix_stat=ATLAS_*_HGam,ATLAS_B*,ATLAS_E*,ATLAS_F*,ATLAS_J*,ATLAS_L*,ATLAS_M*,ATLAS_P*,ATLAS_T*,BR_*,gamma_stat_*,Lumi*,Theo*,Z*,*_fake_*,QCDalphaS*
+fix_stat=ATLAS_*_HGam,alpha_*_HTau,ATLAS_EG_*_ALL,ATLAS_LUMI_*,TheorySig_*,gamma_stat_*
 
 ws=combWS
 dataset=combData

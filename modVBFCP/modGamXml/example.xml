@@ -92,10 +92,10 @@
               mu=mu_composite,
               mu_yy=mu_BR_yy_composite,
               ATLAS_BR_yy=zero,
-              ATLAS_aS1_1=QCDalphaS,
+              ATLAS_alphaS=QCDalphaS,
               ATLAS_lumi_run2=zero,
               constr__ATLAS_BR_yy=one,
-              constr__ATLAS_aS1_1=one,
+              constr__ATLAS_alphaS=one,
               constr__ATLAS_lumi_run2=one,
 	             )" />
 </Organization>
