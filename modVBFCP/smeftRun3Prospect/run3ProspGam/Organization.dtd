@@ -1,0 +1,43 @@
+<!ELEMENT Organization (Item+,Map,Asimov*)>
+<!ATTLIST Organization
+        InFile              CDATA            #REQUIRED
+        OutFile             CDATA            #REQUIRED
+        ModelName           CDATA            #REQUIRED
+        POINames            CDATA            #REQUIRED
+        WorkspaceName       CDATA            #IMPLIED
+        ModelConfigName     CDATA            #IMPLIED
+        DataName            CDATA            #IMPLIED
+        SnapshotNP          CDATA            #IMPLIED
+        SnapshotGO          CDATA            #IMPLIED
+        SnapshotPOI         CDATA            #IMPLIED
+        SnapshotAll         CDATA            #IMPLIED
+	Strict              CDATA            #IMPLIED
+	>
+
+<!ELEMENT Item (Name)*>
+<!ATTLIST Item
+        Name              CDATA            #REQUIRED
+        FileName          CDATA            #IMPLIED
+        WorkspaceName     CDATA            #IMPLIED
+        Type              CDATA            #IMPLIED
+        NP                CDATA            #IMPLIED
+        GO                CDATA            #IMPLIED
+	> 
+
+<!ELEMENT Map (Name)*>
+<!ATTLIST Map
+        Name              CDATA            #REQUIRED
+	>
+
+<!ELEMENT Asimov EMPTY>
+<!ATTLIST Asimov
+          Name              CDATA            #REQUIRED
+	  Setup             CDATA            #IMPLIED
+	  Action            CDATA            #IMPLIED
+	  Data              CDATA            #IMPLIED
+	  SnapshotAll       CDATA            #IMPLIED
+	  SnapshotGlob      CDATA            #IMPLIED
+	  SnapshotNuis      CDATA            #IMPLIED
+	  SnapshotPOI       CDATA            #IMPLIED
+	  Injection         CDATA            #IMPLIED
+	  >

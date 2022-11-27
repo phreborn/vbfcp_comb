@@ -1,0 +1,74 @@
+<!DOCTYPE Organization  SYSTEM 'Organization.dtd'>
+<Organization InFile="inWS/gamgam/Observed/vbf_cp_m0d00.root" OutFile="inWS/gamgam/Observed/vbf_cp_m0d00_run3Scale.root"
+	      ModelName="HGam"
+              POINames="mu,mu_Run3Scale,
+                        mu_ggH,mu_ggH_SM,mu_VBF_RW,mu_VBF_SM"
+              WorkspaceName="combWS"
+              DataName="combData"
+  >
+  <Item Name="mu[1]"/>
+  <Item Name="mu_Run3Scale[1]"/>
+
+  <Item Name="mu_bkg_OO_TT_b1[1]"/>
+  <Item Name="mu_bkg_OO_TL_b1[1]"/>
+  <Item Name="mu_bkg_OO_LT_b1[1]"/>
+  <Item Name="mu_bkg_OO_TT_b2[1]"/>
+  <Item Name="mu_bkg_OO_TL_b2[1]"/>
+  <Item Name="mu_bkg_OO_LT_b2[1]"/>
+  <Item Name="mu_bkg_OO_TT_b3[1]"/>
+  <Item Name="mu_bkg_OO_TL_b3[1]"/>
+  <Item Name="mu_bkg_OO_LT_b3[1]"/>
+  <Item Name="mu_bkg_OO_TT_b4[1]"/>
+  <Item Name="mu_bkg_OO_TL_b4[1]"/>
+  <Item Name="mu_bkg_OO_LT_b4[1]"/>
+  <Item Name="mu_bkg_OO_TT_b5[1]"/>
+  <Item Name="mu_bkg_OO_TL_b5[1]"/>
+  <Item Name="mu_bkg_OO_LT_b5[1]"/>
+  <Item Name="mu_bkg_OO_TT_b6[1]"/>
+  <Item Name="mu_bkg_OO_TL_b6[1]"/>
+  <Item Name="mu_bkg_OO_LT_b6[1]"/>
+
+  <Item Name="prod::mu_composite(mu,mu_Run3Scale)"/>
+
+  <Item Name="prod::mu_bkg_TT_b1_comp(mu_bkg_OO_TT_b1,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_TL_b1_comp(mu_bkg_OO_TL_b1,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_LT_b1_comp(mu_bkg_OO_LT_b1,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_TT_b2_comp(mu_bkg_OO_TT_b2,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_TL_b2_comp(mu_bkg_OO_TL_b2,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_LT_b2_comp(mu_bkg_OO_LT_b2,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_TT_b3_comp(mu_bkg_OO_TT_b3,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_TL_b3_comp(mu_bkg_OO_TL_b3,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_LT_b3_comp(mu_bkg_OO_LT_b3,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_TT_b4_comp(mu_bkg_OO_TT_b4,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_TL_b4_comp(mu_bkg_OO_TL_b4,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_LT_b4_comp(mu_bkg_OO_LT_b4,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_TT_b5_comp(mu_bkg_OO_TT_b5,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_TL_b5_comp(mu_bkg_OO_TL_b5,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_LT_b5_comp(mu_bkg_OO_LT_b5,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_TT_b6_comp(mu_bkg_OO_TT_b6,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_TL_b6_comp(mu_bkg_OO_TL_b6,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_LT_b6_comp(mu_bkg_OO_LT_b6,mu_Run3Scale)"/>
+
+  <Map Name= "EDIT::NEWPDF(OLDPDF,
+              mu=mu_composite,
+              mu_bkg_OO_TT_b1=mu_bkg_TT_b1_comp,
+              mu_bkg_OO_TL_b1=mu_bkg_TL_b1_comp,
+              mu_bkg_OO_LT_b1=mu_bkg_LT_b1_comp,
+              mu_bkg_OO_TT_b2=mu_bkg_TT_b2_comp,
+              mu_bkg_OO_TL_b2=mu_bkg_TL_b2_comp,
+              mu_bkg_OO_LT_b2=mu_bkg_LT_b2_comp,
+              mu_bkg_OO_TT_b3=mu_bkg_TT_b3_comp,
+              mu_bkg_OO_TL_b3=mu_bkg_TL_b3_comp,
+              mu_bkg_OO_LT_b3=mu_bkg_LT_b3_comp,
+              mu_bkg_OO_TT_b4=mu_bkg_TT_b4_comp,
+              mu_bkg_OO_TL_b4=mu_bkg_TL_b4_comp,
+              mu_bkg_OO_LT_b4=mu_bkg_LT_b4_comp,
+              mu_bkg_OO_TT_b5=mu_bkg_TT_b5_comp,
+              mu_bkg_OO_TL_b5=mu_bkg_TL_b5_comp,
+              mu_bkg_OO_LT_b5=mu_bkg_LT_b5_comp,
+              mu_bkg_OO_TT_b6=mu_bkg_TT_b6_comp,
+              mu_bkg_OO_TL_b6=mu_bkg_TL_b6_comp,
+              mu_bkg_OO_LT_b6=mu_bkg_LT_b6_comp,
+	             )" />
+</Organization>
+
