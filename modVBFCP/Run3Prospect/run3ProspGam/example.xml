@@ -1,0 +1,159 @@
+<!DOCTYPE Organization  SYSTEM 'Organization.dtd'>
+<Organization InFile="inWS/gamgam/Observed/vbf_cp_m00.root" OutFile="inWS/gamgam/Observed/vbf_cp_m00_run3Scale.root"
+	      ModelName="HGam"
+              POINames="mu,mu_BR_yy,mu_Run3Scale,
+                        mu_ggH,mu_ggH_SM,mu_VBF_RW,mu_VBF_SM,mu_spur,mu_spur_SM"
+              WorkspaceName="combWS"
+              DataName="combData"
+  >
+  <Item Name="zero[0]"/>
+  <Item Name="one[1]"/>
+  <Item Name="mu[1]"/>
+  <Item Name="mu_BR_yy[1]"/>
+  <Item Name="mu_Run3Scale[1]"/>
+
+  <Item Name="mu_ggH[1]"/>
+  <Item Name="mu_VBF_RW[1]"/>
+  <Item Name="mu_ggH_SM[1]"/>
+  <Item Name="mu_VBF_SM[1]"/>
+
+  <Item Name="mu_bkg_OO_TT_b1[1]"/>
+  <Item Name="mu_bkg_OO_TL_b1[1]"/>
+  <Item Name="mu_bkg_OO_LT_b1[1]"/>
+  <Item Name="mu_bkg_OO_TT_b2[1]"/>
+  <Item Name="mu_bkg_OO_TL_b2[1]"/>
+  <Item Name="mu_bkg_OO_LT_b2[1]"/>
+  <Item Name="mu_bkg_OO_TT_b3[1]"/>
+  <Item Name="mu_bkg_OO_TL_b3[1]"/>
+  <Item Name="mu_bkg_OO_LT_b3[1]"/>
+  <Item Name="mu_bkg_OO_TT_b4[1]"/>
+  <Item Name="mu_bkg_OO_TL_b4[1]"/>
+  <Item Name="mu_bkg_OO_LT_b4[1]"/>
+  <Item Name="mu_bkg_OO_TT_b5[1]"/>
+  <Item Name="mu_bkg_OO_TL_b5[1]"/>
+  <Item Name="mu_bkg_OO_LT_b5[1]"/>
+  <Item Name="mu_bkg_OO_TT_b6[1]"/>
+  <Item Name="mu_bkg_OO_TL_b6[1]"/>
+  <Item Name="mu_bkg_OO_LT_b6[1]"/>
+
+  <!-- Inject BR uncertainty -->
+  <!-- Introducing kappa values, where kappa=1+sigma (sigma contains sign) -->
+  <!-- H->gamgam -->
+  <Item Name="kappa_value_BR_param_alphaS_gamgam[1.0063]"/>
+  <Item Name="kappa_value_BR_param_mB_gamgam[0.9901]"/>
+  <Item Name="kappa_value_BR_param_mC_gamgam[0.9985]"/>
+  <Item Name="kappa_value_BR_HiggsDecayWidthTHU_hbb_gamgam[0.9971]"/>
+  <Item Name="kappa_value_BR_HiggsDecayWidthTHU_hgg_gamgam[0.9974]"/>
+  <Item Name="kappa_value_BR_HiggsDecayWidthTHU_hVV_gamgam[0.9988]"/>
+  <Item Name="kappa_value_BR_HiggsDecayWidthTHU_hyy_gamgam[1.0100]"/>
+
+  <Item Name="kappa_value_ATLAS_LUMI_CORR[1.01459]"/>
+  <Item Name="kappa_value_ATLAS_LUMI_UNCORR_1516[1.00406]"/>
+  <Item Name="kappa_value_ATLAS_LUMI_UNCORR_1718[1.00794]"/>
+
+  <!-- Introducing nuisance parameter names -->
+  <Item Name="QCDalphaS[0,-5,5]"/>
+  <Item Name="BR_param_mB[0,-5,5]"/>
+  <Item Name="BR_param_mC[0,-5,5]"/>
+  <Item Name="BR_HiggsDecayWidthTHU_hbb[0,-5,5]"/>
+  <Item Name="BR_HiggsDecayWidthTHU_hgg[0,-5,5]"/>
+  <Item Name="BR_HiggsDecayWidthTHU_hVV[0,-5,5]"/>
+  <Item Name="BR_HiggsDecayWidthTHU_hyy[0,-5,5]"/>
+
+  <Item Name="ATLAS_LUMI_CORR[0,-5,5]"/>
+  <Item Name="ATLAS_LUMI_UNCORR_1516[0,-5,5]"/>
+  <Item Name="ATLAS_LUMI_UNCORR_1718[0,-5,5]"/>
+
+  <!-- Introducing global observables -->
+  <Item Name="QCDalphaS_In[0]"/>
+  <Item Name="BR_param_mB_In[0]"/>
+  <Item Name="BR_param_mC_In[0]"/>
+  <Item Name="BR_HiggsDecayWidthTHU_hbb_In[0]"/>
+  <Item Name="BR_HiggsDecayWidthTHU_hgg_In[0]"/>
+  <Item Name="BR_HiggsDecayWidthTHU_hVV_In[0]"/>
+  <Item Name="BR_HiggsDecayWidthTHU_hyy_In[0]"/>
+
+  <Item Name="ATLAS_LUMI_CORR_In[0]"/>
+  <Item Name="ATLAS_LUMI_UNCORR_1516_In[0]"/>
+  <Item Name="ATLAS_LUMI_UNCORR_1718_In[0]"/>
+
+  <!-- Introducing constraint terms -->
+  <Item Name="RooGaussian::QCDalphaS_ConstraintPdf(QCDalphaS,QCDalphaS_In,1)" Type="constraint" NP="QCDalphaS" GO="QCDalphaS_In"/>
+  <Item Name="RooGaussian::BR_param_mB_ConstraintPdf(BR_param_mB,BR_param_mB_In,1)" Type="constraint" NP="BR_param_mB" GO="BR_param_mB_In"/>
+  <Item Name="RooGaussian::BR_param_mC_ConstraintPdf(BR_param_mC,BR_param_mC_In,1)" Type="constraint" NP="BR_param_mC" GO="BR_param_mC_In"/>
+  <Item Name="RooGaussian::BR_HiggsDecayWidthTHU_hbb_ConstraintPdf(BR_HiggsDecayWidthTHU_hbb,BR_HiggsDecayWidthTHU_hbb_In,1)" Type="constraint" NP="BR_HiggsDecayWidthTHU_hbb" GO="BR_HiggsDecayWidthTHU_hbb_In"/>
+  <Item Name="RooGaussian::BR_HiggsDecayWidthTHU_hgg_ConstraintPdf(BR_HiggsDecayWidthTHU_hgg,BR_HiggsDecayWidthTHU_hgg_In,1)" Type="constraint" NP="BR_HiggsDecayWidthTHU_hgg" GO="BR_HiggsDecayWidthTHU_hgg_In"/>
+  <Item Name="RooGaussian::BR_HiggsDecayWidthTHU_hyy_ConstraintPdf(BR_HiggsDecayWidthTHU_hyy,BR_HiggsDecayWidthTHU_hyy_In,1)" Type="constraint" NP="BR_HiggsDecayWidthTHU_hyy" GO="BR_HiggsDecayWidthTHU_hyy_In"/>
+  <Item Name="RooGaussian::BR_HiggsDecayWidthTHU_hVV_ConstraintPdf(BR_HiggsDecayWidthTHU_hVV,BR_HiggsDecayWidthTHU_hVV_In,1)" Type="constraint" NP="BR_HiggsDecayWidthTHU_hVV" GO="BR_HiggsDecayWidthTHU_hVV_In"/>
+
+  <Item Name="RooGaussian::ATLAS_LUMI_CORR_ConstraintPdf(ATLAS_LUMI_CORR,ATLAS_LUMI_CORR_In,1)" Type="constraint" NP="ATLAS_LUMI_CORR" GO="ATLAS_LUMI_CORR_In"/>
+  <Item Name="RooGaussian::ATLAS_LUMI_UNCORR_1516_ConstraintPdf(ATLAS_LUMI_UNCORR_1516,ATLAS_LUMI_UNCORR_1516_In,1)" Type="constraint" NP="ATLAS_LUMI_UNCORR_1516" GO="ATLAS_LUMI_UNCORR_1516_In"/>
+  <Item Name="RooGaussian::ATLAS_LUMI_UNCORR_1718_ConstraintPdf(ATLAS_LUMI_UNCORR_1718,ATLAS_LUMI_UNCORR_1718_In,1)" Type="constraint" NP="ATLAS_LUMI_UNCORR_1718" GO="ATLAS_LUMI_UNCORR_1718_In"/>
+
+  <!-- Introducing response terms -->
+  <!-- H->gamgam -->
+  <Item Name="expr::expected_BR_param_alphaS_gamgam('pow(@0,@1)',kappa_value_BR_param_alphaS_gamgam,QCDalphaS)"/>
+  <Item Name="expr::expected_BR_param_mB_gamgam('pow(@0,@1)',kappa_value_BR_param_mB_gamgam,BR_param_mB)"/>
+  <Item Name="expr::expected_BR_param_mC_gamgam('pow(@0,@1)',kappa_value_BR_param_mC_gamgam,BR_param_mC)"/>
+  <Item Name="expr::expected_BR_HiggsDecayWidthTHU_hbb_gamgam('pow(@0,@1)',kappa_value_BR_HiggsDecayWidthTHU_hbb_gamgam,BR_HiggsDecayWidthTHU_hbb)"/>
+  <Item Name="expr::expected_BR_HiggsDecayWidthTHU_hgg_gamgam('pow(@0,@1)',kappa_value_BR_HiggsDecayWidthTHU_hgg_gamgam,BR_HiggsDecayWidthTHU_hgg)"/>
+  <Item Name="expr::expected_BR_HiggsDecayWidthTHU_hVV_gamgam('pow(@0,@1)',kappa_value_BR_HiggsDecayWidthTHU_hVV_gamgam,BR_HiggsDecayWidthTHU_hVV)"/>
+  <Item Name="expr::expected_BR_HiggsDecayWidthTHU_hyy_gamgam('pow(@0,@1)',kappa_value_BR_HiggsDecayWidthTHU_hyy_gamgam,BR_HiggsDecayWidthTHU_hyy)"/>
+
+  <Item Name="expr::expected_ATLAS_LUMI_CORR('pow(@0,@1)',kappa_value_ATLAS_LUMI_CORR,ATLAS_LUMI_CORR)"/>
+  <Item Name="expr::expected_ATLAS_LUMI_UNCORR_1516('pow(@0,@1)',kappa_value_ATLAS_LUMI_UNCORR_1516,ATLAS_LUMI_UNCORR_1516)"/>
+  <Item Name="expr::expected_ATLAS_LUMI_UNCORR_1718('pow(@0,@1)',kappa_value_ATLAS_LUMI_UNCORR_1718,ATLAS_LUMI_UNCORR_1718)"/>
+
+  <Item Name="prod::mu_BR_yy_composite(expected_BR_param_alphaS_gamgam,expected_BR_param_mB_gamgam,expected_BR_param_mC_gamgam,expected_BR_HiggsDecayWidthTHU_hbb_gamgam,expected_BR_HiggsDecayWidthTHU_hgg_gamgam,expected_BR_HiggsDecayWidthTHU_hyy_gamgam,expected_BR_HiggsDecayWidthTHU_hVV_gamgam,mu_BR_yy)"/>
+
+  <Item Name="prod::mu_composite(expected_ATLAS_LUMI_CORR,expected_ATLAS_LUMI_UNCORR_1516,expected_ATLAS_LUMI_UNCORR_1718,mu,mu_Run3Scale)"/>
+
+  <Item Name="prod::mu_bkg_TT_b1_comp(mu_bkg_OO_TT_b1,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_TL_b1_comp(mu_bkg_OO_TL_b1,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_LT_b1_comp(mu_bkg_OO_LT_b1,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_TT_b2_comp(mu_bkg_OO_TT_b2,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_TL_b2_comp(mu_bkg_OO_TL_b2,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_LT_b2_comp(mu_bkg_OO_LT_b2,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_TT_b3_comp(mu_bkg_OO_TT_b3,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_TL_b3_comp(mu_bkg_OO_TL_b3,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_LT_b3_comp(mu_bkg_OO_LT_b3,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_TT_b4_comp(mu_bkg_OO_TT_b4,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_TL_b4_comp(mu_bkg_OO_TL_b4,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_LT_b4_comp(mu_bkg_OO_LT_b4,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_TT_b5_comp(mu_bkg_OO_TT_b5,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_TL_b5_comp(mu_bkg_OO_TL_b5,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_LT_b5_comp(mu_bkg_OO_LT_b5,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_TT_b6_comp(mu_bkg_OO_TT_b6,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_TL_b6_comp(mu_bkg_OO_TL_b6,mu_Run3Scale)"/>
+  <Item Name="prod::mu_bkg_LT_b6_comp(mu_bkg_OO_LT_b6,mu_Run3Scale)"/>
+
+  <Map Name= "EDIT::NEWPDF(OLDPDF,
+              mu=mu_composite,
+              mu_bkg_OO_TT_b1=mu_bkg_TT_b1_comp,
+              mu_bkg_OO_TL_b1=mu_bkg_TL_b1_comp,
+              mu_bkg_OO_LT_b1=mu_bkg_LT_b1_comp,
+              mu_bkg_OO_TT_b2=mu_bkg_TT_b2_comp,
+              mu_bkg_OO_TL_b2=mu_bkg_TL_b2_comp,
+              mu_bkg_OO_LT_b2=mu_bkg_LT_b2_comp,
+              mu_bkg_OO_TT_b3=mu_bkg_TT_b3_comp,
+              mu_bkg_OO_TL_b3=mu_bkg_TL_b3_comp,
+              mu_bkg_OO_LT_b3=mu_bkg_LT_b3_comp,
+              mu_bkg_OO_TT_b4=mu_bkg_TT_b4_comp,
+              mu_bkg_OO_TL_b4=mu_bkg_TL_b4_comp,
+              mu_bkg_OO_LT_b4=mu_bkg_LT_b4_comp,
+              mu_bkg_OO_TT_b5=mu_bkg_TT_b5_comp,
+              mu_bkg_OO_TL_b5=mu_bkg_TL_b5_comp,
+              mu_bkg_OO_LT_b5=mu_bkg_LT_b5_comp,
+              mu_bkg_OO_TT_b6=mu_bkg_TT_b6_comp,
+              mu_bkg_OO_TL_b6=mu_bkg_TL_b6_comp,
+              mu_bkg_OO_LT_b6=mu_bkg_LT_b6_comp,
+              mu_yy=mu_BR_yy_composite,
+              ATLAS_BR_yy=zero,
+              ATLAS_alphaS=QCDalphaS,
+              ATLAS_lumi_run2=zero,
+              constr__ATLAS_BR_yy=one,
+              constr__ATLAS_alphaS=one,
+              constr__ATLAS_lumi_run2=one,
+	             )" />
+</Organization>
+
